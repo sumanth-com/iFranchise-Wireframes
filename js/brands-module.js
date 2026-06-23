@@ -32,15 +32,15 @@ const BRAND_MODULE = (() => {
           <div class="wf-stat-card"><div class="wf-stat-card__label">Interested Leads</div><div class="wf-stat-card__value">1,242</div><div class="wf-stat-card__change">↑ 86 this month</div></div>
           <div class="wf-stat-card"><div class="wf-stat-card__label">Open Cities</div><div class="wf-stat-card__value">108</div><div class="wf-stat-card__change">Across 12 states</div></div>
         </div>
-        <div class="wf-card-grid" style="grid-template-columns:repeat(4,1fr)">
+        <div class="wf-card-grid">
           <div class="wf-stat-card"><div class="wf-stat-card__label">Upcoming Launches</div><div class="wf-stat-card__value">18</div></div>
           <div class="wf-stat-card"><div class="wf-stat-card__label">Pending Agreements</div><div class="wf-stat-card__value">24</div></div>
           <div class="wf-stat-card"><div class="wf-stat-card__label">Franchise Growth</div><div class="wf-stat-card__value">+16%</div></div>
           <div class="wf-stat-card"><div class="wf-stat-card__label">Monthly Enquiries</div><div class="wf-stat-card__value">342</div></div>
         </div>
         <div class="wf-grid-2 wf-mb-20">
-          <div class="wf-card"><div class="wf-card__header"><span class="wf-card__title">Revenue Trend</span></div><div class="wf-card__body"><div class="wf-chart-placeholder">Line Chart — Brand Revenue (6 months)</div></div></div>
-          <div class="wf-card"><div class="wf-card__header"><span class="wf-card__title">Franchise Growth</span></div><div class="wf-card__body"><div class="wf-chart-placeholder">Bar Chart — New Franchisees per Quarter</div></div></div>
+          <div class="wf-card"><div class="wf-card__header"><span class="wf-card__title">Revenue Trend</span></div><div class="wf-card__body">${WF.chartPlaceholder("Line Chart", "Brand Revenue (6 months)")}</div></div>
+          <div class="wf-card"><div class="wf-card__header"><span class="wf-card__title">Franchise Growth</span></div><div class="wf-card__body">${WF.chartPlaceholder("Bar Chart", "New Franchisees per Quarter")}</div></div>
         </div>
         <div class="wf-grid-2">
           <div class="wf-card"><div class="wf-card__header"><span class="wf-card__title">Top Performing Locations</span><button data-screen="performance" class="wf-btn wf-btn--sm">View All</button></div>
@@ -52,7 +52,7 @@ const BRAND_MODULE = (() => {
           </div>
         </div>
         <div class="wf-card wf-mt-16"><div class="wf-card__header"><span class="wf-card__title">Monthly Enquiries by Brand</span><button data-screen="list" class="wf-btn wf-btn--sm">All Brands</button></div>
-          <div class="wf-card__body"><div class="wf-chart-placeholder" style="height:220px">Stacked Bar — Enquiries per Brand</div></div>
+          <div class="wf-card__body">${WF.chartPlaceholder("Stacked Bar", "Enquiries per Brand")}</div>
         </div>
       `
     },
@@ -186,7 +186,7 @@ const BRAND_MODULE = (() => {
               <div class="wf-detail-info__row"><span class="wf-detail-info__label">Break Even</span><span class="wf-detail-info__value">${WF.esc(br.breakEven)}</span></div>
               <div class="wf-detail-info__row"><span class="wf-detail-info__label">Agreement Duration</span><span class="wf-detail-info__value">${WF.esc(br.agreementDuration)}</span></div>
             </div>
-            <div class="wf-chart-placeholder wf-mt-16">Pie Chart — Investment Allocation</div>
+            ${WF.chartPlaceholder("Pie Chart", "Investment Allocation")}
           </div></div>
         `;
       }
@@ -204,7 +204,7 @@ const BRAND_MODULE = (() => {
               <div class="wf-stat-card"><div class="wf-stat-card__label">Marketing Fee</div><div class="wf-stat-card__value">${WF.esc(br.marketingFee)}</div><div class="wf-stat-card__change">National fund</div></div>
               <div class="wf-stat-card"><div class="wf-stat-card__label">Franchise Fee</div><div class="wf-stat-card__value" style="font-size:20px">${WF.esc(br.franchiseFee)}</div><div class="wf-stat-card__change">One-time</div></div>
             </div>
-            <div class="wf-chart-placeholder wf-mt-16" style="height:200px">Table/Chart — Fee Schedule by Year</div>
+            ${WF.chartPlaceholder("Table/Chart", "Fee Schedule by Year")}
           </div></div>
         `;
       }
@@ -216,7 +216,7 @@ const BRAND_MODULE = (() => {
         ${WF.pageHeader("Expansion Locations", b().name + " — Open outlets and planned cities")}
         ${brandTabs("expansion")}${WF.toolbar({ filters: ["City", "Status", "Region"] })}
         <div class="wf-grid-2 wf-mb-16">
-          <div class="wf-card"><div class="wf-card__header"><span class="wf-card__title">Expansion Map</span></div><div class="wf-card__body"><div class="wf-chart-placeholder" style="height:220px">Map — Open & Planned Cities</div></div></div>
+          <div class="wf-card"><div class="wf-card__header"><span class="wf-card__title">Expansion Map</span></div><div class="wf-card__body">${WF.chartPlaceholder("Map", "Open & Planned Cities")}</div></div>
           <div class="wf-card"><div class="wf-card__header"><span class="wf-card__title">Target Cities</span></div><div class="wf-card__body">
             ${b().expansionCities.map(c => `<span class="wf-badge" style="margin:4px">${WF.esc(c)}</span>`).join("")}
           </div></div>
@@ -243,7 +243,7 @@ const BRAND_MODULE = (() => {
         ${WF.pageHeader("Marketing Assets", b().name, `<button class="wf-btn wf-btn--sm">Upload Asset</button>`)}
         ${WF.toolbar({ showImport: true, filters: ["Asset Type", "Format"] })}
         <div class="wf-card-grid" style="grid-template-columns:repeat(3,1fr);margin-bottom:16px">
-          ${BRAND_DATA.marketingAssets.slice(0, 3).map(a => `<div class="wf-card"><div class="wf-card__body" style="text-align:center"><div class="wf-chart-placeholder" style="height:100px;margin-bottom:8px">Preview</div><div style="font-size:13px;font-weight:500">${WF.esc(a.name)}</div><div style="font-size:11px;color:var(--wf-text-muted)">${WF.esc(a.type)} · ${WF.esc(a.size)}</div><button class="wf-btn wf-btn--sm wf-mt-16" style="margin-top:8px">Download</button></div></div>`).join("")}
+          ${BRAND_DATA.marketingAssets.slice(0, 3).map(a => `<div class="wf-card"><div class="wf-card__body" style="text-align:center">${WF.chartPlaceholder("Bar Chart", "Preview")}<div style="font-size:13px;font-weight:500">${WF.esc(a.name)}</div><div style="font-size:11px;color:var(--wf-text-muted)">${WF.esc(a.type)} · ${WF.esc(a.size)}</div><button class="wf-btn wf-btn--sm wf-mt-16" style="margin-top:8px">Download</button></div></div>`).join("")}
         </div>
         <div class="wf-table-wrap wf-card"><table class="wf-table"><thead><tr><th>Asset Name</th><th>Type</th><th>Format</th><th>Size</th><th>Actions</th></tr></thead>
         <tbody>${BRAND_DATA.marketingAssets.map(a => `<tr><td>${WF.esc(a.name)}</td><td><span class="wf-badge">${WF.esc(a.type)}</span></td><td>${WF.esc(a.format)}</td><td>${WF.esc(a.size)}</td><td><button class="wf-btn wf-btn--sm">Download</button></td></tr>`).join("")}</tbody></table>${WF.pagination()}</div>
@@ -263,7 +263,7 @@ const BRAND_MODULE = (() => {
           </div></div>
           <div class="wf-card"><div class="wf-card__header"><span class="wf-card__title">Ongoing Support</span><span class="wf-badge wf-badge--dark">${b().supportIncluded ? "Included" : "Add-on"}</span></div><div class="wf-card__body">
             <div class="wf-detail-info__row"><span class="wf-detail-info__label">Field Support</span><span class="wf-detail-info__value">Monthly visits</span></div>
-            <div class="wf-detail-info__row"><span class="wf-detail-info__label">Helpdesk</span><span class="wf-detail-info__value">${WF.esc(b().supportPhone)}</span></div>
+            <div class="wf-detail-info__row"><span class="wf-detail-info__label">Helpdesk</span><span class="wf-detail-info__value">${WF.esc(WF.formatPhone(b().supportPhone))}</span></div>
             <div class="wf-detail-info__row"><span class="wf-detail-info__label">Inventory</span><span class="wf-detail-info__value">${WF.esc(b().inventory)}</span></div>
           </div></div>
         </div>
@@ -280,7 +280,7 @@ const BRAND_MODULE = (() => {
           ${BRAND_DATA.contacts.map(c => `<div class="wf-card"><div class="wf-card__body">
             <div style="display:flex;gap:12px;align-items:center;margin-bottom:12px"><div class="wf-avatar-lg" style="width:48px;height:48px;margin:0"></div><div><div style="font-weight:600">${WF.esc(c.name)}</div><div style="font-size:12px;color:var(--wf-text-muted)">${WF.esc(c.role)}</div></div></div>
             <div class="wf-detail-info__row"><span class="wf-detail-info__label">Email</span><span class="wf-detail-info__value">${WF.esc(c.email)}</span></div>
-            <div class="wf-detail-info__row"><span class="wf-detail-info__label">Phone</span><span class="wf-detail-info__value">${WF.esc(c.phone)}</span></div>
+            <div class="wf-detail-info__row"><span class="wf-detail-info__label">Phone</span><span class="wf-detail-info__value">${WF.esc(WF.formatPhone(c.phone))}</span></div>
             <button class="wf-btn wf-btn--sm wf-mt-16" style="margin-top:12px" data-modal="send-email">Contact</button>
           </div></div>`).join("")}
         </div>
@@ -299,13 +299,13 @@ const BRAND_MODULE = (() => {
           <div class="wf-stat-card"><div class="wf-stat-card__label">Compliance Score</div><div class="wf-stat-card__value">94%</div></div>
         </div>
         <div class="wf-grid-2 wf-mt-16">
-          <div class="wf-card"><div class="wf-card__header"><span class="wf-card__title">Revenue Trend</span></div><div class="wf-card__body"><div class="wf-chart-placeholder">Line Chart — Monthly Revenue</div></div></div>
+          <div class="wf-card"><div class="wf-card__header"><span class="wf-card__title">Revenue Trend</span></div><div class="wf-card__body">${WF.chartPlaceholder("Line Chart", "Monthly Revenue")}</div></div>
           <div class="wf-card"><div class="wf-card__header"><span class="wf-card__title">Top Performing Locations</span></div>
             <div class="wf-table-wrap" style="border:none"><table class="wf-table"><thead><tr><th>Outlet</th><th>Revenue</th><th>Growth</th></tr></thead>
             <tbody>${BRAND_DATA.topLocations.map(l => `<tr><td>${WF.esc(l.outlet)}</td><td>${WF.esc(l.revenue)}</td><td>${WF.esc(l.growth)}</td></tr>`).join("")}</tbody></table></div>
           </div>
         </div>
-        <div class="wf-card wf-mt-16"><div class="wf-card__header"><span class="wf-card__title">Franchise Growth</span></div><div class="wf-card__body"><div class="wf-chart-placeholder" style="height:220px">Bar Chart — New Franchisees per Quarter</div></div></div>
+        <div class="wf-card wf-mt-16"><div class="wf-card__header"><span class="wf-card__title">Franchise Growth</span></div><div class="wf-card__body">${WF.chartPlaceholder("Bar Chart", "New Franchisees per Quarter")}</div></div>
       `
     },
     {

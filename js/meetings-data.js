@@ -1,7 +1,7 @@
 /* Meeting Management — Mock Data */
 
 const MEETING_DATA = {
-  roles: ["CEO", "Team Lead", "Sales Executive", "Brand Owner", "Accounts", "Admin"],
+  roles: ["CEO", "Co-Founder", "Team Lead", "Sales Executive", "Brand Owner", "Accounts", "Admin"],
   workflow: ["Scheduled", "Confirmed", "In Progress", "Completed", "Follow-up Pending", "Closed", "Cancelled"],
   types: [
     "Initial Discussion", "Discovery Call", "Brand Presentation", "Site Visit",
@@ -95,7 +95,7 @@ const MEETING_DATA = {
   ],
 
   participants: [
-    { name: "Abdul Syed", role: "Sales Executive", email: "abdul@franchisecrm.com", status: "Accepted" },
+    { name: "Abdul Syed", role: "CEO", email: "abdul@franchisecrm.com", status: "Accepted" },
     { name: "Himani Bhargava", role: "Team Lead", email: "himani@franchisecrm.com", status: "Accepted" },
     { name: "Rahul Sharma", role: "Customer", email: "rahul.sharma@email.com", status: "Accepted" },
     { name: "Om Anil", role: "Observer", email: "om@franchisecrm.com", status: "Pending" }

@@ -6,7 +6,7 @@ const USERS_MODULE = (() => {
   let activeRole = "HR";
   const sample = () => d().users.find((u) => u.name === "Himani Bhargava") || d().users[0];
 
-  const roleBar = () => WF.roleSwitcher(activeRole, d().roles);
+  const roleBar = () => WF.roleSwitcher(WF.getViewRole(activeRole), d().roles);
   const filters = () => WF.toolbar({ filters: ["Department", "Role", "Status", "City", "Team", "Employment Type"], showImport: true, showExport: true });
   const exports = () => WF.reportActions();
   const statuses = () => d().userStatuses;
@@ -184,7 +184,7 @@ const USERS_MODULE = (() => {
               <div class="wf-card__body" style="font-size:13px;line-height:1.9">
                 <div><strong>DOB:</strong> ${u.dob}</div>
                 <div><strong>Address:</strong> ${u.address}</div>
-                <div><strong>Emergency:</strong> ${u.emergencyContact}</div>
+                <div><strong>Emergency:</strong> ${WF.formatPhoneInText(u.emergencyContact)}</div>
                 <div><strong>Languages:</strong> ${(u.languages || []).join(", ")}</div>
               </div>
             </div>
@@ -200,7 +200,7 @@ const USERS_MODULE = (() => {
             </div>
             <div class="wf-card"><div class="wf-card__header"><span class="wf-card__title">Reporting Structure</span><button data-screen="hierarchy" class="wf-btn wf-btn--sm">Full Tree</button></div>
               <div class="wf-card__body" style="font-size:13px">
-                <div>CEO: Sumanth → Sales Manager: Himani Bhargava → <strong>${u.name}</strong></div>
+                <div>CEO: Abdul Syed · Co-Founder: Abrar → Sales Manager: Himani Bhargava → <strong>${u.name}</strong></div>
                 <button data-screen="org-chart" class="wf-btn wf-btn--sm wf-mt-16">View Org Chart</button>
               </div>
             </div>
@@ -221,12 +221,13 @@ const USERS_MODULE = (() => {
           <div class="wf-card"><div class="wf-card__header"><span class="wf-card__title">Reporting Tree</span></div>
             <div class="wf-card__body">${WF.hierarchyTree()}</div>
           </div>
-          <div class="wf-card"><div class="wf-card__header"><span class="wf-card__title">Manager Chain — Abdul Syed</span></div>
+          <div class="wf-card"><div class="wf-card__header"><span class="wf-card__title">Manager Chain — Sales Executive</span></div>
             <div class="wf-card__body" style="font-size:13px;line-height:2">
               <div>Level 1: <a href="#" data-screen="profile">Himani Bhargava</a> (Sales Manager)</div>
-              <div>Level 2: <a href="#" data-screen="profile">Sumanth</a> (CEO)</div>
-              <div class="wf-mt-16"><strong>Direct Reports:</strong> None</div>
-              <div><strong>Peers:</strong> <a href="#" data-screen="profile">Diksha</a>, <a href="#" data-screen="profile">Abrar</a></div>
+              <div>Level 2: <a href="#" data-screen="profile">Abdul Syed</a> (CEO)</div>
+              <div class="wf-mt-16"><strong>Executive:</strong> <a href="#" data-screen="profile">Abrar</a> (Co-Founder)</div>
+              <div><strong>Direct Reports:</strong> None</div>
+              <div><strong>Peers:</strong> <a href="#" data-screen="profile">Diksha</a></div>
             </div>
           </div>
         </div>
@@ -552,7 +553,7 @@ const USERS_MODULE = (() => {
             <div class="wf-form__group"><label class="wf-form__label">Department</label><select class="wf-form__select"><option>Sales</option></select></div>
             <div class="wf-form__group"><label class="wf-form__label">Team</label><select class="wf-form__select"><option>Kochi Sales</option></select></div>
             <div class="wf-form__group"><label class="wf-form__label">Manager</label><select class="wf-form__select"><option>Himani Bhargava</option></select></div>
-            <div class="wf-form__group wf-form__group--full"><label class="wf-form__label">Welcome Message</label><textarea class="wf-form__textarea">Welcome to FranchiseCRM! Complete your profile to get started.</textarea></div>
+            <div class="wf-form__group wf-form__group--full"><label class="wf-form__label">Welcome Message</label><textarea class="wf-form__textarea">Welcome to iFranchise CRM! Complete your profile to get started.</textarea></div>
             <button data-modal="invite-user" class="wf-btn wf-btn--primary">Send Invitation</button>
           </div></div>
           <div class="wf-card"><div class="wf-card__header"><span class="wf-card__title">Pending Invitations (${k().pendingInvitations})</span></div>
@@ -624,6 +625,7 @@ const USERS_MODULE = (() => {
   ];
 
   function init() {
+    WF.resetViewRole(activeRole);
     WF_SPA.init({
       moduleKey: "users",
       moduleLabel: "User Management",
@@ -635,16 +637,6 @@ const USERS_MODULE = (() => {
       screens
     });
 
-    document.body.addEventListener("click", (e) => {
-      const roleBtn = e.target.closest("[data-role]");
-      if (roleBtn && roleBtn.closest(".wf-role-bar")) {
-        activeRole = roleBtn.getAttribute("data-role");
-        document.querySelectorAll(".wf-role-bar [data-role]").forEach((btn) => {
-          btn.classList.toggle("wf-btn--primary", btn.getAttribute("data-role") === activeRole);
-        });
-        WF.showToast(`Viewing as ${activeRole}`);
-      }
-    });
   }
 
   return { init, screens };

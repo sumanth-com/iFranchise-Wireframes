@@ -4,7 +4,7 @@ const NOTIFICATIONS_MODULE = (() => {
   const n = () => NOTIFICATION_DATA.notifications[0];
   let activeRole = "CEO";
 
-  const roleBar = () => WF.roleSwitcher(activeRole, NOTIFICATION_DATA.roles);
+  const roleBar = () => WF.roleSwitcher(WF.getViewRole(activeRole), NOTIFICATION_DATA.roles);
   const unread = () => NOTIFICATION_DATA.notifications.filter(x => !x.read);
   const byChannel = (ch) => NOTIFICATION_DATA.notifications.filter(x => x.channel === ch || x.channel.includes(ch));
 
@@ -35,7 +35,7 @@ const NOTIFICATIONS_MODULE = (() => {
             <div class="wf-card__body">${WF.timeline(NOTIFICATION_DATA.timeline)}</div>
           </div>
           <div class="wf-card"><div class="wf-card__header"><span class="wf-card__title">Channel Performance</span><button data-screen="analytics" class="wf-btn wf-btn--sm">Analytics</button></div>
-            <div class="wf-card__body"><div class="wf-chart-placeholder" style="height:220px">Bar Chart — In-App · Email · SMS · WhatsApp · Push delivery rates</div></div>
+            <div class="wf-card__body">${WF.chartPlaceholder("Bar Chart", "In-App · Email · SMS · WhatsApp · Push delivery rates")}</div>
           </div>
         </div>
         <div class="wf-card"><div class="wf-card__header"><span class="wf-card__title">Unread Notifications</span><button data-modal="mark-all-read" class="wf-btn wf-btn--sm">Mark All Read</button></div>
@@ -325,14 +325,14 @@ const NOTIFICATIONS_MODULE = (() => {
         </div>
         <div class="wf-grid-2 wf-mb-16">
           <div class="wf-card"><div class="wf-card__header"><span class="wf-card__title">Delivery by Channel</span></div>
-            <div class="wf-card__body"><div class="wf-chart-placeholder">Bar Chart — In-App · Email · SMS · WhatsApp · Push success %</div></div>
+            <div class="wf-card__body">${WF.chartPlaceholder("Bar Chart", "In-App · Email · SMS · WhatsApp · Push success %")}</div>
           </div>
           <div class="wf-card"><div class="wf-card__header"><span class="wf-card__title">Notifications by Type</span></div>
-            <div class="wf-card__body"><div class="wf-chart-placeholder">Donut — Approvals · Meetings · Payments · Documents · Leads</div></div>
+            <div class="wf-card__body">${WF.chartPlaceholder("Donut", "Approvals · Meetings · Payments · Documents · Leads")}</div>
           </div>
         </div>
         <div class="wf-card"><div class="wf-card__header"><span class="wf-card__title">Volume Trend</span></div>
-          <div class="wf-card__body"><div class="wf-chart-placeholder" style="height:240px">Line Chart — Sent vs Delivered vs Read (daily, 30 days)</div></div>
+          <div class="wf-card__body">${WF.chartPlaceholder("Line Chart", "Sent vs Delivered vs Read (daily, 30 days)")}</div>
         </div>
       `
     },
@@ -395,6 +395,7 @@ const NOTIFICATIONS_MODULE = (() => {
   ];
 
   function init() {
+    WF.resetViewRole(activeRole);
     WF_SPA.init({
       moduleKey: "notifications",
       moduleLabel: "Notification Center",
@@ -407,16 +408,6 @@ const NOTIFICATIONS_MODULE = (() => {
     });
 
     document.body.addEventListener("click", (e) => {
-      const roleBtn = e.target.closest("[data-role]");
-      if (roleBtn) {
-        activeRole = roleBtn.getAttribute("data-role");
-        document.querySelectorAll("[data-role]").forEach((btn) => {
-          btn.classList.toggle("wf-btn--primary", btn.getAttribute("data-role") === activeRole);
-        });
-        const msg = activeRole === "Customer" ? "Own notifications only" : `Viewing as ${activeRole}`;
-        WF.showToast(msg);
-      }
-
       const notifItem = e.target.closest(".wf-notif-item");
       if (notifItem && notifItem.dataset.screen) {
         WF_SPA.navigate(notifItem.dataset.screen);

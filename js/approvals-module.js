@@ -4,7 +4,7 @@ const APPROVALS_MODULE = (() => {
   const a = () => APPROVAL_DATA.approvals[0];
   let activeRole = "CEO";
 
-  const roleBar = () => WF.roleSwitcher(activeRole, APPROVAL_DATA.roles);
+  const roleBar = () => WF.roleSwitcher(WF.getViewRole(activeRole), APPROVAL_DATA.roles);
 
   const approvalTabs = (active) => WF.spaTabs([
     { id: "details", label: "Overview" },
@@ -37,27 +37,27 @@ const APPROVALS_MODULE = (() => {
           <div class="wf-stat-card"><div class="wf-stat-card__label">Rejected Today</div><div class="wf-stat-card__value">1</div></div>
           <div class="wf-stat-card"><div class="wf-stat-card__label">Escalated</div><div class="wf-stat-card__value">2</div><div class="wf-stat-card__change">SLA breach</div></div>
         </div>
-        <div class="wf-card-grid" style="grid-template-columns:repeat(4,1fr)">
+        <div class="wf-card-grid">
           <div class="wf-stat-card"><div class="wf-stat-card__label">Avg Approval Time</div><div class="wf-stat-card__value">18h</div></div>
           <div class="wf-stat-card"><div class="wf-stat-card__label">SLA Compliance</div><div class="wf-stat-card__value">92%</div></div>
           <div class="wf-stat-card"><div class="wf-stat-card__label">My Pending Tasks</div><div class="wf-stat-card__value">3</div></div>
           <div class="wf-stat-card"><div class="wf-stat-card__label">Returned for Changes</div><div class="wf-stat-card__value">2</div></div>
         </div>
+        <div class="wf-card wf-dashboard-full">
+          <div class="wf-card__header"><span class="wf-card__title">Recent Requests</span><button data-screen="inbox" class="wf-btn wf-btn--sm">Inbox</button></div>
+          <div class="wf-card__body" style="padding:0">${WF.approvalTable(APPROVAL_DATA.approvals.slice(0, 4), { showActions: false, compact: true, hidePagination: true })}</div>
+        </div>
         <div class="wf-grid-2 wf-mb-20">
-          <div class="wf-card"><div class="wf-card__header"><span class="wf-card__title">Recent Requests</span><button data-screen="inbox" class="wf-btn wf-btn--sm">Inbox</button></div>
-            <div class="wf-card__body" style="padding:0">${WF.approvalTable(APPROVAL_DATA.approvals.slice(0, 4), { showActions: false })}</div>
-          </div>
           <div class="wf-card"><div class="wf-card__header"><span class="wf-card__title">Approval Trends</span><button data-screen="analytics" class="wf-btn wf-btn--sm">Analytics</button></div>
-            <div class="wf-card__body"><div class="wf-chart-placeholder" style="height:220px">Line Chart — Submitted vs Approved vs Rejected (30 days)</div></div>
+            <div class="wf-card__body">${WF.chartPlaceholder("Line Chart", "Submitted vs Approved vs Rejected (30 days)")}</div>
+          </div>
+          <div class="wf-card"><div class="wf-card__header"><span class="wf-card__title">Department-wise Approvals</span></div>
+            <div class="wf-card__body">${WF.chartPlaceholder("Bar Chart", "Sales · Operations · Accounts · Legal")}</div>
           </div>
         </div>
-        <div class="wf-grid-2">
-          <div class="wf-card"><div class="wf-card__header"><span class="wf-card__title">Department-wise Approvals</span></div>
-            <div class="wf-card__body"><div class="wf-chart-placeholder">Bar Chart — Sales · Operations · Accounts · Legal</div></div>
-          </div>
-          <div class="wf-card"><div class="wf-card__header"><span class="wf-card__title">Recent Activity</span><button data-screen="audit" class="wf-btn wf-btn--sm">Audit Log</button></div>
-            <div class="wf-card__body">${WF.timeline(APPROVAL_DATA.timeline.slice(0, 4))}</div>
-          </div>
+        <div class="wf-card">
+          <div class="wf-card__header"><span class="wf-card__title">Recent Activity</span><button data-screen="audit" class="wf-btn wf-btn--sm">Audit Log</button></div>
+          <div class="wf-card__body">${WF.timeline(APPROVAL_DATA.timeline.slice(0, 4))}</div>
         </div>
       `
     },
@@ -307,17 +307,17 @@ const APPROVALS_MODULE = (() => {
           <div class="wf-stat-card"><div class="wf-stat-card__label">SLA Compliance</div><div class="wf-stat-card__value">92%</div></div>
         </div>
         <div class="wf-grid-2 wf-mb-20">
-          <div class="wf-card"><div class="wf-card__header"><span class="wf-card__title">Approval Trends</span></div><div class="wf-card__body"><div class="wf-chart-placeholder">Area Chart — Submitted / Approved / Rejected per week</div></div></div>
-          <div class="wf-card"><div class="wf-card__header"><span class="wf-card__title">By Approval Type</span></div><div class="wf-card__body"><div class="wf-chart-placeholder">Donut — Lead · Discount · Agreement · Payment · Brand</div></div></div>
+          <div class="wf-card"><div class="wf-card__header"><span class="wf-card__title">Approval Trends</span></div><div class="wf-card__body">${WF.chartPlaceholder("Area Chart", "Submitted / Approved / Rejected per week")}</div></div>
+          <div class="wf-card"><div class="wf-card__header"><span class="wf-card__title">By Approval Type</span></div><div class="wf-card__body">${WF.chartPlaceholder("Donut", "Lead · Discount · Agreement · Payment · Brand")}</div></div>
         </div>
         <div class="wf-grid-2">
-          <div class="wf-card"><div class="wf-card__header"><span class="wf-card__title">Department-wise</span></div><div class="wf-card__body"><div class="wf-chart-placeholder">Bar Chart — Sales · Operations · Accounts · Legal</div></div></div>
+          <div class="wf-card"><div class="wf-card__header"><span class="wf-card__title">Department-wise</span></div><div class="wf-card__body">${WF.chartPlaceholder("Bar Chart", "Sales · Operations · Accounts · Legal")}</div></div>
           <div class="wf-card"><div class="wf-card__header"><span class="wf-card__title">Approver Performance</span></div>
             <div class="wf-table-wrap" style="border:none"><table class="wf-table"><thead><tr><th>Approver</th><th>Pending</th><th>Avg Time</th><th>SLA %</th></tr></thead>
             <tbody>
               <tr><td>Himani Bhargava</td><td>4</td><td>14h</td><td>96%</td></tr>
               <tr><td>Om Anil</td><td>3</td><td>22h</td><td>88%</td></tr>
-              <tr><td>CEO</td><td>2</td><td>36h</td><td>90%</td></tr>
+              <tr><td>Abdul Syed</td><td>2</td><td>36h</td><td>90%</td></tr>
               <tr><td>Fazil</td><td>1</td><td>8h</td><td>98%</td></tr>
             </tbody></table></div>
           </div>
@@ -450,6 +450,7 @@ const APPROVALS_MODULE = (() => {
   ];
 
   function init() {
+    WF.resetViewRole(activeRole);
     WF_SPA.init({
       moduleKey: "approvals",
       moduleLabel: "Approval Management",
@@ -461,17 +462,6 @@ const APPROVALS_MODULE = (() => {
       screens
     });
 
-    document.body.addEventListener("click", (e) => {
-      const roleBtn = e.target.closest("[data-role]");
-      if (roleBtn) {
-        activeRole = roleBtn.getAttribute("data-role");
-        document.querySelectorAll("[data-role]").forEach((btn) => {
-          btn.classList.toggle("wf-btn--primary", btn.getAttribute("data-role") === activeRole);
-        });
-        const msg = activeRole === "Sales Executive" ? "Viewing own requests only" : `Viewing as ${activeRole}`;
-        WF.showToast(msg);
-      }
-    });
   }
 
   return { init, screens };

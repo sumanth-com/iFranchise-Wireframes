@@ -2,35 +2,14 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Dashboard — FranchiseCRM Wireframe</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>Dashboard — iFranchise CRM</title>
   <link rel="stylesheet" href="../css/wireframe.css">
 </head>
 <body>
-  <script src="../js/data.js"></script>
+  <script src="../js/dashboard-data.js"></script>
   <script src="../js/wireframe.js"></script>
-  <script>
-    function WF_PAGE() {
-      WF.initPage({
-        activeModule: "dashboard",
-        title: "Dashboard",
-        breadcrumb: [
-          { label: "Home", href: "../index.html" },
-          { label: "Dashboard" }
-        ],
-        content: `
-          ${WF.pageHeader("Executive Dashboard", "Franchise operations overview")}
-          <div class="wf-card-grid">
-            <div class="wf-stat-card"><div class="wf-stat-card__label">Total Leads</div><div class="wf-stat-card__value">1,024</div></div>
-            <div class="wf-stat-card"><div class="wf-stat-card__label">Customers</div><div class="wf-stat-card__value">248</div></div>
-            <div class="wf-stat-card"><div class="wf-stat-card__label">Active Franchises</div><div class="wf-stat-card__value">186</div></div>
-            <div class="wf-stat-card"><div class="wf-stat-card__label">Revenue (MTD)</div><div class="wf-stat-card__value">₹2.4Cr</div></div>
-          </div>
-          <div class="wf-card"><div class="wf-card__body"><div class="wf-chart-placeholder" style="height:300px">Dashboard Module — Placeholder</div></div></div>
-          <p style="margin-top:16px;font-size:13px;color:var(--wf-text-muted)"><a href="../customers/index.html">→ Go to Customer Management</a></p>
-        `
-      });
-    }
-  </script>
+  <script src="../js/spa.js"></script>
+  <script src="../js/dashboard-module.js"></script>
 </body>
 </html>

@@ -1,7 +1,7 @@
 /* Franchise Models — Mock Data */
 
 const MODEL_DATA = {
-  roles: ["CEO", "Team Lead", "Sales Executive", "Brand Owner", "Admin"],
+  roles: ["CEO", "Co-Founder", "Team Lead", "Sales Executive", "Brand Owner", "Admin"],
   workflow: ["Draft", "Submitted", "Under Review", "Approved", "Published", "Archived"],
   modelTypes: ["Premium", "Express", "Kiosk", "Flagship", "Family Dining", "Mini Store", "Cloud Kitchen"],
   brands: [
@@ -30,7 +30,7 @@ const MODEL_DATA = {
       territories: ["East Bengaluru", "Jubilee Hills", "T Nagar", "Bandra West"],
       eligibility: "Min. 3 years F&B experience. Net worth ₹50L+. Dedicated operator required.",
       requiredDocs: "FDD, Financial statements, ID proof, Business plan",
-      createdBy: "Himani Bhargava", approvedBy: "Sumanth", notes: "Flagship model — highest margin.",
+      createdBy: "Himani Bhargava", approvedBy: "Abdul Syed", notes: "Flagship model — highest margin.",
       leads: 86, franchisees: 12, revenue: "₹1.8 Cr"
     },
     {
@@ -75,7 +75,7 @@ const MODEL_DATA = {
       territories: ["Jubilee Hills", "Anna Salai"],
       eligibility: "F&B operators with QSR experience preferred.",
       requiredDocs: "FDD, P&L statements, Site photos",
-      createdBy: "Fazil", approvedBy: "Sumanth", notes: "",
+      createdBy: "Fazil", approvedBy: "Abdul Syed", notes: "",
       leads: 58, franchisees: 8, revenue: "₹1.2 Cr"
     },
     {
@@ -160,7 +160,7 @@ const MODEL_DATA = {
 
   timeline: [
     { time: "23 Jun 2024, 3:00 PM", title: "Model published", desc: "Odette Premium is now live on franchise portal.", user: "Sumanth" },
-    { time: "22 Jun 2024, 11:00 AM", title: "Approval granted", desc: "CEO approved Odette Premium for publication.", user: "Sumanth" },
+    { time: "22 Jun 2024, 11:00 AM", title: "Approval granted", desc: "CEO approved Odette Premium for publication.", user: "Abdul Syed" },
     { time: "20 Jun 2024, 2:30 PM", title: "Submitted for review", desc: "Himani Bhargava submitted model for approval.", user: "Himani Bhargava" },
     { time: "18 Jun 2024, 10:00 AM", title: "Financial terms updated", desc: "Royalty adjusted from 7% to 8%.", user: "Om Anil" },
     { time: "15 Jun 2024, 4:00 PM", title: "Model created", desc: "Odette Premium draft created.", user: "Himani Bhargava" }
@@ -176,7 +176,7 @@ const MODEL_DATA = {
 
   notes: [
     { author: "Himani Bhargava", time: "23 Jun 2024", body: "Premium model performing above projections in Bengaluru." },
-    { author: "Sumanth", time: "22 Jun 2024", body: "Approved with condition — review royalty after 12 months." },
+    { author: "Abdul Syed", time: "22 Jun 2024", body: "Approved with condition — review royalty after 12 months." },
     { author: "Abdul Syed", time: "20 Jun 2024", body: "Express model has highest lead conversion at 22%." }
   ]
 };

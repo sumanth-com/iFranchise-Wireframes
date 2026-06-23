@@ -4,7 +4,7 @@ const DOCUMENTS_MODULE = (() => {
   const d = () => DOCUMENT_DATA.documents[0];
   let activeRole = "CEO";
 
-  const roleBar = () => WF.roleSwitcher(activeRole, DOCUMENT_DATA.roles);
+  const roleBar = () => WF.roleSwitcher(WF.getViewRole(activeRole), DOCUMENT_DATA.roles);
 
   const docTabs = (active) => WF.spaTabs([
     { id: "details", label: "Overview" },
@@ -40,23 +40,23 @@ const DOCUMENTS_MODULE = (() => {
         </div>
         <div class="wf-grid-2 wf-mb-20">
           <div class="wf-card"><div class="wf-card__header"><span class="wf-card__title">Category Distribution</span></div>
-            <div class="wf-card__body"><div class="wf-chart-placeholder" style="height:220px">Donut Chart — KYC · Agreements · Payments · Brand · Training</div></div>
+            <div class="wf-card__body">${WF.chartPlaceholder("Donut Chart", "KYC · Agreements · Payments · Brand · Training")}</div>
           </div>
-          <div class="wf-card"><div class="wf-card__header"><span class="wf-card__title">Recent Uploads</span><button data-screen="library" class="wf-btn wf-btn--sm">Library</button></div>
-            <div class="wf-card__body" style="padding:0">${WF.documentTable(DOCUMENT_DATA.documents.slice(0, 4), { showActions: false })}</div>
-          </div>
-        </div>
-        <div class="wf-grid-2">
           <div class="wf-card"><div class="wf-card__header"><span class="wf-card__title">Expiring Soon</span><button data-screen="expiry" class="wf-btn wf-btn--sm">Tracker</button></div>
-            <div class="wf-table-wrap" style="border:none"><table class="wf-table"><thead><tr><th>Document</th><th>Expiry</th><th>Days Left</th></tr></thead>
+            <div class="wf-table-wrap wf-table-wrap--fit" style="border:none"><table class="wf-table wf-table--fit wf-table--compact"><thead><tr><th>Document</th><th>Expiry</th><th>Days Left</th></tr></thead>
             <tbody>${DOCUMENT_DATA.expiring.map(e => `<tr>
-              <td>${WF.esc(e.name)}</td><td>${WF.esc(e.expiryDate)}</td>
+              <td class="wf-table__cell-clip">${WF.esc(e.name)}</td><td>${WF.esc(e.expiryDate)}</td>
               <td><span class="wf-badge${e.daysLeft <= 7 ? " wf-badge--dark" : ""}">${e.daysLeft} days</span></td>
             </tr>`).join("")}</tbody></table></div>
           </div>
-          <div class="wf-card"><div class="wf-card__header"><span class="wf-card__title">Recent Activity</span><button data-screen="audit" class="wf-btn wf-btn--sm">Audit Log</button></div>
-            <div class="wf-card__body">${WF.timeline(DOCUMENT_DATA.timeline.slice(0, 4))}</div>
-          </div>
+        </div>
+        <div class="wf-card wf-dashboard-full">
+          <div class="wf-card__header"><span class="wf-card__title">Recent Uploads</span><button data-screen="library" class="wf-btn wf-btn--sm">Library</button></div>
+          <div class="wf-card__body" style="padding:0">${WF.documentTable(DOCUMENT_DATA.documents.slice(0, 4), { showActions: false, compact: true, hidePagination: true })}</div>
+        </div>
+        <div class="wf-card">
+          <div class="wf-card__header"><span class="wf-card__title">Recent Activity</span><button data-screen="audit" class="wf-btn wf-btn--sm">Audit Log</button></div>
+          <div class="wf-card__body">${WF.timeline(DOCUMENT_DATA.timeline.slice(0, 4))}</div>
         </div>
       `
     },
@@ -386,6 +386,7 @@ const DOCUMENTS_MODULE = (() => {
   ];
 
   function init() {
+    WF.resetViewRole(activeRole);
     WF_SPA.init({
       moduleKey: "documents",
       moduleLabel: "Document Management",
@@ -398,16 +399,6 @@ const DOCUMENTS_MODULE = (() => {
     });
 
     document.body.addEventListener("click", (e) => {
-      const roleBtn = e.target.closest("[data-role]");
-      if (roleBtn) {
-        activeRole = roleBtn.getAttribute("data-role");
-        document.querySelectorAll("[data-role]").forEach((btn) => {
-          btn.classList.toggle("wf-btn--primary", btn.getAttribute("data-role") === activeRole);
-        });
-        const msg = activeRole === "Customer" ? "Own documents only" : activeRole === "Brand Owner" ? "Own brand records" : `Viewing as ${activeRole}`;
-        WF.showToast(msg);
-      }
-
       const folderItem = e.target.closest(".wf-folder__item");
       if (folderItem && folderItem.dataset.screen) {
         const sid = folderItem.getAttribute("data-screen");

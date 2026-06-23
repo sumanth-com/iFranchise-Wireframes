@@ -1,7 +1,7 @@
 /* Audit & Activity Logs — Mock Data */
 
 const AUDIT_DATA = {
-  viewRoles: ["Super Admin", "CEO", "Admin", "Security Administrator", "Operations Manager", "Compliance Officer", "Team Lead", "Sales Executive (Own Activity Only)"],
+  viewRoles: ["Super Admin", "CEO", "Co-Founder", "Admin", "Security Administrator", "Operations Manager", "Compliance Officer", "Team Lead", "Sales Executive (Own Activity Only)"],
   categories: [
     "Authentication", "Lead Management", "Customer Management", "Brand Management", "Franchise Models",
     "Meetings", "Approvals", "Payments", "Documents", "Notifications", "Automation", "Reports",
@@ -31,7 +31,7 @@ const AUDIT_DATA = {
 
   logs: [
     {
-      auditId: "AUD-2024-12847", timestamp: "25 Jun 2024, 10:42:18 AM", user: "Abdul Syed", role: "Sales Executive",
+      auditId: "AUD-2024-12847", timestamp: "25 Jun 2024, 10:42:18 AM", user: "Abdul Syed", role: "CEO",
       department: "Sales", module: "Lead Management", action: "Update", recordId: "LEAD-2024-089",
       before: "status: Qualified", after: "status: Proposal Sent", reason: "Follow-up call completed",
       status: "Success", severity: "Info", ip: "103.**.**.42", device: "Laptop", browser: "Chrome 126",
@@ -66,7 +66,7 @@ const AUDIT_DATA = {
       os: "Windows 11", location: "Bengaluru"
     },
     {
-      auditId: "AUD-2024-12842", timestamp: "25 Jun 2024, 10:15:33 AM", user: "Sumanth", role: "CEO",
+      auditId: "AUD-2024-12842", timestamp: "25 Jun 2024, 10:15:33 AM", user: "Abdul Syed", role: "CEO",
       department: "Executive", module: "Reports", action: "Export", recordId: "RPT-Q2-2024",
       before: "—", after: "format: PDF", reason: "Board meeting",
       status: "Success", severity: "Info", ip: "103.**.**.01", device: "iPad", browser: "Safari",

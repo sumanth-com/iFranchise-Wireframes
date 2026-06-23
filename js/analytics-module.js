@@ -4,7 +4,7 @@ const ANALYTICS_MODULE = (() => {
   const k = () => ANALYTICS_DATA.kpis;
   let activeRole = "CEO";
 
-  const roleBar = () => WF.roleSwitcher(activeRole, ANALYTICS_DATA.roles);
+  const roleBar = () => WF.roleSwitcher(WF.getViewRole(activeRole), ANALYTICS_DATA.roles);
   const filters = () => WF.toolbar({ filters: ["Date Range", "Brand", "City", "Sales Executive", "Department", "Franchise Model"], showImport: false });
   const exports = () => WF.reportActions();
 
@@ -68,7 +68,7 @@ const ANALYTICS_MODULE = (() => {
         <div class="wf-card wf-mt-16"><div class="wf-card__header"><span class="wf-card__title">Recently Viewed</span></div>
           <div class="wf-table-wrap" style="border:none"><table class="wf-table"><thead><tr><th>Report</th><th>Viewed By</th><th>Date</th><th>Actions</th></tr></thead>
           <tbody>
-            <tr><td>Q2 Revenue by Brand</td><td>CEO</td><td>25 Jun 2024</td><td><button data-screen="revenue" class="wf-btn wf-btn--sm">Open</button></td></tr>
+            <tr><td>Q2 Revenue by Brand</td><td>Abdul Syed</td><td>25 Jun 2024</td><td><button data-screen="revenue" class="wf-btn wf-btn--sm">Open</button></td></tr>
             <tr><td>Lead Funnel — Jun 2024</td><td>Himani Bhargava</td><td>24 Jun 2024</td><td><button data-screen="lead-conversion" class="wf-btn wf-btn--sm">Open</button></td></tr>
             <tr><td>Team Performance</td><td>Sales Manager</td><td>23 Jun 2024</td><td><button data-screen="team" class="wf-btn wf-btn--sm">Open</button></td></tr>
           </tbody></table></div>
@@ -334,7 +334,7 @@ const ANALYTICS_MODULE = (() => {
             <div class="wf-card__body">${WF.reportForm()}</div>
           </div>
           <div class="wf-card"><div class="wf-card__header"><span class="wf-card__title">Preview</span></div>
-            <div class="wf-card__body"><div class="wf-chart-placeholder" style="height:360px">Report Preview — configure dimensions and metrics to generate chart</div></div>
+            <div class="wf-card__body">${WF.chartPlaceholder("Bar Chart", "Report Preview")}</div>
           </div>
         </div>
       `
@@ -403,6 +403,7 @@ const ANALYTICS_MODULE = (() => {
   ];
 
   function init() {
+    WF.resetViewRole(activeRole);
     WF_SPA.init({
       moduleKey: "analytics",
       moduleLabel: "Reporting & Analytics",
@@ -415,15 +416,6 @@ const ANALYTICS_MODULE = (() => {
     });
 
     document.body.addEventListener("click", (e) => {
-      const roleBtn = e.target.closest("[data-role]");
-      if (roleBtn) {
-        activeRole = roleBtn.getAttribute("data-role");
-        document.querySelectorAll("[data-role]").forEach((btn) => {
-          btn.classList.toggle("wf-btn--primary", btn.getAttribute("data-role") === activeRole);
-        });
-        WF.showToast(`Viewing as ${activeRole}`);
-      }
-
       const periodBtn = e.target.closest("[data-period]");
       if (periodBtn) {
         document.querySelectorAll("[data-period]").forEach((btn) => {

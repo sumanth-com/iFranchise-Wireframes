@@ -21,7 +21,7 @@ const BRAND_DATA = {
     {
       id: "BRD-001", name: "Odette", industry: "Food & Beverage", category: "Bakery",
       description: "Premium European-inspired bakery and patisserie franchise with artisan breads, pastries, and café dining.",
-      website: "https://odette.in", supportEmail: "franchise@odette.in", supportPhone: "+91 80 4567 8900",
+      website: "https://odette.in", supportEmail: "franchise@odette.in", supportPhone: "+91 80456 78900",
       gst: "29AABCO1234F1Z5", pan: "AABCO1234F", address: "12 Church Street, MG Road",
       city: "Bengaluru", state: "Karnataka", pin: "560001", country: "India",
       established: "2018", founder: "Ananya Krishnan", investmentRange: "₹35–50 Lakhs",
@@ -36,7 +36,7 @@ const BRAND_DATA = {
     {
       id: "BRD-002", name: "Original Burger Co.", industry: "QSR", category: "Burger",
       description: "Gourmet burger QSR with fresh ingredients, craft sauces, and fast-casual dining experience.",
-      website: "https://originalburger.co.in", supportEmail: "partner@originalburger.co.in", supportPhone: "+91 40 2345 6789",
+      website: "https://originalburger.co.in", supportEmail: "partner@originalburger.co.in", supportPhone: "+91 40234 56789",
       gst: "36AABOB5678G1Z2", pan: "AABOB5678G", address: "45 Jubilee Hills Road No. 36",
       city: "Hyderabad", state: "Telangana", pin: "500033", country: "India",
       established: "2019", founder: "Ravi Menon", investmentRange: "₹25–40 Lakhs",
@@ -46,12 +46,12 @@ const BRAND_DATA = {
       status: "Expanding", expansionCities: ["Bengaluru", "Chennai", "Mumbai"],
       requiredStaff: "6–10", inventory: "₹2–4 Lakhs initial", license: "FSSAI",
       franchisees: 18, openCities: 6, interestedLeads: 98, revenue: "₹2.8 Cr",
-      manager: "Abdul Syed", notes: "Strong youth appeal — focus on mall locations."
+      manager: "Himani Bhargava", notes: "Strong youth appeal — focus on mall locations."
     },
     {
       id: "BRD-003", name: "Kasturi", industry: "Food & Beverage", category: "South Indian",
       description: "Authentic South Indian vegetarian restaurant chain serving traditional meals and tiffin.",
-      website: "https://kasturi.in", supportEmail: "franchise@kasturi.in", supportPhone: "+91 44 2876 5432",
+      website: "https://kasturi.in", supportEmail: "franchise@kasturi.in", supportPhone: "+91 44287 65432",
       gst: "33AABCK9012H1Z8", pan: "AABCK9012H", address: "78 Anna Salai, T Nagar",
       city: "Chennai", state: "Tamil Nadu", pin: "600017", country: "India",
       established: "2015", founder: "Lakshmi Iyer", investmentRange: "₹20–35 Lakhs",
@@ -66,7 +66,7 @@ const BRAND_DATA = {
     {
       id: "BRD-004", name: "Belgian Waffle Co.", industry: "QSR", category: "Waffle",
       description: "Specialty waffle kiosk and café concept with premium toppings and beverage pairings.",
-      website: "https://belgianwaffle.co.in", supportEmail: "grow@belgianwaffle.co.in", supportPhone: "+91 22 6789 0123",
+      website: "https://belgianwaffle.co.in", supportEmail: "grow@belgianwaffle.co.in", supportPhone: "+91 22678 90123",
       gst: "27AABCB3456I1Z1", pan: "AABCB3456I", address: "23 Linking Road, Bandra West",
       city: "Mumbai", state: "Maharashtra", pin: "400050", country: "India",
       established: "2017", founder: "Priya Shah", investmentRange: "₹15–25 Lakhs",
@@ -81,7 +81,7 @@ const BRAND_DATA = {
     {
       id: "BRD-005", name: "Tea Time", industry: "Café", category: "Tea & Snacks",
       description: "Neighbourhood tea café with snacks, quick bites, and comfortable seating for all-day traffic.",
-      website: "https://teatime.in", supportEmail: "franchise@teatime.in", supportPhone: "+91 11 4567 8901",
+      website: "https://teatime.in", supportEmail: "franchise@teatime.in", supportPhone: "+91 11456 78901",
       gst: "07AABCT7890J1Z4", pan: "AABCT7890J", address: "56 Connaught Place, Block C",
       city: "Delhi", state: "Delhi", pin: "110001", country: "India",
       established: "2016", founder: "Arun Malhotra", investmentRange: "₹12–20 Lakhs",
@@ -96,7 +96,7 @@ const BRAND_DATA = {
     {
       id: "BRD-006", name: "Chai Point", industry: "Café", category: "Tea & Snacks",
       description: "India's leading chai-led beverage chain with snacks, delivery, and corporate catering.",
-      website: "https://chaipoint.com", supportEmail: "franchise@chaipoint.com", supportPhone: "+91 80 3012 3456",
+      website: "https://chaipoint.com", supportEmail: "franchise@chaipoint.com", supportPhone: "+91 80301 23456",
       gst: "29AABCC1234K1Z7", pan: "AABCC1234K", address: "100 Outer Ring Road, Marathahalli",
       city: "Bengaluru", state: "Karnataka", pin: "560037", country: "India",
       established: "2010", founder: "Amuleek Bijral", investmentRange: "₹30–45 Lakhs",
@@ -111,7 +111,7 @@ const BRAND_DATA = {
     {
       id: "BRD-007", name: "Wow! Momo", industry: "QSR", category: "Momos",
       description: "India's largest momo chain with pan-Asian sides, delivery-first operations, and kiosk formats.",
-      website: "https://wowmomo.com", supportEmail: "franchise@wowmomo.com", supportPhone: "+91 33 4012 3456",
+      website: "https://wowmomo.com", supportEmail: "franchise@wowmomo.com", supportPhone: "+91 33401 23456",
       gst: "19AABCM5678L1Z0", pan: "AABCM5678L", address: "15 Park Street, Middleton Row",
       city: "Kolkata", state: "West Bengal", pin: "700016", country: "India",
       established: "2008", founder: "Sagar Daryani", investmentRange: "₹25–40 Lakhs",
@@ -126,7 +126,7 @@ const BRAND_DATA = {
     {
       id: "BRD-008", name: "Rolls Mania", industry: "QSR", category: "Rolls",
       description: "Kolkata-style kathi rolls and wraps with regional flavours and quick-service format.",
-      website: "https://rollsmania.in", supportEmail: "partner@rollsmania.in", supportPhone: "+91 20 6789 0123",
+      website: "https://rollsmania.in", supportEmail: "partner@rollsmania.in", supportPhone: "+91 20678 90123",
       gst: "27AABCR9012M1Z3", pan: "AABCR9012M", address: "34 FC Road, Deccan",
       city: "Pune", state: "Maharashtra", pin: "411004", country: "India",
       established: "2014", founder: "Debashish Roy", investmentRange: "₹15–28 Lakhs",
@@ -141,7 +141,7 @@ const BRAND_DATA = {
     {
       id: "BRD-009", name: "Third Wave Coffee", industry: "Café", category: "Coffee",
       description: "Specialty coffee roaster and café with single-origin beans and experiential store design.",
-      website: "https://thirdwavecoffeeroasters.com", supportEmail: "franchise@thirdwavecoffee.com", supportPhone: "+91 80 4123 4567",
+      website: "https://thirdwavecoffeeroasters.com", supportEmail: "franchise@thirdwavecoffee.com", supportPhone: "+91 80412 34567",
       gst: "29AABCT3456N1Z6", pan: "AABCT3456N", address: "8 100 Feet Road, Indiranagar",
       city: "Bengaluru", state: "Karnataka", pin: "560038", country: "India",
       established: "2016", founder: "Ayush Bathwal", investmentRange: "₹40–60 Lakhs",
@@ -156,7 +156,7 @@ const BRAND_DATA = {
     {
       id: "BRD-010", name: "Barbeque Nation", industry: "Fine Dining", category: "BBQ",
       description: "India's leading grill-and-barbecue dining chain with live counters and buffet format.",
-      website: "https://barbequenation.com", supportEmail: "franchise@barbequenation.com", supportPhone: "+91 124 456 7890",
+      website: "https://barbequenation.com", supportEmail: "franchise@barbequenation.com", supportPhone: "+91 12445 67890",
       gst: "06AABCB7890P1Z9", pan: "AABCB7890P", address: "Tower B, Cyber City, DLF Phase 3",
       city: "Gurgaon", state: "Haryana", pin: "122002", country: "India",
       established: "2006", founder: "Sayaji Bansal", investmentRange: "₹1.5–2.5 Cr",
@@ -166,7 +166,7 @@ const BRAND_DATA = {
       status: "Active", expansionCities: ["Bengaluru", "Chennai", "Pune"],
       requiredStaff: "40–60", inventory: "₹15–20 Lakhs initial", license: "FSSAI, Liquor (optional)",
       franchisees: 8, openCities: 4, interestedLeads: 34, revenue: "₹8.6 Cr",
-      manager: "Sumanth", notes: "High-capital format — experienced operators only."
+      manager: "Himani Bhargava", notes: "High-capital format — experienced operators only."
     }
   ],
 
@@ -218,9 +218,10 @@ const BRAND_DATA = {
 
   contacts: [
     { name: "Himani Bhargava", role: "Brand Manager", email: "himani@franchisecrm.com", phone: "+91 98765 11111" },
-    { name: "Abdul Syed", role: "Franchise Sales Lead", email: "abdul@franchisecrm.com", phone: "+91 98765 22222" },
+    { name: "Abdul Syed", role: "CEO", email: "abdul@franchisecrm.com", phone: "+91 98765 22222" },
+    { name: "Abrar", role: "Co-Founder", email: "abrar@franchisecrm.com", phone: "+91 98765 10018" },
     { name: "Om Anil", role: "Operations Head", email: "om@franchisecrm.com", phone: "+91 98765 33333" },
-    { name: "franchise@odette.in", role: "Brand Support", email: "franchise@odette.in", phone: "+91 80 4567 8900" }
+    { name: "franchise@odette.in", role: "Brand Support", email: "franchise@odette.in", phone: "+91 80456 78900" }
   ],
 
   agreements: [

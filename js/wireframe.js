@@ -1,6 +1,9 @@
 /* Enterprise Franchise CRM — Wireframe Component System */
 
 const WF = (() => {
+  const BRAND_NAME = "iFranchise CRM";
+  const BRAND_MARK = "iF";
+
   const MODULES = {
     dashboard: { label: "Dashboard", href: "../dashboard/index.html" },
     leads: { label: "Lead Management", href: "../leads/index.html" },
@@ -54,11 +57,32 @@ const WF = (() => {
     { label: "Activity Log", href: "activity-log.html" }
   ];
 
+  const PHONE_FORMAT = "+91 XXXXX XXXXX";
+
   function esc(str) {
     if (str == null) return "";
     const d = document.createElement("div");
     d.textContent = str;
     return d.innerHTML;
+  }
+
+  function formatPhone(value) {
+    if (value == null || value === "" || value === "—") return value == null ? "" : value;
+    const str = String(value).trim();
+    if (!str || str === PHONE_FORMAT) return str;
+    const digits = str.replace(/\D/g, "");
+    if (!digits) return str;
+    let local = digits;
+    if (digits.length >= 12 && digits.startsWith("91")) local = digits.slice(-10);
+    else if (digits.length === 11 && digits.startsWith("0")) local = digits.slice(1);
+    else if (digits.length > 10) local = digits.slice(-10);
+    if (local.length !== 10) return str;
+    return `+91 ${local.slice(0, 5)} ${local.slice(5)}`;
+  }
+
+  function formatPhoneInText(value) {
+    if (value == null || value === "" || value === "—") return value == null ? "" : value;
+    return String(value).replace(/(\+?\d[\d\s\-().]{6,}\d)/g, (match) => formatPhone(match));
   }
 
   function shared(key) {
@@ -75,9 +99,28 @@ const WF = (() => {
       agreementStatuses: ["Signed", "Pending Signature", "Draft", "Expired"],
       paymentStatuses: ["Paid", "Partial", "Overdue", "Pending"],
       sources: ["Website", "Referral", "Trade Show", "Cold Call"],
-      customers: [{ id: "CUS-001", name: "Sample Customer", email: "sample@email.com", phone: "+91 98765 43210", city: "Bengaluru", brand: "Odette", status: "Active", agreementStatus: "Signed", paymentStatus: "Paid", salesExec: "Abdul Syed", franchise: "—", teamLead: "Himani Bhargava", remarks: "" }]
+      customers: [{ id: "CUS-001", name: "Sample Customer", email: "sample@email.com", phone: "+91 98765 43210", city: "Bengaluru", brand: "Odette", status: "Active", agreementStatus: "Signed", paymentStatus: "Paid", salesExec: "Diksha", franchise: "—", teamLead: "Himani Bhargava", remarks: "" }]
     };
     return defaults[key] || [];
+  }
+
+  function sidebarLogo(moduleLabel) {
+    return `<a href="../index.html" class="wf-sidebar__logo" style="text-decoration:none;color:inherit">
+      <div class="wf-sidebar__logo-icon" aria-hidden="true">${BRAND_MARK}</div>
+      <div>
+        <div class="wf-sidebar__logo-text">${BRAND_NAME}</div>
+        <div class="wf-sidebar__logo-sub">${esc(moduleLabel || "")}</div>
+      </div>
+    </a>`;
+  }
+
+  function authLogo(subtitle) {
+    const sub = subtitle ? `<div class="wf-auth__subtitle">${esc(subtitle)}</div>` : "";
+    return `<div class="wf-auth__logo">
+      <div class="wf-auth__logo-icon" aria-hidden="true">${BRAND_MARK}</div>
+      <div class="wf-auth__title">${BRAND_NAME}</div>
+      ${sub}
+    </div>`;
   }
 
   function sidebar(activeModule, activeItem) {
@@ -89,21 +132,17 @@ const WF = (() => {
         <span class="wf-sidebar__icon"></span>${mod.label}
       </a>`;
 
-    nav += `<div class="wf-sidebar__section">Exit</div>
+    const exit = `<div class="wf-sidebar__exit">
+      <div class="wf-sidebar__section">Exit</div>
       <a href="../index.html" class="wf-sidebar__link wf-sidebar__link--back">
         <span class="wf-sidebar__icon"></span>← All Modules
-      </a>`;
+      </a>
+    </div>`;
 
     return `<aside class="wf-sidebar" id="wf-sidebar">
-      <a href="../index.html" class="wf-sidebar__logo" style="text-decoration:none;color:inherit">
-        <div class="wf-sidebar__logo-icon"></div>
-        <div>
-          <div class="wf-sidebar__logo-text">FranchiseCRM</div>
-          <div class="wf-sidebar__logo-sub">${mod.label}</div>
-        </div>
-      </a>
+      ${sidebarLogo(mod.label)}
       <nav class="wf-sidebar__nav">${nav}</nav>
-      <div class="wf-sidebar__footer">Wireframe · ${mod.label} only</div>
+      ${exit}
     </aside>
     <div class="wf-sidebar-overlay" id="wf-sidebar-overlay"></div>`;
   }
@@ -119,21 +158,17 @@ const WF = (() => {
       </a>`;
     });
 
-    nav += `<div class="wf-sidebar__section">Exit</div>
+    const exit = `<div class="wf-sidebar__exit">
+      <div class="wf-sidebar__section">Exit</div>
       <a href="../index.html" class="wf-sidebar__link wf-sidebar__link--back">
         <span class="wf-sidebar__icon"></span>← All Modules
-      </a>`;
+      </a>
+    </div>`;
 
     return `<aside class="wf-sidebar" id="wf-sidebar">
-      <a href="../index.html" class="wf-sidebar__logo" style="text-decoration:none;color:inherit">
-        <div class="wf-sidebar__logo-icon"></div>
-        <div>
-          <div class="wf-sidebar__logo-text">FranchiseCRM</div>
-          <div class="wf-sidebar__logo-sub">${esc(mod ? mod.label : moduleLabel)}</div>
-        </div>
-      </a>
+      ${sidebarLogo(mod ? mod.label : moduleLabel)}
       <nav class="wf-sidebar__nav">${nav}</nav>
-      <div class="wf-sidebar__footer">Wireframe · ${esc(moduleLabel)} only</div>
+      ${exit}
     </aside>
     <div class="wf-sidebar-overlay" id="wf-sidebar-overlay"></div>`;
   }
@@ -176,7 +211,7 @@ const WF = (() => {
         <button class="wf-topbar__icon-btn" title="Help"></button>
         <div class="wf-topbar__user">
           <div class="wf-topbar__avatar"></div>
-          <span>Sumanth</span>
+          <span>Abdul Syed</span>
         </div>
       </div>
     </header>`;
@@ -319,8 +354,8 @@ const WF = (() => {
           <td class="wf-table__cell-clip">${esc(c.salesExec)}</td>
         </tr>
       `).join("");
-      return `<div class="wf-table-wrap">
-        <table class="wf-table wf-table--compact">
+      return `<div class="wf-table-wrap wf-table-wrap--fit">
+        <table class="wf-table wf-table--fit wf-table--compact">
           <thead><tr>
             <th>Customer</th><th>Brand</th><th>Status</th><th>Payment</th><th>Assigned To</th>
           </tr></thead>
@@ -335,7 +370,7 @@ const WF = (() => {
         <td class="wf-table__cell-clip"><a href="#details" data-screen="details" class="wf-table__link">${esc(c.id)}</a></td>
         <td class="wf-table__cell-clip"><a href="#details" data-screen="details" class="wf-table__link">${esc(c.name)}</a></td>
         <td class="wf-table__cell-clip">${esc(c.email)}</td>
-        <td class="wf-table__cell-clip">${esc(c.phone)}</td>
+        <td class="wf-table__cell-clip">${esc(formatPhone(c.phone))}</td>
         <td>${esc(c.city)}</td>
         <td class="wf-table__cell-clip">${esc(c.brand)}</td>
         <td><span class="wf-badge">${esc(c.status)}</span></td>
@@ -350,7 +385,7 @@ const WF = (() => {
     `).join("");
 
     return `<div class="wf-table-wrap wf-table-wrap--scroll">
-      <table class="wf-table">
+      <table class="wf-table wf-table--fit">
         <thead>
           <tr>
             ${selectable ? "<th><span class='wf-table__checkbox'></span></th>" : ""}
@@ -394,7 +429,7 @@ const WF = (() => {
       </div>
       <div class="wf-card__body" style="padding-top:0">
         <div class="wf-detail-info__row"><span class="wf-detail-info__label">Email</span><span class="wf-detail-info__value">${esc(c.email)}</span></div>
-        <div class="wf-detail-info__row"><span class="wf-detail-info__label">Phone</span><span class="wf-detail-info__value">${esc(c.phone)}</span></div>
+        <div class="wf-detail-info__row"><span class="wf-detail-info__label">Phone</span><span class="wf-detail-info__value">${esc(formatPhone(c.phone))}</span></div>
         <div class="wf-detail-info__row"><span class="wf-detail-info__label">City</span><span class="wf-detail-info__value">${esc(c.city)}</span></div>
         <div class="wf-detail-info__row"><span class="wf-detail-info__label">Brand</span><span class="wf-detail-info__value">${esc(c.brand)}</span></div>
         <div class="wf-detail-info__row"><span class="wf-detail-info__label">Franchise</span><span class="wf-detail-info__value">${esc(c.franchise)}</span></div>
@@ -435,11 +470,11 @@ const WF = (() => {
           </div>
           <div class="wf-form__group">
             <label class="wf-form__label wf-form__label--required">Phone</label>
-            <input class="wf-form__input" value="${esc(c.phone || "")}" placeholder="+91 XXXXX XXXXX" required>
+            <input class="wf-form__input" type="tel" data-phone-input value="${esc(formatPhone(c.phone || ""))}" placeholder="${PHONE_FORMAT}" required>
           </div>
           <div class="wf-form__group">
             <label class="wf-form__label">Alternative Phone</label>
-            <input class="wf-form__input" value="${esc(c.altPhone || "")}" placeholder="Optional">
+            <input class="wf-form__input" type="tel" data-phone-input value="${esc(formatPhone(c.altPhone || ""))}" placeholder="${PHONE_FORMAT}">
           </div>
           <div class="wf-form__group wf-form__group--full">
             <label class="wf-form__label">Address</label>
@@ -737,6 +772,7 @@ const WF = (() => {
         <div class="wf-main">
           ${topbar()}
           <main class="wf-content">
+            <div class="wf-ptr-indicator" id="wf-ptr-indicator">Pull to refresh</div>
             ${breadcrumb(crumbs)}
             ${content}
           </main>
@@ -745,7 +781,7 @@ const WF = (() => {
       ${modals()}
     `;
 
-    document.title = `${title} — FranchiseCRM Wireframe`;
+    document.title = `${title} — ${BRAND_NAME}`;
     bindEvents();
   }
 
@@ -905,6 +941,15 @@ const WF = (() => {
         if (e.target === ov) ov.classList.remove("is-open");
       });
     });
+
+    if (!window.__wfResizeBound) {
+      window.__wfResizeBound = true;
+      let resizeTimer;
+      window.addEventListener("resize", () => {
+        clearTimeout(resizeTimer);
+        resizeTimer = setTimeout(() => enhanceMobileExperience(), 150);
+      });
+    }
   }
 
   function bindContentEvents() {
@@ -1118,6 +1163,398 @@ const WF = (() => {
   function bindEvents() {
     bindShellEvents();
     bindContentEvents();
+    bindRoleSwitcher();
+    enhanceMobileExperience();
+  }
+
+  /* ── View-as Role Switcher (RBAC wireframe preview) ──────── */
+
+  const viewRoleState = { role: null };
+
+  function getViewRole(fallback) {
+    return viewRoleState.role || fallback || "CEO";
+  }
+
+  function setViewRole(role) {
+    viewRoleState.role = role;
+  }
+
+  function resetViewRole(role) {
+    viewRoleState.role = role;
+  }
+
+  function rolePermissionSummary(role) {
+    const r = role || "";
+    if (/super admin/i.test(r)) return "Full system access — all modules, settings, and security controls.";
+    if (r === "CEO") return "Executive visibility — all modules, approvals, reports, and team performance.";
+    if (/co-founder/i.test(r)) return "Executive access — nearly full permissions except destructive security changes.";
+    if (r === "Admin") return "Administrative access — users, roles, configuration, and operational modules.";
+    if (/security administrator/i.test(r)) return "Security & audit focus — logs, compliance, access reviews.";
+    if (/it administrator/i.test(r)) return "Infrastructure access — integrations, API, database, storage.";
+    if (/operations manager/i.test(r)) return "Operations scope — workflows, documents, meetings, franchise models.";
+    if (/read only/i.test(r)) return "Read-only — can view settings and reports but cannot save or delete.";
+    if (/sales executive/i.test(r)) return "Own records only — assigned leads, customers, and personal tasks.";
+    if (r === "Team Lead") return "Team scope — team leads, pipeline, meetings, and team member records.";
+    if (/brand owner/i.test(r)) return "Brand-scoped — own brand enquiries, documents, and franchise pipeline.";
+    if (/accounts|finance/i.test(r)) return "Finance scope — payments, invoices, GST, collections, refunds.";
+    if (r === "HR") return "People operations — users, onboarding, leave, and directory.";
+    if (r === "Customer") return "Portal view — own agreements, documents, and payments only.";
+    if (/automation administrator/i.test(r)) return "Workflow builder — create, test, and manage automations.";
+    return "Role-based permissions filter visible actions and data on this screen.";
+  }
+
+  function roleContextBanner(role) {
+    const readOnly = /read only|view only|own (activity|records)/i.test(role || "");
+    return `<div class="wf-role-context" data-role-context role="status" aria-live="polite">
+      <div class="wf-role-context__main">
+        <strong>Viewing as ${esc(role)}</strong>
+        <span class="wf-role-context__desc">${esc(rolePermissionSummary(role))}</span>
+      </div>
+      ${readOnly ? '<span class="wf-badge wf-badge--dark">Read-only mode</span>' : '<span class="wf-badge">Permissions active</span>'}
+    </div>`;
+  }
+
+  function applyRoleViewState(role) {
+    if (!role) return;
+    const readOnly = /read only|view only|own (activity|records)/i.test(role);
+    document.body.classList.toggle("wf-view-readonly", readOnly);
+    document.body.dataset.viewRole = role;
+
+    const bar = document.querySelector(".wf-role-bar");
+    let banner = document.querySelector(".wf-role-context");
+    if (bar) {
+      const html = roleContextBanner(role);
+      if (banner) banner.outerHTML = html;
+      else bar.insertAdjacentHTML("afterend", html);
+    } else if (banner) {
+      banner.remove();
+    }
+  }
+
+  function bindRoleSwitcher() {
+    if (document.body.dataset.roleSwitcherBound) return;
+    document.body.dataset.roleSwitcherBound = "1";
+
+    document.body.addEventListener("click", (e) => {
+      const roleBtn = e.target.closest(".wf-role-bar [data-role]");
+      if (!roleBtn) return;
+      e.preventDefault();
+
+      const role = roleBtn.getAttribute("data-role");
+      setViewRole(role);
+
+      document.querySelectorAll(".wf-role-bar [data-role]").forEach((btn) => {
+        btn.classList.toggle("wf-btn--primary", btn.getAttribute("data-role") === role);
+      });
+
+      applyRoleViewState(role);
+
+      if (typeof WF_SPA !== "undefined" && WF_SPA.getCurrent) {
+        const current = WF_SPA.getCurrent();
+        if (current) WF_SPA.navigate(current);
+      }
+
+      const readOnly = /read only|view only/i.test(role);
+      const ownOnly = /own (activity|records)/i.test(role);
+      let msg = `Now viewing as ${role}`;
+      if (readOnly) msg = "Read-only mode — save and delete actions disabled";
+      else if (ownOnly) msg = `Viewing own records only as ${role}`;
+      showToast(msg);
+    });
+  }
+
+  /* ── Mobile-First Enhancements ───────────────────────────── */
+
+  function isMobileViewport() {
+    return window.matchMedia("(max-width: 768px)").matches;
+  }
+
+  function pickBottomNavScreens(screens) {
+    if (!screens || !screens.length) return [];
+    const byId = (id) => screens.find((s) => s.id === id);
+    const find = (re) => screens.find((s) => re.test(s.id));
+    const picked = [];
+    const add = (s) => { if (s && !picked.includes(s)) picked.push(s); };
+    add(byId("dashboard") || screens[0]);
+    add(find(/list|directory|library|inbox|all|explorer/) || screens[1]);
+    add(find(/create|new|invite|schedule/) || screens[2]);
+    add(find(/calendar|analytics|reports|settings/) || screens[3]);
+    return picked.slice(0, 3);
+  }
+
+  function mobileBottomNav(screens, activeId) {
+    const primary = pickBottomNavScreens(screens);
+    const items = primary.map((s) => {
+      const active = s.id === activeId ? " wf-bottom-nav__item--active" : "";
+      const label = s.label.length > 10 ? s.label.split(" ")[0] : s.label;
+      return `<a href="#${s.id}" data-screen="${s.id}" class="wf-bottom-nav__item${active}" aria-label="${esc(s.label)}">
+        <span class="wf-bottom-nav__icon" aria-hidden="true"></span>
+        <span class="wf-bottom-nav__label">${esc(label)}</span>
+      </a>`;
+    }).join("");
+    return `<nav class="wf-bottom-nav" id="wf-bottom-nav" aria-label="Quick navigation">
+      ${items}
+      <button type="button" class="wf-bottom-nav__item" id="wf-bottom-nav-menu" aria-label="All screens menu">
+        <span class="wf-bottom-nav__icon" aria-hidden="true"></span>
+        <span class="wf-bottom-nav__label">Menu</span>
+      </button>
+    </nav>`;
+  }
+
+  function updateBottomNavActive(activeId) {
+    document.querySelectorAll(".wf-bottom-nav__item[data-screen]").forEach((el) => {
+      el.classList.toggle("wf-bottom-nav__item--active", el.getAttribute("data-screen") === activeId);
+    });
+  }
+
+  function cellHtml(cell) {
+    return cell ? cell.innerHTML.trim() : "";
+  }
+
+  function isSkippableHeader(text) {
+    return !text || text === "☐" || text.length < 2;
+  }
+
+  function buildMobileCardsFromTable(wrap) {
+    const table = wrap.querySelector("table");
+    if (!table || wrap.querySelector(".wf-mobile-cards")) return;
+
+    const headers = [...table.querySelectorAll("thead th")].map((th) => th.textContent.trim()).filter((h) => !isSkippableHeader(h));
+    const rows = [...table.querySelectorAll("tbody tr")];
+    if (!rows.length) return;
+
+    const cards = rows.map((row, idx) => {
+      const cells = [...row.querySelectorAll("td")];
+      const offset = cells.length > headers.length ? cells.length - headers.length : 0;
+      const dataCells = cells.slice(offset);
+
+      let titleIdx = dataCells.findIndex((c) => c.querySelector("a, .wf-table__link"));
+      if (titleIdx < 0) titleIdx = dataCells.findIndex((c) => cellHtml(c) && !c.querySelector(".wf-table__checkbox"));
+      if (titleIdx < 0) titleIdx = 0;
+
+      const titleCell = dataCells[titleIdx];
+      const titleHtml = titleCell ? cellHtml(titleCell) : `Record ${idx + 1}`;
+      const badges = dataCells.map((c) => c.querySelector(".wf-badge")).filter(Boolean).map((b) => b.outerHTML).join("");
+
+      const detailRows = dataCells.map((cell, i) => {
+        const headerIdx = i + offset;
+        const label = headers[headerIdx] || headers[i] || `Field ${i + 1}`;
+        if (i === titleIdx) return "";
+        const val = cellHtml(cell);
+        if (!val || val === "—") return "";
+        return `<div class="wf-mobile-card__row"><span class="wf-mobile-card__label">${esc(label)}</span><span class="wf-mobile-card__value">${val}</span></div>`;
+      }).join("");
+
+      const actionsCell = dataCells.find((c) => c.querySelector(".wf-table__actions, .wf-btn"));
+      const actionsHtml = actionsCell ? `<div class="wf-mobile-card__actions">${actionsCell.innerHTML}</div>` : "";
+
+      return `<article class="wf-mobile-card" data-mobile-card="${idx}">
+        <div class="wf-mobile-card__header" role="button" tabindex="0" aria-expanded="false">
+          <div>
+            <div class="wf-mobile-card__title">${titleHtml}</div>
+            ${badges ? `<div class="wf-mobile-card__meta">${badges}</div>` : ""}
+          </div>
+          <span class="wf-mobile-card__chevron" aria-hidden="true">▾</span>
+        </div>
+        <div class="wf-mobile-card__body">${detailRows}${actionsHtml}</div>
+      </article>`;
+    }).join("");
+
+    wrap.insertAdjacentHTML("beforeend", `<div class="wf-mobile-cards" role="list">${cards}</div>`);
+  }
+
+  function enhanceMobileTables(scope = document) {
+    scope.querySelectorAll(".wf-table-wrap").forEach((wrap) => buildMobileCardsFromTable(wrap));
+  }
+
+  function bindMobileCardToggles(scope = document) {
+    scope.querySelectorAll(".wf-mobile-card__header").forEach((header) => {
+      if (header.dataset.bound) return;
+      header.dataset.bound = "1";
+      const toggle = () => {
+        const card = header.closest(".wf-mobile-card");
+        const open = card.classList.toggle("is-expanded");
+        header.setAttribute("aria-expanded", open ? "true" : "false");
+      };
+      header.addEventListener("click", toggle);
+      header.addEventListener("keydown", (e) => {
+        if (e.key === "Enter" || e.key === " ") { e.preventDefault(); toggle(); }
+      });
+    });
+  }
+
+  function enhanceMobileForms(scope = document) {
+    if (!isMobileViewport()) return;
+    scope.querySelectorAll(".wf-form").forEach((form) => {
+      if (form.classList.contains("wf-form--has-sticky-footer") || form.closest(".wf-modal")) return;
+      const footer = form.querySelector(".wf-form__footer, .wf-form__actions");
+      if (!footer || form.querySelector(".wf-form__sticky-footer")) return;
+      const sticky = document.createElement("div");
+      sticky.className = "wf-form__sticky-footer";
+      sticky.innerHTML = footer.innerHTML;
+      form.appendChild(sticky);
+      footer.classList.add("wf-hidden");
+      form.classList.add("wf-form--has-sticky-footer");
+    });
+  }
+
+  function enhanceMobileFilters() {
+    const panel = document.getElementById("wf-advanced-filters");
+    if (!panel || panel.dataset.mobileSheet) return;
+    panel.dataset.mobileSheet = "1";
+
+    let backdrop = document.getElementById("wf-filter-sheet-backdrop");
+    if (!backdrop) {
+      backdrop = document.createElement("div");
+      backdrop.id = "wf-filter-sheet-backdrop";
+      backdrop.className = "wf-filter-sheet-backdrop";
+      backdrop.setAttribute("aria-hidden", "true");
+      document.body.appendChild(backdrop);
+    }
+
+    const closeSheet = () => {
+      panel.classList.remove("is-open");
+      backdrop.classList.remove("is-visible");
+      document.body.style.overflow = "";
+    };
+
+    const openSheet = () => {
+      panel.classList.add("is-open");
+      backdrop.classList.add("is-visible");
+      document.body.style.overflow = "hidden";
+    };
+
+    backdrop.addEventListener("click", closeSheet);
+
+    if (!document.getElementById("wf-filter-fab")) {
+      const fab = document.createElement("button");
+      fab.id = "wf-filter-fab";
+      fab.className = "wf-filter-fab";
+      fab.type = "button";
+      fab.setAttribute("aria-label", "Open filters");
+      fab.addEventListener("click", openSheet);
+      document.body.appendChild(fab);
+    }
+
+    const toggle = document.getElementById("wf-adv-filter-toggle");
+    if (toggle && !toggle.dataset.mobileSheetBound) {
+      toggle.dataset.mobileSheetBound = "1";
+      toggle.addEventListener("click", (e) => {
+        if (!isMobileViewport()) return;
+        e.preventDefault();
+        e.stopPropagation();
+        if (panel.classList.contains("is-open")) closeSheet();
+        else openSheet();
+      }, true);
+    }
+
+    panel.querySelector("#wf-adv-filter-apply")?.addEventListener("click", () => {
+      if (isMobileViewport()) closeSheet();
+    });
+    panel.querySelector("#wf-adv-filter-clear")?.addEventListener("click", () => {
+      if (isMobileViewport()) closeSheet();
+    });
+  }
+
+  function enhanceCollapsibleWidgets(scope = document) {
+    if (!isMobileViewport()) return;
+    scope.querySelectorAll(".wf-card").forEach((card, i) => {
+      if (card.closest(".wf-mobile-card") || card.classList.contains("wf-collapsible")) return;
+      if (i > 2 && card.querySelector(".wf-card__header")) {
+        card.classList.add("wf-collapsible");
+        const header = card.querySelector(".wf-card__header");
+        if (header && !header.dataset.collapsibleBound) {
+          header.dataset.collapsibleBound = "1";
+          header.addEventListener("click", () => card.classList.toggle("is-expanded"));
+        }
+      }
+    });
+  }
+
+  function enhanceSwipeableCharts(scope = document) {
+    scope.querySelectorAll(".wf-dashboard-charts, .wf-dashboard-charts--2, .wf-card-grid").forEach((el) => {
+      el.classList.add("wf-swipe-scroll");
+    });
+  }
+
+  function enhanceCalendarAgenda(scope = document) {
+    const agenda = scope.querySelector(".wf-calendar-agenda");
+    if (agenda && isMobileViewport()) agenda.style.display = "block";
+  }
+
+  function bindBottomNavMenu() {
+    const menuBtn = document.getElementById("wf-bottom-nav-menu");
+    if (!menuBtn || menuBtn.dataset.bound) return;
+    menuBtn.dataset.bound = "1";
+    menuBtn.addEventListener("click", () => {
+      document.getElementById("wf-sidebar")?.classList.add("is-open");
+      document.getElementById("wf-sidebar-overlay")?.classList.add("is-visible");
+    });
+  }
+
+  function bindPullToRefresh() {
+    const container = document.querySelector(".wf-content");
+    if (!container || container.dataset.ptrBound || !isMobileViewport()) return;
+    container.dataset.ptrBound = "1";
+    let startY = 0;
+    let indicator = document.getElementById("wf-ptr-indicator");
+    if (!indicator) {
+      indicator = document.createElement("div");
+      indicator.id = "wf-ptr-indicator";
+      indicator.className = "wf-ptr-indicator";
+      indicator.textContent = "Pull to refresh";
+      container.prepend(indicator);
+    }
+    container.addEventListener("touchstart", (e) => { startY = e.touches[0].clientY; }, { passive: true });
+    container.addEventListener("touchmove", (e) => {
+      if (container.scrollTop > 0) return;
+      const pull = e.touches[0].clientY - startY;
+      if (pull > 60) indicator.classList.add("is-visible");
+    }, { passive: true });
+    container.addEventListener("touchend", () => {
+      if (indicator.classList.contains("is-visible")) {
+        showToast("Refreshing…");
+        setTimeout(() => showToast("Data refreshed"), 800);
+      }
+      indicator.classList.remove("is-visible");
+    });
+  }
+
+  function enhanceMobileModals() {
+    document.querySelectorAll(".wf-modal-overlay .wf-modal").forEach((modal) => {
+      if (modal.querySelector(".wf-form__grid, .wf-perm-matrix-wrap")) {
+        modal.classList.add("wf-modal--fullscreen-mobile");
+      }
+    });
+  }
+
+  function bindPhoneInputs(scope = document) {
+    scope.querySelectorAll("[data-phone-input]").forEach((input) => {
+      if (input.dataset.phoneBound) return;
+      input.dataset.phoneBound = "1";
+      input.addEventListener("blur", () => {
+        const v = input.value.trim();
+        if (v) input.value = formatPhone(v);
+      });
+    });
+  }
+
+  function enhanceMobileExperience() {
+    enhanceMobileTables();
+    bindMobileCardToggles();
+    enhanceMobileForms();
+    enhanceMobileFilters();
+    enhanceCollapsibleWidgets();
+    enhanceSwipeableCharts();
+    enhanceCalendarAgenda();
+    bindBottomNavMenu();
+    bindPullToRefresh();
+    bindPhoneInputs();
+    if (isMobileViewport()) enhanceMobileModals();
+    if (typeof WF_SPA !== "undefined" && typeof WF_SPA.getCurrent === "function") {
+      updateBottomNavActive(WF_SPA.getCurrent());
+    }
+    applyRoleViewState(getViewRole());
   }
 
   function closeAllModals() {
@@ -1257,7 +1694,7 @@ const WF = (() => {
           </div>
           <div class="wf-form__group">
             <label class="wf-form__label">Support Phone</label>
-            <input class="wf-form__input" value="${esc(b.supportPhone || "")}">
+            <input class="wf-form__input" type="tel" data-phone-input value="${esc(formatPhone(b.supportPhone || ""))}" placeholder="${PHONE_FORMAT}">
           </div>
           <div class="wf-form__group">
             <label class="wf-form__label">GST Number</label>
@@ -1543,16 +1980,38 @@ const WF = (() => {
 
   function calendarView(activeView) {
     const views = ["Day", "Week", "Month"];
+    const agendaItems = (typeof MEETING_DATA !== "undefined" ? MEETING_DATA.meetings : []).slice(0, 5);
+    const agendaHtml = agendaItems.length ? agendaItems.map((m) => `
+      <div class="wf-list-item" data-screen="details">
+        <div class="wf-list-item__content">
+          <div class="wf-list-item__title">${esc(m.title || m.subject || "Meeting")}</div>
+          <div class="wf-list-item__subtitle">${esc(m.date || m.scheduledDate || "")} · ${esc(m.mode || "")} · ${esc(m.status || "")}</div>
+        </div>
+        <span class="wf-badge">${esc(m.status || "Scheduled")}</span>
+      </div>
+    `).join("") : `
+      <div class="wf-list-item"><div class="wf-list-item__content">
+        <div class="wf-list-item__title">Brand Presentation — Rahul Sharma</div>
+        <div class="wf-list-item__subtitle">25 Jun 2024, 10:00 AM · Online</div>
+      </div></div>
+      <div class="wf-list-item"><div class="wf-list-item__content">
+        <div class="wf-list-item__title">Site Visit — Arjun Reddy</div>
+        <div class="wf-list-item__subtitle">26 Jun 2024, 2:00 PM · In Person</div>
+      </div></div>`;
     return `<div class="wf-calendar-toolbar">
       <div class="wf-view-toggle">${views.map((v) => `<button type="button" class="wf-btn wf-btn--sm${v === activeView ? " wf-btn--primary" : ""}" data-cal-view="${v.toLowerCase()}">${v}</button>`).join("")}</div>
       <div class="wf-flex wf-gap-8" style="margin-left:auto">
-        <button class="wf-btn wf-btn--sm">‹ Prev</button>
+        <button class="wf-btn wf-btn--sm" aria-label="Previous">‹ Prev</button>
         <span style="font-size:13px;font-weight:600;padding:6px 12px">June 2024</span>
-        <button class="wf-btn wf-btn--sm">Next ›</button>
+        <button class="wf-btn wf-btn--sm" aria-label="Next">Next ›</button>
         <button class="wf-btn wf-btn--sm">Today</button>
       </div>
     </div>
-    <div class="wf-chart-placeholder" style="height:420px;margin-top:12px">${activeView || "Week"} Calendar View — Meeting blocks by time slot</div>`;
+    <div class="wf-calendar-grid wf-chart-placeholder" style="height:420px;margin-top:12px">${activeView || "Week"} Calendar View — Meeting blocks by time slot</div>
+    <div class="wf-calendar-agenda wf-card wf-mt-16" style="display:none">
+      <div class="wf-card__header"><span class="wf-card__title">Agenda</span><span style="font-size:12px;color:var(--wf-text-muted)">Swipe for day navigation</span></div>
+      <div class="wf-card__body" style="padding:0">${agendaHtml}</div>
+    </div>`;
   }
 
   function kanbanView(columns) {
@@ -1578,7 +2037,21 @@ const WF = (() => {
     </div>`;
   }
 
-  function meetingTable(meetings) {
+  function meetingTable(meetings, options = {}) {
+    const { compact = false, hidePagination = false } = options;
+    if (compact) {
+      const rows = meetings.map((m) => `
+        <tr>
+          <td class="wf-table__cell-clip"><a href="#details" data-screen="details" class="wf-table__link">${esc(m.title)}</a></td>
+          <td class="wf-table__cell-clip">${esc(m.customer)}</td>
+          <td>${esc(m.start)}</td>
+          <td><span class="wf-badge">${esc(m.status)}</span></td>
+        </tr>
+      `).join("");
+      return `<div class="wf-table-wrap wf-table-wrap--fit"><table class="wf-table wf-table--fit wf-table--compact"><thead><tr>
+        <th>Title</th><th>Customer</th><th>Time</th><th>Status</th>
+      </tr></thead><tbody>${rows}</tbody></table></div>`;
+    }
     const rows = meetings.map((m) => `
       <tr>
         <td><span class="wf-table__checkbox"></span></td>
@@ -1598,10 +2071,10 @@ const WF = (() => {
         </div></td>
       </tr>
     `).join("");
-    return `<div class="wf-table-wrap"><table class="wf-table"><thead><tr>
+    return `<div class="wf-table-wrap wf-table-wrap--scroll"><table class="wf-table wf-table--fit"><thead><tr>
       <th><span class="wf-table__checkbox"></span></th>
       <th>ID</th><th>Title</th><th>Type</th><th>Customer</th><th>Brand</th><th>Date</th><th>Time</th><th>Mode</th><th>Status</th><th>Organizer</th><th>Actions</th>
-    </tr></thead><tbody>${rows}</tbody></table>${pagination(meetings.length > 6 ? 86 : meetings.length)}</div>`;
+    </tr></thead><tbody>${rows}</tbody></table>${hidePagination ? "" : pagination(meetings.length > 6 ? 86 : meetings.length)}</div>`;
   }
 
   function meetingProfileCard(meeting) {
@@ -1711,7 +2184,23 @@ const WF = (() => {
   }
 
   function approvalTable(approvals, options = {}) {
-    const { selectable = true, showActions = true, screen = "details" } = options;
+    const { selectable = true, showActions = true, screen = "details", compact = false, hidePagination = false } = options;
+
+    if (compact) {
+      const rows = (approvals || []).map((a) => `
+        <tr>
+          <td class="wf-table__cell-clip"><span class="wf-badge wf-badge--outline">${esc(a.type)}</span></td>
+          <td class="wf-table__cell-clip"><a href="#${screen}" data-screen="${screen}" class="wf-table__link">${esc(a.reference)}</a></td>
+          <td><span class="wf-badge">${esc(a.status)}</span></td>
+          <td class="wf-table__cell-clip">${esc(a.currentApprover)}</td>
+          <td>${esc(a.dueDate)}</td>
+        </tr>
+      `).join("");
+      return `<div class="wf-table-wrap wf-table-wrap--fit"><table class="wf-table wf-table--fit wf-table--compact"><thead><tr>
+        <th>Type</th><th>Reference</th><th>Status</th><th>Approver</th><th>Due</th>
+      </tr></thead><tbody>${rows || `<tr><td colspan="5">${emptyState("No approvals found", "Try adjusting your filters")}</td></tr>`}</tbody></table></div>`;
+    }
+
     const rows = (approvals || []).map((a) => `
       <tr>
         ${selectable ? `<td><span class="wf-table__checkbox"></span></td>` : ""}
@@ -1732,11 +2221,11 @@ const WF = (() => {
       </tr>
     `).join("");
     const count = (approvals || []).length;
-    return `<div class="wf-table-wrap"><table class="wf-table"><thead><tr>
+    return `<div class="wf-table-wrap wf-table-wrap--scroll"><table class="wf-table wf-table--fit"><thead><tr>
       ${selectable ? "<th><span class='wf-table__checkbox'></span></th>" : ""}
       <th>Approval ID</th><th>Type</th><th>Module</th><th>Reference</th><th>Requested By</th><th>Department</th><th>Priority</th><th>Status</th><th>Current Approver</th><th>Due Date</th>
       ${showActions ? "<th>Actions</th>" : ""}
-    </tr></thead><tbody>${rows || `<tr><td colspan="12">${emptyState("No approvals found", "Try adjusting your filters")}</td></tr>`}</tbody></table>${pagination(count > 6 ? 124 : count)}</div>`;
+    </tr></thead><tbody>${rows || `<tr><td colspan="12">${emptyState("No approvals found", "Try adjusting your filters")}</td></tr>`}</tbody></table>${hidePagination ? "" : pagination(count > 6 ? 124 : count)}</div>`;
   }
 
   function approvalProfileCard(approval) {
@@ -1793,7 +2282,7 @@ const WF = (() => {
     const items = levels || [
       { level: 1, name: "Manager Review", approver: "Himani Bhargava", status: "Completed" },
       { level: 2, name: "Operations Review", approver: "Om Anil", status: "In Progress" },
-      { level: 3, name: "CEO Approval", approver: "CEO", status: "Pending" }
+      { level: 3, name: "CEO Approval", approver: "Abdul Syed", status: "Pending" }
     ];
     return `<div class="wf-approval-levels">${items.map((l) => {
       const done = l.status === "Completed" || l.status === "Approved";
@@ -1866,7 +2355,22 @@ const WF = (() => {
   }
 
   function paymentTable(payments, options = {}) {
-    const { selectable = true, showActions = true, screen = "payment-details" } = options;
+    const { selectable = true, showActions = true, screen = "payment-details", compact = false, hidePagination = false } = options;
+
+    if (compact) {
+      const rows = (payments || []).map((p) => `
+        <tr>
+          <td class="wf-table__cell-clip">${esc(p.customer)}</td>
+          <td><span class="wf-badge wf-badge--outline">${esc(p.type)}</span></td>
+          <td style="font-weight:600">${formatINR(p.amount)}</td>
+          <td><span class="wf-badge${p.status === "Completed" || p.status === "Verified" ? " wf-badge--dark" : ""}">${esc(p.status)}</span></td>
+        </tr>
+      `).join("");
+      return `<div class="wf-table-wrap wf-table-wrap--fit"><table class="wf-table wf-table--fit wf-table--compact"><thead><tr>
+        <th>Customer</th><th>Type</th><th>Amount</th><th>Status</th>
+      </tr></thead><tbody>${rows || `<tr><td colspan="4" style="text-align:center;padding:24px;color:var(--wf-text-muted)">No payments found</td></tr>`}</tbody></table></div>`;
+    }
+
     const rows = (payments || []).map((p) => `
       <tr>
         ${selectable ? `<td><span class="wf-table__checkbox"></span></td>` : ""}
@@ -1887,11 +2391,11 @@ const WF = (() => {
       </tr>
     `).join("");
     const count = (payments || []).length;
-    return `<div class="wf-table-wrap"><table class="wf-table"><thead><tr>
+    return `<div class="wf-table-wrap wf-table-wrap--scroll"><table class="wf-table wf-table--fit"><thead><tr>
       ${selectable ? "<th><span class='wf-table__checkbox'></span></th>" : ""}
       <th>Payment ID</th><th>Customer</th><th>Brand</th><th>Type</th><th>Amount</th><th>GST</th><th>Method</th><th>Date</th><th>Status</th><th>Verification</th>
       ${showActions ? "<th>Actions</th>" : ""}
-    </tr></thead><tbody>${rows || `<tr><td colspan="12" style="text-align:center;padding:24px;color:var(--wf-text-muted)">No payments found</td></tr>`}</tbody></table>${pagination(count > 6 ? 156 : count)}</div>`;
+    </tr></thead><tbody>${rows || `<tr><td colspan="12" style="text-align:center;padding:24px;color:var(--wf-text-muted)">No payments found</td></tr>`}</tbody></table>${hidePagination ? "" : pagination(count > 6 ? 156 : count)}</div>`;
   }
 
   function invoiceTable(invoices, options = {}) {
@@ -2065,7 +2569,22 @@ const WF = (() => {
   }
 
   function documentTable(documents, options = {}) {
-    const { selectable = true, showActions = true, screen = "details" } = options;
+    const { selectable = true, showActions = true, screen = "details", compact = false, hidePagination = false } = options;
+
+    if (compact) {
+      const rows = (documents || []).map((d) => `
+        <tr>
+          <td class="wf-table__cell-clip"><a href="#${screen}" data-screen="${screen}" class="wf-table__link">${esc(d.name)}</a></td>
+          <td><span class="wf-badge wf-badge--outline">${esc(d.category)}</span></td>
+          <td><span class="wf-badge${d.status === "Approved" ? " wf-badge--dark" : ""}">${esc(d.status)}</span></td>
+          <td>${esc(d.uploadDate)}</td>
+        </tr>
+      `).join("");
+      return `<div class="wf-table-wrap wf-table-wrap--fit"><table class="wf-table wf-table--fit wf-table--compact"><thead><tr>
+        <th>Name</th><th>Category</th><th>Status</th><th>Date</th>
+      </tr></thead><tbody>${rows || `<tr><td colspan="4" style="text-align:center;padding:24px;color:var(--wf-text-muted)">No documents found</td></tr>`}</tbody></table></div>`;
+    }
+
     const rows = (documents || []).map((d) => `
       <tr>
         ${selectable ? `<td><span class="wf-table__checkbox"></span></td>` : ""}
@@ -2088,11 +2607,11 @@ const WF = (() => {
       </tr>
     `).join("");
     const count = (documents || []).length;
-    return `<div class="wf-table-wrap"><table class="wf-table"><thead><tr>
+    return `<div class="wf-table-wrap wf-table-wrap--scroll"><table class="wf-table wf-table--fit"><thead><tr>
       ${selectable ? "<th><span class='wf-table__checkbox'></span></th>" : ""}
       <th></th><th>Name</th><th>Category</th><th>Type</th><th>Linked To</th><th>Uploaded By</th><th>Date</th><th>Size</th><th>Ver</th><th>Status</th><th>Expiry</th>
       ${showActions ? "<th>Actions</th>" : ""}
-    </tr></thead><tbody>${rows || `<tr><td colspan="14" style="text-align:center;padding:24px;color:var(--wf-text-muted)">No documents found</td></tr>`}</tbody></table>${pagination(count > 6 ? 284 : count)}</div>`;
+    </tr></thead><tbody>${rows || `<tr><td colspan="14" style="text-align:center;padding:24px;color:var(--wf-text-muted)">No documents found</td></tr>`}</tbody></table>${hidePagination ? "" : pagination(count > 6 ? 284 : count)}</div>`;
   }
 
   function documentProfileCard(doc) {
@@ -2428,14 +2947,243 @@ const WF = (() => {
   }
 
   function chartCard(title, chartType, options = {}) {
-    const { height = 240, drillScreen, subtitle } = options;
+    const { drillScreen, subtitle, bare } = options;
     const drill = drillScreen ? `<button data-screen="${drillScreen}" class="wf-btn wf-btn--sm">Drill Down</button>` : "";
+    const body = `${subtitle ? `<p style="font-size:12px;color:var(--wf-text-muted);margin-bottom:12px">${esc(subtitle)}</p>` : ""}${dummyChart(chartType, title, options)}`;
+    if (bare) return body;
     return `<div class="wf-card${options.className ? " " + options.className : ""}">
       <div class="wf-card__header"><span class="wf-card__title">${esc(title)}</span>${drill}</div>
-      <div class="wf-card__body">${subtitle ? `<p style="font-size:12px;color:var(--wf-text-muted);margin-bottom:12px">${esc(subtitle)}</p>` : ""}
-        <div class="wf-chart-placeholder" style="height:${height}px">${esc(chartType)} — ${esc(title)}</div>
-      </div>
+      <div class="wf-card__body">${body}</div>
     </div>`;
+  }
+
+  function defaultBarItems(title, chartType) {
+    const t = `${title || ""} ${chartType || ""}`.toLowerCase();
+    const brands = [
+      { label: "Odette", value: 86 },
+      { label: "Belgian Waffle", value: 72 },
+      { label: "Chai Point", value: 64 },
+      { label: "Kasturi", value: 48 },
+      { label: "Burger Co.", value: 42 }
+    ];
+    const cities = [
+      { label: "Bengaluru", value: 72 },
+      { label: "Mumbai", value: 58 },
+      { label: "Delhi", value: 45 },
+      { label: "Hyderabad", value: 38 },
+      { label: "Pune", value: 24 }
+    ];
+    if (t.includes("quarter") || t.includes("franchise growth") || t.includes("new franchise")) {
+      return [{ label: "Q1", value: 28 }, { label: "Q2", value: 34 }, { label: "Q3", value: 42 }, { label: "Q4", value: 48 }];
+    }
+    if (t.includes("city") || t.includes("geo") || t.includes("map") || t.includes("expansion") || t.includes("territory")) return cities;
+    if (t.includes("brand") || t.includes("enquir") || t.includes("executive") || t.includes("horizontal")) return brands;
+    if (t.includes("department")) {
+      return [
+        { label: "Sales", value: 86 },
+        { label: "Operations", value: 42 },
+        { label: "Accounts", value: 28 },
+        { label: "Legal", value: 14 }
+      ];
+    }
+    if (t.includes("meeting") && t.includes("type")) {
+      return [
+        { label: "Discovery", value: 42 },
+        { label: "Presentation", value: 38 },
+        { label: "Site Visit", value: 28 },
+        { label: "Legal", value: 18 },
+        { label: "Follow-up", value: 56 }
+      ];
+    }
+    if (t.includes("payment") || t.includes("neft") || t.includes("upi")) {
+      return [
+        { label: "NEFT", value: 45 },
+        { label: "UPI", value: 68 },
+        { label: "Cheque", value: 12 },
+        { label: "RTGS", value: 24 }
+      ];
+    }
+    if (t.includes("fee") || t.includes("royalty") || t.includes("gst") || t.includes("cgst")) {
+      return [
+        { label: "Franchise Fee", value: 42 },
+        { label: "Royalty", value: 28 },
+        { label: "Booking", value: 18 },
+        { label: "Training", value: 12 }
+      ];
+    }
+    if (t.includes("channel") || t.includes("delivery") || t.includes("notification") || t.includes("success %")) {
+      return [
+        { label: "In-App", value: 94 },
+        { label: "Email", value: 88 },
+        { label: "SMS", value: 76 },
+        { label: "WhatsApp", value: 82 },
+        { label: "Push", value: 71 }
+      ];
+    }
+    if (t.includes("role") || t.includes("user") || t.includes("headcount")) {
+      return [
+        { label: "Sales Exec", value: 42 },
+        { label: "Admin", value: 18 },
+        { label: "Ops Mgr", value: 12 },
+        { label: "HR", value: 8 }
+      ];
+    }
+    if (t.includes("trigger") || t.includes("action") || t.includes("module") || t.includes("event")) {
+      return [
+        { label: "Customers", value: 420 },
+        { label: "Leads", value: 380 },
+        { label: "Payments", value: 240 },
+        { label: "Documents", value: 186 }
+      ];
+    }
+    if (t.includes("target") || t.includes("kpi")) {
+      return [
+        { label: "Revenue", value: 92 },
+        { label: "Leads", value: 78 },
+        { label: "Conversion", value: 64 },
+        { label: "Retention", value: 88 }
+      ];
+    }
+    if (t.includes("pipeline") || t.includes("lead")) {
+      return [
+        { label: "New", value: 124 },
+        { label: "Qualified", value: 86 },
+        { label: "Proposal", value: 52 },
+        { label: "Negotiation", value: 34 },
+        { label: "Won", value: 28 }
+      ];
+    }
+    if (t.includes("model") || t.includes("investment") || t.includes("comparison")) {
+      return [
+        { label: "FOFO", value: 24 },
+        { label: "FOCO", value: 18 },
+        { label: "Hybrid", value: 12 },
+        { label: "Master", value: 8 }
+      ];
+    }
+    return brands;
+  }
+
+  function defaultDonutItems(title, chartType) {
+    const t = `${title || ""} ${chartType || ""}`.toLowerCase();
+    if (t.includes("status") || t.includes("employee") || t.includes("distribution")) {
+      return [
+        { label: "Active", value: 186 },
+        { label: "Onboarding", value: 34 },
+        { label: "Inactive", value: 12 }
+      ];
+    }
+    if (t.includes("meeting")) {
+      return [
+        { label: "Scheduled", value: 48 },
+        { label: "Completed", value: 124 },
+        { label: "Cancelled", value: 8 }
+      ];
+    }
+    if (t.includes("document") || t.includes("kyc")) {
+      return [
+        { label: "KYC", value: 124 },
+        { label: "Agreements", value: 86 },
+        { label: "Payments", value: 64 },
+        { label: "Brand", value: 42 },
+        { label: "Training", value: 28 }
+      ];
+    }
+    if (t.includes("approval") || t.includes("type")) {
+      return [
+        { label: "Lead", value: 42 },
+        { label: "Discount", value: 28 },
+        { label: "Agreement", value: 36 },
+        { label: "Payment", value: 24 },
+        { label: "Brand", value: 18 }
+      ];
+    }
+    if (t.includes("model") || t.includes("draft") || t.includes("published")) {
+      return [
+        { label: "Published", value: 24 },
+        { label: "Draft", value: 8 },
+        { label: "Archived", value: 4 }
+      ];
+    }
+    if (t.includes("source") || t.includes("conversion")) {
+      return [
+        { label: "Website", value: 42 },
+        { label: "Referral", value: 28 },
+        { label: "Trade Show", value: 18 },
+        { label: "Social", value: 24 }
+      ];
+    }
+    if (t.includes("success") || t.includes("workflow") || t.includes("failed")) {
+      return [
+        { label: "Success", value: 372 },
+        { label: "Failed", value: 12 },
+        { label: "Pending", value: 8 }
+      ];
+    }
+    if (t.includes("severity") || t.includes("security")) {
+      return [
+        { label: "Critical", value: 4 },
+        { label: "High", value: 18 },
+        { label: "Medium", value: 42 },
+        { label: "Low", value: 86 }
+      ];
+    }
+    if (t.includes("notification") || t.includes("donut")) {
+      return [
+        { label: "Approvals", value: 86 },
+        { label: "Meetings", value: 64 },
+        { label: "Payments", value: 48 },
+        { label: "Documents", value: 36 },
+        { label: "Leads", value: 52 }
+      ];
+    }
+    if (t.includes("payment") && t.includes("type")) {
+      return [
+        { label: "Paid", value: 168 },
+        { label: "Partial", value: 32 },
+        { label: "Overdue", value: 18 },
+        { label: "Pending", value: 24 }
+      ];
+    }
+  if (t.includes("permission") || t.includes("role")) {
+      return [
+        { label: "Sales Exec", value: 42 },
+        { label: "Admin", value: 18 },
+        { label: "Ops Mgr", value: 12 },
+        { label: "Read Only", value: 6 }
+      ];
+    }
+    return [
+      { label: "Category A", value: 45 },
+      { label: "Category B", value: 32 },
+      { label: "Category C", value: 23 }
+    ];
+  }
+
+  function defaultLineLabels(title, chartType) {
+    const t = `${title || ""} ${chartType || ""}`.toLowerCase();
+    if (t.includes("quarter") || t.includes("week")) return ["W1", "W2", "W3", "W4", "W5", "W6"];
+    if (t.includes("sent") || t.includes("delivered")) return ["1", "5", "10", "15", "20", "25", "30"];
+    return ["Jan", "Feb", "Mar", "Apr", "May", "Jun"];
+  }
+
+  function dummyChart(chartType, title, options = {}) {
+    const type = (chartType || "Bar Chart").toLowerCase();
+    const items = options.items || defaultBarItems(title, chartType);
+    const segments = options.segments || defaultDonutItems(title, chartType);
+    const labels = options.labels || defaultLineLabels(title, chartType);
+    if (type.includes("line") || type.includes("area") || type.includes("forecast") || type.includes("trend") || type.includes("cumulative") || type.includes("multi")) {
+      return miniLineChart(labels);
+    }
+    if (type.includes("donut") || type.includes("pie") || type.includes("funnel")) {
+      const total = segments.reduce((sum, s) => sum + (Number(s.value) || 0), 0);
+      return miniDonut(segments, options.center || String(total));
+    }
+    return miniBarChart(items);
+  }
+
+  function chartPlaceholder(chartType, title, options = {}) {
+    return dummyChart(chartType, title, options);
   }
 
   function miniBarChart(items) {
@@ -2824,7 +3572,7 @@ const WF = (() => {
       </div>
       <div class="wf-card__body" style="padding-top:0">
         <div class="wf-detail-info__row"><span class="wf-detail-info__label">Email</span><span class="wf-detail-info__value">${esc(u.email)}</span></div>
-        <div class="wf-detail-info__row"><span class="wf-detail-info__label">Mobile</span><span class="wf-detail-info__value">${esc(u.phone)}</span></div>
+        <div class="wf-detail-info__row"><span class="wf-detail-info__label">Mobile</span><span class="wf-detail-info__value">${esc(formatPhone(u.phone))}</span></div>
         <div class="wf-detail-info__row"><span class="wf-detail-info__label">Department</span><span class="wf-detail-info__value">${esc(u.department)}</span></div>
         <div class="wf-detail-info__row"><span class="wf-detail-info__label">Team</span><span class="wf-detail-info__value">${esc(u.team)}</span></div>
         <div class="wf-detail-info__row"><span class="wf-detail-info__label">Office</span><span class="wf-detail-info__value">${esc(u.city)}</span></div>
@@ -2856,9 +3604,9 @@ const WF = (() => {
       </div>
       <div class="wf-form__section"><div class="wf-form__section-title">Contact</div>
         <div class="wf-form__grid">
-          <div class="wf-form__group"><label class="wf-form__label wf-form__label--required">Mobile Number</label><input class="wf-form__input" value="${esc(u.phone || "")}" placeholder="+91 XXXXX XXXXX" required></div>
+          <div class="wf-form__group"><label class="wf-form__label wf-form__label--required">Mobile Number</label><input class="wf-form__input" type="tel" data-phone-input value="${esc(formatPhone(u.phone || ""))}" placeholder="${PHONE_FORMAT}" required></div>
           <div class="wf-form__group"><label class="wf-form__label wf-form__label--required">Email</label><input type="email" class="wf-form__input" value="${esc(u.email || "")}" required></div>
-          <div class="wf-form__group"><label class="wf-form__label">Emergency Contact</label><input class="wf-form__input" value="${esc(u.emergencyContact || "")}" placeholder="Name & number"></div>
+          <div class="wf-form__group"><label class="wf-form__label">Emergency Contact</label><input class="wf-form__input" value="${esc(formatPhoneInText(u.emergencyContact || ""))}" placeholder="Name — ${PHONE_FORMAT}"></div>
           <div class="wf-form__group wf-form__group--full"><label class="wf-form__label">Address</label><input class="wf-form__input" value="${esc(u.address || "")}"></div>
           <div class="wf-form__group"><label class="wf-form__label">City</label><select class="wf-form__select">${opt(d.cities || shared("cities"), u.city)}</select></div>
           <div class="wf-form__group"><label class="wf-form__label">State</label><select class="wf-form__select">${opt(d.states || shared("states"), u.state)}</select></div>
@@ -2912,7 +3660,7 @@ const WF = (() => {
         ${children}
       </div>`;
     };
-    const root = tree || (typeof USER_DATA !== "undefined" ? USER_DATA.orgChart : { name: "CEO", title: "Chief Executive", children: [] });
+    const root = tree || (typeof USER_DATA !== "undefined" ? USER_DATA.orgChart : { name: "Abdul Syed", title: "CEO", children: [{ name: "Abrar", title: "Co-Founder", children: [] }] });
     return `<div class="wf-org">${renderNode(root)}</div>`;
   }
 
@@ -3374,7 +4122,7 @@ const WF = (() => {
           <div class="wf-form__group"><label class="wf-form__label wf-form__label--required">Company Name</label><input class="wf-form__input" value="${esc(c.name || "iFranchise")}"></div>
           <div class="wf-form__group"><label class="wf-form__label">Website</label><input class="wf-form__input" value="${esc(c.website || "")}"></div>
           <div class="wf-form__group"><label class="wf-form__label">Support Email</label><input type="email" class="wf-form__input" value="${esc(c.supportEmail || "")}"></div>
-          <div class="wf-form__group"><label class="wf-form__label">Support Phone</label><input class="wf-form__input" value="${esc(c.supportPhone || "")}"></div>
+          <div class="wf-form__group"><label class="wf-form__label">Support Phone</label><input class="wf-form__input" type="tel" data-phone-input value="${esc(formatPhone(c.supportPhone || ""))}" placeholder="${PHONE_FORMAT}"></div>
           <div class="wf-form__group"><label class="wf-form__label">GST</label><input class="wf-form__input" value="${esc(c.gst || "")}"></div>
           <div class="wf-form__group"><label class="wf-form__label">PAN</label><input class="wf-form__input" value="${esc(c.pan || "")}"></div>
           <div class="wf-form__group wf-form__group--full"><label class="wf-form__label">Registered Address</label><textarea class="wf-form__textarea">${esc(c.address || "")}</textarea></div>
@@ -3472,6 +4220,10 @@ const WF = (() => {
   }
 
   return {
+    BRAND_NAME,
+    BRAND_MARK,
+    sidebarLogo,
+    authLogo,
     initPage,
     pageHeader,
     toolbar,
@@ -3537,6 +4289,8 @@ const WF = (() => {
     periodToggle,
     kpiGrid,
     chartCard,
+    chartPlaceholder,
+    dummyChart,
     miniBarChart,
     miniDonut,
     miniLineChart,
@@ -3588,7 +4342,19 @@ const WF = (() => {
     settingsModals,
     DETAIL_SCREENS,
     CUSTOMER_DETAIL_TABS,
-    showToast
+    showToast,
+    formatPhone,
+    formatPhoneInText,
+    PHONE_FORMAT,
+    mobileBottomNav,
+    enhanceMobileExperience,
+    updateBottomNavActive,
+    isMobileViewport,
+    getViewRole,
+    setViewRole,
+    resetViewRole,
+    applyRoleViewState,
+    rolePermissionSummary
   };
 })();
 

@@ -1,7 +1,7 @@
 /* Automation Engine — Mock Data */
 
 const AUTOMATION_DATA = {
-  roles: ["CEO", "Admin", "Operations Manager", "Sales Manager", "Team Lead", "Automation Administrator", "Sales Executive (View Only)"],
+  roles: ["CEO", "Co-Founder", "Admin", "Operations Manager", "Sales Manager", "Team Lead", "Automation Administrator", "Sales Executive (View Only)"],
   workflowStates: ["Draft", "Testing", "Active", "Paused", "Completed", "Archived"],
   brands: ["Odette", "Original Burger Co.", "Kasturi", "Tea Time", "Belgian Waffle Co.", "Third Wave Coffee"],
   cities: ["Bengaluru", "Hyderabad", "Chennai", "Mumbai", "Delhi", "Pune", "Kochi", "Mysuru", "Ahmedabad", "Coimbatore"],

@@ -5,7 +5,7 @@ const SETTINGS_MODULE = (() => {
   const k = () => d().kpis;
   let activeRole = "Super Admin";
 
-  const roleBar = () => WF.roleSwitcher(activeRole, d().viewRoles);
+  const roleBar = () => WF.roleSwitcher(WF.getViewRole(activeRole), d().viewRoles);
   const exports = () => WF.reportActions();
 
   const dashKpis = () => WF.kpiGrid([
@@ -427,7 +427,7 @@ const SETTINGS_MODULE = (() => {
       render: () => cfg("about", "About System", "Version, build, and environment information", `
         <div class="wf-card"><div class="wf-card__body" style="text-align:center;padding:40px">
           <div style="width:64px;height:64px;background:var(--wf-placeholder);border-radius:12px;margin:0 auto 16px"></div>
-          <div style="font-size:20px;font-weight:700">FranchiseCRM</div>
+          <div style="font-size:20px;font-weight:700">iFranchise CRM</div>
           <div style="font-size:13px;color:var(--wf-text-muted);margin:8px 0">by iFranchise</div>
           <div style="font-size:14px;margin:16px 0"><strong>Version ${d().license.version}</strong> · Build 20240625.1</div>
           <div style="font-size:12px;color:var(--wf-text-muted);line-height:1.8">
@@ -443,6 +443,7 @@ const SETTINGS_MODULE = (() => {
   ];
 
   function init() {
+    WF.resetViewRole(activeRole);
     WF_SPA.init({
       moduleKey: "settings",
       moduleLabel: "System Configuration",
@@ -454,17 +455,6 @@ const SETTINGS_MODULE = (() => {
       screens
     });
 
-    document.body.addEventListener("click", (e) => {
-      const roleBtn = e.target.closest("[data-role]");
-      if (roleBtn && roleBtn.closest(".wf-role-bar")) {
-        activeRole = roleBtn.getAttribute("data-role");
-        document.querySelectorAll(".wf-role-bar [data-role]").forEach((btn) => {
-          btn.classList.toggle("wf-btn--primary", btn.getAttribute("data-role") === activeRole);
-        });
-        const readOnly = activeRole === "Read Only Administrator";
-        WF.showToast(readOnly ? "Read-only — cannot save settings" : `Viewing as ${activeRole}`);
-      }
-    });
   }
 
   return { init, screens };

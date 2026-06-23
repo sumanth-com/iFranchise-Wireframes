@@ -5,7 +5,7 @@ const ROLES_MODULE = (() => {
   const k = () => d().kpis;
   let activeRole = "Super Admin";
 
-  const roleBar = () => WF.roleSwitcher(activeRole, d().viewRoles);
+  const roleBar = () => WF.roleSwitcher(WF.getViewRole(activeRole), d().viewRoles);
   const filters = () => WF.toolbar({ filters: ["Role", "Department", "Permission", "Module", "Status", "Type"], showImport: true, showExport: true });
   const exports = () => WF.reportActions();
   const sampleRole = () => d().roles.find((r) => r.name === "Sales Manager") || d().roles[0];
@@ -535,6 +535,7 @@ const ROLES_MODULE = (() => {
   ];
 
   function init() {
+    WF.resetViewRole(activeRole);
     WF_SPA.init({
       moduleKey: "roles",
       moduleLabel: "Role & Permission Management",
@@ -546,16 +547,6 @@ const ROLES_MODULE = (() => {
       screens
     });
 
-    document.body.addEventListener("click", (e) => {
-      const roleBtn = e.target.closest("[data-role]");
-      if (roleBtn && roleBtn.closest(".wf-role-bar")) {
-        activeRole = roleBtn.getAttribute("data-role");
-        document.querySelectorAll(".wf-role-bar [data-role]").forEach((btn) => {
-          btn.classList.toggle("wf-btn--primary", btn.getAttribute("data-role") === activeRole);
-        });
-        WF.showToast(`Security view as ${activeRole}`);
-      }
-    });
   }
 
   return { init, screens };

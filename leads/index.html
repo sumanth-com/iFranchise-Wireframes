@@ -2,8 +2,8 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Lead Management — FranchiseCRM Wireframe</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>Lead Management — iFranchise CRM</title>
   <link rel="stylesheet" href="../css/wireframe.css">
 </head>
 <body>
@@ -23,7 +23,7 @@
             <a href="../customers/index.html#create" class="wf-btn wf-btn--sm wf-btn--primary">Convert to Customer</a>
           `)}
           ${WF.toolbar()}
-          <div class="wf-card"><div class="wf-card__body"><div class="wf-chart-placeholder" style="height:200px">Lead Pipeline — Placeholder</div></div></div>
+          <div class="wf-card"><div class="wf-card__body">${WF.chartPlaceholder("Lead Pipeline", "Placeholder")}</div></div>
           <p style="margin-top:16px;font-size:13px;color:var(--wf-text-muted)"><a href="../customers/index.html#list">→ Go to Customer List</a></p>
         `
       });

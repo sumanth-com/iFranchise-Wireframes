@@ -1,7 +1,7 @@
 /* Approval Management — Mock Data */
 
 const APPROVAL_DATA = {
-  roles: ["CEO", "Admin", "Operations Manager", "Sales Manager", "Team Lead", "Accounts", "Brand Owner", "Sales Executive"],
+  roles: ["CEO", "Co-Founder", "Admin", "Operations Manager", "Sales Manager", "Team Lead", "Accounts", "Brand Owner", "Sales Executive"],
   workflow: ["Draft", "Submitted", "Manager Review", "Operations Review", "CEO Approval", "Approved"],
   altStatuses: ["Rejected", "Returned for Changes"],
   types: [
@@ -29,7 +29,7 @@ const APPROVAL_DATA = {
     {
       id: "APR-2024-041", type: "Agreement Approval", module: "Agreements",
       reference: "AGR-2024-018 · Meera Iyer", requestedBy: "Himani Bhargava", department: "Sales",
-      priority: "Critical", status: "CEO Approval", currentApprover: "CEO", level: "Level 3 of 3",
+      priority: "Critical", status: "CEO Approval", currentApprover: "Abdul Syed", level: "Level 3 of 3",
       dueDate: "25 Jun 2024", dueDateRaw: "2024-06-25", createdDate: "20 Jun 2024",
       reason: "Final franchise agreement for Kasturi Family Dining — Pune. All prior approvals complete.",
       notes: "Legal review completed. Payment schedule attached.",
@@ -94,13 +94,13 @@ const APPROVAL_DATA = {
   levels: [
     { level: 1, name: "Manager Review", approver: "Himani Bhargava", status: "Completed", date: "24 Jun 2024" },
     { level: 2, name: "Operations Review", approver: "Om Anil", status: "In Progress", date: "—" },
-    { level: 3, name: "CEO Approval", approver: "CEO", status: "Pending", date: "—" }
+    { level: 3, name: "CEO Approval", approver: "Abdul Syed", status: "Pending", date: "—" }
   ],
 
   comments: [
     { author: "Himani Bhargava", role: "Team Lead", time: "24 Jun 2024, 3:45 PM", body: "Approved at manager level. Discount justified given customer's F&B experience and site readiness. Ops to confirm territory." },
     { author: "Om Anil", role: "Operations Manager", time: "25 Jun 2024, 10:20 AM", body: "Reviewing territory exclusivity clause. Will respond by EOD." },
-    { author: "Abdul Syed", role: "Sales Executive", time: "23 Jun 2024, 11:00 AM", body: "Submitted with supporting ROI analysis and customer profile." }
+    { author: "Abdul Syed", role: "CEO", time: "23 Jun 2024, 11:00 AM", body: "Submitted with supporting ROI analysis and customer profile." }
   ],
 
   documents: [
@@ -128,7 +128,7 @@ const APPROVAL_DATA = {
   decisions: [
     { date: "24 Jun 2024", decision: "Approved", actor: "Himani Bhargava", level: "Manager Review", comment: "Discount justified. Proceed to operations." },
     { date: "—", decision: "Pending", actor: "Om Anil", level: "Operations Review", comment: "—" },
-    { date: "—", decision: "Pending", actor: "CEO", level: "CEO Approval", comment: "—" }
+    { date: "—", decision: "Pending", actor: "Abdul Syed", level: "CEO Approval", comment: "—" }
   ],
 
   auditLog: [
@@ -137,11 +137,11 @@ const APPROVAL_DATA = {
     { timestamp: "24 Jun 2024, 15:45:33", user: "Himani Bhargava", action: "APPROVE", entity: "APR-2024-042", details: "Manager level approved" },
     { timestamp: "24 Jun 2024, 09:00:01", user: "System", action: "STATUS_CHANGE", entity: "APR-2024-042", details: "Draft → Submitted → Manager Review" },
     { timestamp: "23 Jun 2024, 11:00:22", user: "Abdul Syed", action: "CREATE", entity: "APR-2024-042", details: "Approval request created" },
-    { timestamp: "23 Jun 2024, 16:30:08", user: "CEO", action: "REJECT", entity: "APR-2024-036", details: "Brand approval rejected — territory overlap" }
+    { timestamp: "23 Jun 2024, 16:30:08", user: "Abdul Syed", action: "REJECT", entity: "APR-2024-036", details: "Brand approval rejected — territory overlap" }
   ],
 
   escalated: [
-    { id: "APR-2024-033", type: "Agreement Approval", reference: "AGR-2024-015", requestedBy: "Sumanth", priority: "Critical", status: "Escalated", currentApprover: "CEO", dueDate: "24 Jun 2024", escalatedOn: "25 Jun 2024", reason: "SLA breached — pending CEO approval 48+ hours" },
+    { id: "APR-2024-033", type: "Agreement Approval", reference: "AGR-2024-015", requestedBy: "Sumanth", priority: "Critical", status: "Escalated", currentApprover: "Abdul Syed", dueDate: "24 Jun 2024", escalatedOn: "25 Jun 2024", reason: "SLA breached — pending CEO approval 48+ hours" },
     { id: "APR-2024-031", type: "Payment Verification", reference: "PAY-2024-108", requestedBy: "Fazil", priority: "High", status: "Escalated", currentApprover: "Operations Manager", dueDate: "23 Jun 2024", escalatedOn: "25 Jun 2024", reason: "No action from assigned approver within SLA" }
   ],
 

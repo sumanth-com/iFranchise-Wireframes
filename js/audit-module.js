@@ -5,7 +5,7 @@ const AUDIT_MODULE = (() => {
   const k = () => d().kpis;
   let activeRole = "Security Administrator";
 
-  const roleBar = () => WF.roleSwitcher(activeRole, d().viewRoles);
+  const roleBar = () => WF.roleSwitcher(WF.getViewRole(activeRole), d().viewRoles);
   const filters = () => WF.auditToolbar();
   const exports = () => WF.reportActions();
   const sampleLog = () => d().logs[0];
@@ -451,6 +451,7 @@ const AUDIT_MODULE = (() => {
   ];
 
   function init() {
+    WF.resetViewRole(activeRole);
     WF_SPA.init({
       moduleKey: "audit",
       moduleLabel: "Audit & Activity Logs",
@@ -462,17 +463,6 @@ const AUDIT_MODULE = (() => {
       screens
     });
 
-    document.body.addEventListener("click", (e) => {
-      const roleBtn = e.target.closest("[data-role]");
-      if (roleBtn && roleBtn.closest(".wf-role-bar")) {
-        activeRole = roleBtn.getAttribute("data-role");
-        document.querySelectorAll(".wf-role-bar [data-role]").forEach((btn) => {
-          btn.classList.toggle("wf-btn--primary", btn.getAttribute("data-role") === activeRole);
-        });
-        const ownOnly = activeRole === "Sales Executive (Own Activity Only)";
-        WF.showToast(ownOnly ? "Viewing own activity only" : `Viewing as ${activeRole}`);
-      }
-    });
   }
 
   return { init, screens };

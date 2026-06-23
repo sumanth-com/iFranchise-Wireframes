@@ -5,7 +5,7 @@ const ACCOUNTS_MODULE = (() => {
   const inv = () => ACCOUNTS_DATA.invoices[0];
   let activeRole = "CEO";
 
-  const roleBar = () => WF.roleSwitcher(activeRole, ACCOUNTS_DATA.roles);
+  const roleBar = () => WF.roleSwitcher(WF.getViewRole(activeRole), ACCOUNTS_DATA.roles);
 
   const paymentTabs = (active) => WF.spaTabs([
     { id: "payment-details", label: "Overview" },
@@ -42,20 +42,22 @@ const ACCOUNTS_MODULE = (() => {
         </div>
         <div class="wf-grid-2 wf-mb-20">
           <div class="wf-card"><div class="wf-card__header"><span class="wf-card__title">Revenue Trend</span><button data-screen="revenue-analytics" class="wf-btn wf-btn--sm">View</button></div>
-            <div class="wf-card__body"><div class="wf-chart-placeholder" style="height:240px">Area Chart — Monthly Revenue (₹ Cr) Jan–Jun 2024</div></div>
+            <div class="wf-card__body">${WF.chartPlaceholder("Area Chart", "Monthly Revenue (₹ Cr) Jan–Jun 2024")}</div>
           </div>
           <div class="wf-card"><div class="wf-card__header"><span class="wf-card__title">Department Collections</span></div>
-            <div class="wf-card__body"><div class="wf-chart-placeholder">Bar Chart — Franchise Fee · Royalty · Booking · Training</div></div>
+            <div class="wf-card__body">${WF.chartPlaceholder("Bar Chart", "Franchise Fee · Royalty · Booking · Training")}</div>
           </div>
         </div>
-        <div class="wf-grid-2">
-          <div class="wf-card"><div class="wf-card__header"><span class="wf-card__title">Recent Transactions</span><button data-screen="payment-list" class="wf-btn wf-btn--sm">All Payments</button></div>
-            <div class="wf-card__body" style="padding:0">${WF.paymentTable(ACCOUNTS_DATA.payments.slice(0, 4), { showActions: false })}</div>
-          </div>
-          <div class="wf-card"><div class="wf-card__header"><span class="wf-card__title">Pending Dues</span><button data-screen="pending-dues" class="wf-btn wf-btn--sm">View All</button></div>
-            <div class="wf-table-wrap" style="border:none"><table class="wf-table"><thead><tr><th>Customer</th><th>Amount</th><th>Due</th><th>Status</th></tr></thead>
+        <div class="wf-card wf-dashboard-full">
+          <div class="wf-card__header"><span class="wf-card__title">Recent Transactions</span><button data-screen="payment-list" class="wf-btn wf-btn--sm">All Payments</button></div>
+          <div class="wf-card__body" style="padding:0">${WF.paymentTable(ACCOUNTS_DATA.payments.slice(0, 4), { showActions: false, compact: true, hidePagination: true })}</div>
+        </div>
+        <div class="wf-card">
+          <div class="wf-card__header"><span class="wf-card__title">Pending Dues</span><button data-screen="pending-dues" class="wf-btn wf-btn--sm">View All</button></div>
+          <div class="wf-card__body" style="padding:0">
+            <div class="wf-table-wrap wf-table-wrap--fit" style="border:none"><table class="wf-table wf-table--fit wf-table--compact"><thead><tr><th>Customer</th><th>Amount</th><th>Due</th><th>Status</th></tr></thead>
             <tbody>${ACCOUNTS_DATA.pendingDues.slice(0, 4).map(d => `<tr>
-              <td>${WF.esc(d.customer)}</td><td>${WF.formatINR(d.amount)}</td><td>${WF.esc(d.dueDate)}</td>
+              <td class="wf-table__cell-clip">${WF.esc(d.customer)}</td><td>${WF.formatINR(d.amount)}</td><td>${WF.esc(d.dueDate)}</td>
               <td><span class="wf-badge${d.status === "Overdue" ? " wf-badge--dark" : ""}">${WF.esc(d.status)}</span></td>
             </tr>`).join("")}</tbody></table></div>
           </div>
@@ -263,7 +265,7 @@ const ACCOUNTS_MODULE = (() => {
           <div class="wf-stat-card"><div class="wf-stat-card__label">IGST</div><div class="wf-stat-card__value" style="font-size:18px">${WF.formatINR(ACCOUNTS_DATA.gstSummary.igst)}</div></div>
         </div>
         <div class="wf-card wf-mb-16"><div class="wf-card__header"><span class="wf-card__title">Total GST Payable</span><span style="font-size:20px;font-weight:700">${WF.formatINR(ACCOUNTS_DATA.gstSummary.totalGst)}</span></div>
-          <div class="wf-card__body"><div class="wf-chart-placeholder" style="height:220px">Stacked Bar — CGST / SGST / IGST by Month (Jun 2024)</div></div>
+          <div class="wf-card__body">${WF.chartPlaceholder("Stacked Bar", "CGST / SGST / IGST by Month (Jun 2024)")}</div>
         </div>
         <div class="wf-card"><div class="wf-card__header"><span class="wf-card__title">GST by Invoice</span><span class="wf-badge">${ACCOUNTS_DATA.gstSummary.invoices} invoices</span></div>
           <div class="wf-card__body" style="padding:0">${WF.invoiceTable(ACCOUNTS_DATA.invoices, { showActions: false })}</div>
@@ -287,7 +289,7 @@ const ACCOUNTS_MODULE = (() => {
           <div class="wf-card__body" style="padding:0">${WF.paymentTable(ACCOUNTS_DATA.payments.filter(x => x.status === "Completed" || x.status === "Verified"))}</div>
         </div>
         <div class="wf-card wf-mt-16"><div class="wf-card__header"><span class="wf-card__title">Collection by Payment Method</span></div>
-          <div class="wf-card__body"><div class="wf-chart-placeholder">Pie Chart — NEFT · UPI · Cheque · RTGS</div></div>
+          <div class="wf-card__body">${WF.chartPlaceholder("Pie Chart", "NEFT · UPI · Cheque · RTGS")}</div>
         </div>
       `
     },
@@ -438,18 +440,18 @@ const ACCOUNTS_MODULE = (() => {
           <div class="wf-stat-card"><div class="wf-stat-card__label">Success Rate</div><div class="wf-stat-card__value">${ACCOUNTS_DATA.kpis.successRate}%</div></div>
         </div>
         <div class="wf-card wf-mb-16"><div class="wf-card__header"><span class="wf-card__title">Revenue Trend</span></div>
-          <div class="wf-card__body"><div class="wf-chart-placeholder" style="height:280px">Line Chart — Monthly Revenue ₹ Cr (Jan–Jun 2024) with YoY comparison</div></div>
+          <div class="wf-card__body">${WF.chartPlaceholder("Line Chart", "Monthly Revenue ₹ Cr (Jan–Jun 2024) with YoY comparison")}</div>
         </div>
         <div class="wf-grid-2">
           <div class="wf-card"><div class="wf-card__header"><span class="wf-card__title">Revenue by Brand</span></div>
-            <div class="wf-card__body"><div class="wf-chart-placeholder">Horizontal Bar — Odette · OBC · Kasturi · Tea Time · BWC</div></div>
+            <div class="wf-card__body">${WF.chartPlaceholder("Horizontal Bar", "Odette · OBC · Kasturi · Tea Time · BWC")}</div>
           </div>
           <div class="wf-card"><div class="wf-card__header"><span class="wf-card__title">Revenue by City</span></div>
-            <div class="wf-card__body"><div class="wf-chart-placeholder">Bar Chart — Bengaluru · Mumbai · Delhi · Hyderabad · Pune</div></div>
+            <div class="wf-card__body">${WF.chartPlaceholder("Bar Chart", "Bengaluru · Mumbai · Delhi · Hyderabad · Pune")}</div>
           </div>
         </div>
         <div class="wf-card wf-mt-16"><div class="wf-card__header"><span class="wf-card__title">Payment Type Breakdown</span></div>
-          <div class="wf-card__body"><div class="wf-chart-placeholder" style="height:200px">Stacked Bar — Franchise Fee · Booking · Royalty · Security Deposit · Training</div></div>
+          <div class="wf-card__body">${WF.chartPlaceholder("Stacked Bar", "Franchise Fee · Booking · Royalty · Security Deposit · Training")}</div>
         </div>
       `
     },
@@ -476,6 +478,7 @@ const ACCOUNTS_MODULE = (() => {
   ];
 
   function init() {
+    WF.resetViewRole(activeRole);
     WF_SPA.init({
       moduleKey: "accounts",
       moduleLabel: "Accounts & Payments",
@@ -487,17 +490,6 @@ const ACCOUNTS_MODULE = (() => {
       screens
     });
 
-    document.body.addEventListener("click", (e) => {
-      const roleBtn = e.target.closest("[data-role]");
-      if (roleBtn) {
-        activeRole = roleBtn.getAttribute("data-role");
-        document.querySelectorAll("[data-role]").forEach((btn) => {
-          btn.classList.toggle("wf-btn--primary", btn.getAttribute("data-role") === activeRole);
-        });
-        const msg = activeRole === "Sales Executive" ? "View only — own records" : activeRole === "Brand Owner" ? "Viewing own brand records" : `Viewing as ${activeRole}`;
-        WF.showToast(msg);
-      }
-    });
   }
 
   return { init, screens };

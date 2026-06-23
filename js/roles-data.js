@@ -1,7 +1,7 @@
 /* Role & Permission Management — Mock Data */
 
 const ROLES_DATA = {
-  systemRoles: ["Super Admin", "CEO", "Operations Manager", "Sales Manager", "Team Lead", "Sales Executive", "Brand Owner", "Accounts", "HR", "Marketing", "Legal", "Support", "Read Only User"],
+  systemRoles: ["Super Admin", "CEO", "Co-Founder", "Operations Manager", "Sales Manager", "Team Lead", "Sales Executive", "Brand Owner", "Accounts", "HR", "Marketing", "Legal", "Support", "Read Only User"],
   viewRoles: ["Super Admin", "CEO", "Admin", "Operations Manager", "Sales Manager", "Team Lead", "HR"],
   departments: ["Sales", "Operations", "Accounts", "Marketing", "HR", "Technology", "Legal", "Support", "Executive"],
   users: ["Abdul Syed", "Abrar", "Himani Bhargava", "Om Anil", "Sumanth", "Fazil", "Diksha", "Akshita", "Swetha"],
@@ -32,7 +32,8 @@ const ROLES_DATA = {
 
   roles: [
     { id: "ROL-2019-001", name: "Super Admin", department: "Executive", users: 2, permissions: 312, parent: "—", status: "Active", isCustom: false, color: "#333333", description: "Full system access — restricted to IT security team", mfa: true, updated: "10 Jan 2024" },
-    { id: "ROL-2019-002", name: "CEO", department: "Executive", users: 1, permissions: 248, parent: "Super Admin", status: "Active", isCustom: false, color: "#444444", description: "Executive visibility across all modules", mfa: true, updated: "15 Mar 2024" },
+    { id: "ROL-2019-002", name: "CEO", department: "Executive", users: 1, permissions: 248, parent: "Super Admin", status: "Active", isCustom: false, color: "#444444", description: "Abdul Syed — executive visibility across all modules", mfa: true, updated: "15 Mar 2024" },
+    { id: "ROL-2019-002b", name: "Co-Founder", department: "Executive", users: 1, permissions: 240, parent: "Super Admin", status: "Active", isCustom: false, color: "#555555", description: "Abrar — co-founder executive access", mfa: true, updated: "15 Mar 2024" },
     { id: "ROL-2020-003", name: "Operations Manager", department: "Operations", users: 3, permissions: 186, parent: "CEO", status: "Active", isCustom: false, color: "#666666", description: "Operations, approvals, and cross-department coordination", mfa: true, updated: "20 Jun 2024" },
     { id: "ROL-2021-004", name: "Sales Manager", department: "Sales", users: 4, permissions: 164, parent: "CEO", status: "Active", isCustom: false, color: "#555555", description: "Full sales pipeline, team management, and reporting", mfa: true, updated: "25 Jun 2024" },
     { id: "ROL-2021-005", name: "Team Lead", department: "Sales", users: 8, permissions: 128, parent: "Sales Manager", status: "Active", isCustom: false, color: "#777777", description: "Team oversight, lead assignment, limited approvals", mfa: false, updated: "22 Jun 2024" },
@@ -48,23 +49,23 @@ const ROLES_DATA = {
   templates: [
     { name: "Sales Team Standard", roles: 3, permissions: 128, description: "Team Lead + Sales Executive baseline" },
     { name: "Finance & Accounts", roles: 2, permissions: 112, description: "Accounts + Read-only auditor" },
-    { name: "Executive Suite", roles: 2, permissions: 248, description: "CEO + Operations Manager" },
+    { name: "Executive Suite", roles: 2, permissions: 248, description: "CEO (Abdul Syed) + Co-Founder (Abrar)" },
     { name: "Brand Partner Portal", roles: 1, permissions: 64, description: "Brand Owner limited access" },
     { name: "HR Onboarding Kit", roles: 2, permissions: 98, description: "HR + invite-only user setup" }
   ],
 
   accessRequests: [
-    { id: "AR-089", user: "Abdul Syed", role: "Sales Executive", module: "Reports", permission: "Export", reason: "Q2 pipeline report for management", requested: "25 Jun 2024", status: "Pending" },
+    { id: "AR-089", user: "Himani Bhargava", role: "Sales Manager", module: "Reports", permission: "Export", reason: "Q2 pipeline report for management", requested: "25 Jun 2024", status: "Pending" },
     { id: "AR-088", user: "Diksha", role: "Team Lead", module: "Automation", permission: "Configure", reason: "Setup lead follow-up workflow", requested: "24 Jun 2024", status: "Pending" },
     { id: "AR-087", user: "Fazil", role: "Accounts", module: "Users", permission: "View", reason: "Cross-check payment approvers", requested: "23 Jun 2024", status: "Approved" },
-    { id: "AR-086", user: "Abrar", role: "Sales Executive", module: "Documents", permission: "Download", reason: "Agreement template for client", requested: "22 Jun 2024", status: "Rejected" }
+    { id: "AR-086", user: "Diksha", role: "Team Lead", module: "Documents", permission: "Download", reason: "Agreement template for client", requested: "22 Jun 2024", status: "Rejected" }
   ],
 
   auditLog: [
     { time: "25 Jun 10:30", user: "Super Admin", action: "Updated permissions", target: "Sales Manager", details: "Granted Export on Reports" },
     { time: "25 Jun 09:15", user: "HR", action: "Assigned role", target: "Rahul Mehta", details: "Sales Executive" },
     { time: "24 Jun 16:00", user: "Super Admin", action: "Created custom role", target: "Franchise Onboarding", details: "12 module permissions" },
-    { time: "24 Jun 14:20", user: "CEO", action: "Approved access request", target: "Fazil", details: "Users.View — permanent" },
+    { time: "24 Jun 14:20", user: "Abdul Syed", action: "Approved access request", target: "Fazil", details: "Users.View — permanent" },
     { time: "23 Jun 11:00", user: "Super Admin", action: "Revoked permission", target: "Read Only User", details: "Documents.Download removed" },
     { time: "22 Jun 09:30", user: "Super Admin", action: "Cloned role", target: "Sales Manager — Hyderabad", details: "From Sales Manager" }
   ],
@@ -72,7 +73,7 @@ const ROLES_DATA = {
   assignmentHistory: [
     { date: "25 Jun 2024", user: "Rahul Mehta", fromRole: "—", toRole: "Sales Executive", by: "Swetha", reason: "New hire onboarding" },
     { date: "20 Jun 2024", user: "Diksha", fromRole: "Sales Executive", toRole: "Team Lead", by: "Himani Bhargava", reason: "Promotion" },
-    { date: "15 Jun 2024", user: "Abdul Syed", fromRole: "Sales Executive", toRole: "Sales Executive", by: "Himani Bhargava", reason: "Region change — Bengaluru" },
+    { date: "15 Jun 2024", user: "Abdul Syed", fromRole: "Sales Executive", toRole: "CEO", by: "Board", reason: "Promoted to Chief Executive Officer" },
     { date: "08 Jan 2024", user: "Swetha", fromRole: "—", toRole: "HR", by: "Om Anil", reason: "New hire" }
   ],
 
@@ -124,7 +125,7 @@ const ROLES_DATA = {
 
   timeline: [
     { title: "Permission updated — Sales Manager", time: "25 Jun 10:30", user: "Super Admin", desc: "Export granted on Reports module" },
-    { title: "Access request approved", time: "24 Jun 14:20", user: "CEO", desc: "Fazil — Users.View" },
+    { title: "Access request approved", time: "24 Jun 14:20", user: "Abdul Syed", desc: "Fazil — Users.View" },
     { title: "Custom role created", time: "24 Jun 16:00", user: "Super Admin", desc: "Franchise Onboarding" },
     { title: "Failed access attempt blocked", time: "24 Jun 18:30", user: "System", desc: "Abrar — Roles.Configure denied" },
     { title: "Role cloned", time: "22 Jun 09:30", user: "Super Admin", desc: "Sales Manager — Hyderabad from Sales Manager" }

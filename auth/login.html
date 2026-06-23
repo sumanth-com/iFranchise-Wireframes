@@ -2,39 +2,31 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Login — FranchiseCRM Wireframe</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>Login — iFranchise CRM</title>
   <link rel="stylesheet" href="../css/wireframe.css">
-  <style>
-    .wf-auth { min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 24px; }
-    .wf-auth__card { width: 100%; max-width: 400px; }
-    .wf-auth__logo { text-align: center; margin-bottom: 24px; }
-    .wf-auth__logo-icon { width: 48px; height: 48px; background: var(--wf-placeholder-dark); border-radius: var(--wf-radius); margin: 0 auto 12px; }
-    .wf-auth__title { font-size: 20px; font-weight: 700; }
-    .wf-auth__subtitle { font-size: 13px; color: var(--wf-text-secondary); }
-  </style>
 </head>
 <body>
   <div class="wf-auth">
     <div class="wf-auth__card wf-card">
       <div class="wf-card__body">
-        <div class="wf-auth__logo">
-          <div class="wf-auth__logo-icon"></div>
-          <div class="wf-auth__title">FranchiseCRM</div>
+        <div class="wf-auth__logo" style="text-align:center;margin-bottom:24px">
+          <div class="wf-auth__logo-icon" aria-hidden="true">iF</div>
+          <div class="wf-auth__title">iFranchise CRM</div>
           <div class="wf-auth__subtitle">Enterprise Edition</div>
         </div>
         <form class="wf-form" onsubmit="event.preventDefault();window.location.href='../dashboard/index.html'">
           <div class="wf-form__group wf-mb-16">
             <label class="wf-form__label wf-form__label--required">Email</label>
-            <input class="wf-form__input" type="email" placeholder="you@company.com" value="sumanth@franchisecrm.com">
+            <input class="wf-form__input" type="email" placeholder="you@company.com" value="abdul.syed@franchisecrm.com" autocomplete="email">
           </div>
           <div class="wf-form__group wf-mb-16">
             <label class="wf-form__label wf-form__label--required">Password</label>
-            <input class="wf-form__input" type="password" placeholder="••••••••" value="password">
+            <input class="wf-form__input" type="password" placeholder="••••••••" value="password" autocomplete="current-password">
           </div>
-          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;font-size:12px">
-            <label style="display:flex;align-items:center;gap:6px"><input type="checkbox" checked> Remember me</label>
-            <a href="forgot-password.html">Forgot password?</a>
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;font-size:12px;flex-wrap:wrap;gap:8px">
+            <label style="display:flex;align-items:center;gap:6px;min-height:44px"><input type="checkbox" checked> Remember me</label>
+            <a href="forgot-password.html" style="min-height:44px;display:flex;align-items:center">Forgot password?</a>
           </div>
           <button type="submit" class="wf-btn wf-btn--primary" style="width:100%">Sign In</button>
         </form>

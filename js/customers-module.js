@@ -123,7 +123,7 @@ const CUSTOMER_MODULE = (() => {
               <div class="wf-card wf-mb-16"><div class="wf-card__header"><span class="wf-card__title">Customer Information</span></div><div class="wf-card__body">
                 <div class="wf-form__grid wf-form__grid--3">
                   <div class="wf-detail-info__row"><span class="wf-detail-info__label">Email</span><span class="wf-detail-info__value">${WF.esc(c.email)}</span></div>
-                  <div class="wf-detail-info__row"><span class="wf-detail-info__label">Phone</span><span class="wf-detail-info__value">${WF.esc(c.phone)}</span></div>
+                  <div class="wf-detail-info__row"><span class="wf-detail-info__label">Phone</span><span class="wf-detail-info__value">${WF.esc(WF.formatPhone(c.phone))}</span></div>
                   <div class="wf-detail-info__row"><span class="wf-detail-info__label">City</span><span class="wf-detail-info__value">${WF.esc(c.city)}</span></div>
                   <div class="wf-detail-info__row"><span class="wf-detail-info__label">Sales Executive</span><span class="wf-detail-info__value">${WF.esc(c.salesExec)}</span></div>
                   <div class="wf-detail-info__row"><span class="wf-detail-info__label">Source</span><span class="wf-detail-info__value">${WF.esc(c.source)}</span></div>
@@ -206,7 +206,7 @@ const CUSTOMER_MODULE = (() => {
           <div class="wf-form__grid"><div class="wf-detail-info__row"><span class="wf-detail-info__label">Franchise ID</span><span class="wf-detail-info__value">FRN-2024-042</span></div>
           <div class="wf-detail-info__row"><span class="wf-detail-info__label">Launch Date</span><span class="wf-detail-info__value">01 Aug 2024</span></div>
           <div class="wf-detail-info__row"><span class="wf-detail-info__label">Monthly Revenue</span><span class="wf-detail-info__value">₹8,50,000</span></div></div>
-          <div class="wf-chart-placeholder wf-mt-16" style="height:180px">Map Placeholder</div>
+          ${WF.chartPlaceholder("Bar Chart", "Map Placeholder")}
         </div></div></div>
       `
     },

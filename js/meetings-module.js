@@ -4,7 +4,7 @@ const MEETINGS_MODULE = (() => {
   const m = () => MEETING_DATA.meetings[0];
   let activeRole = "CEO";
 
-  const roleBar = () => WF.roleSwitcher(activeRole, MEETING_DATA.roles);
+  const roleBar = () => WF.roleSwitcher(WF.getViewRole(activeRole), MEETING_DATA.roles);
 
   const meetingTabs = (active) => WF.spaTabs([
     { id: "details", label: "Overview" },
@@ -40,25 +40,26 @@ const MEETINGS_MODULE = (() => {
           <div class="wf-stat-card"><div class="wf-stat-card__label">Avg Duration</div><div class="wf-stat-card__value">52 min</div></div>
           <div class="wf-stat-card"><div class="wf-stat-card__label">Upcoming Tasks</div><div class="wf-stat-card__value">12</div></div>
         </div>
+        <div class="wf-card wf-dashboard-full">
+          <div class="wf-card__header"><span class="wf-card__title">Today's Meetings</span><button data-screen="calendar" class="wf-btn wf-btn--sm">Calendar</button></div>
+          <div class="wf-card__body" style="padding:0">${WF.meetingTable(MEETING_DATA.meetings.slice(0, 3), { compact: true, hidePagination: true })}</div>
+        </div>
         <div class="wf-grid-2 wf-mb-20">
-          <div class="wf-card"><div class="wf-card__header"><span class="wf-card__title">Today's Meetings</span><button data-screen="calendar" class="wf-btn wf-btn--sm">Calendar</button></div>
-            <div class="wf-card__body" style="padding:0">${WF.meetingTable(MEETING_DATA.meetings.slice(0, 3))}</div>
-          </div>
           <div class="wf-card"><div class="wf-card__header"><span class="wf-card__title">Calendar Overview</span><button data-screen="calendar" class="wf-btn wf-btn--sm">Full View</button></div>
             <div class="wf-card__body">${WF.calendarView("Week")}</div>
+          </div>
+          <div class="wf-card"><div class="wf-card__header"><span class="wf-card__title">Success Rate Trend</span></div>
+            <div class="wf-card__body">${WF.chartPlaceholder("Line Chart", "Success Rate & Completion by Month")}</div>
           </div>
         </div>
         <div class="wf-grid-2">
           <div class="wf-card"><div class="wf-card__header"><span class="wf-card__title">Pending Follow-ups</span><button data-screen="followups" class="wf-btn wf-btn--sm">View All</button></div>
-            <div class="wf-table-wrap" style="border:none"><table class="wf-table"><thead><tr><th>Task</th><th>Assignee</th><th>Due</th><th>Status</th></tr></thead>
-            <tbody>${MEETING_DATA.followups.filter(f => f.status !== "Completed").map(f => `<tr><td>${WF.esc(f.task)}</td><td>${WF.esc(f.assignee)}</td><td>${WF.esc(f.due)}</td><td><span class="wf-badge">${WF.esc(f.status)}</span></td></tr>`).join("")}</tbody></table></div>
+            <div class="wf-table-wrap wf-table-wrap--fit" style="border:none"><table class="wf-table wf-table--fit wf-table--compact"><thead><tr><th>Task</th><th>Assignee</th><th>Due</th><th>Status</th></tr></thead>
+            <tbody>${MEETING_DATA.followups.filter(f => f.status !== "Completed").map(f => `<tr><td class="wf-table__cell-clip">${WF.esc(f.task)}</td><td class="wf-table__cell-clip">${WF.esc(f.assignee)}</td><td>${WF.esc(f.due)}</td><td><span class="wf-badge">${WF.esc(f.status)}</span></td></tr>`).join("")}</tbody></table></div>
           </div>
           <div class="wf-card"><div class="wf-card__header"><span class="wf-card__title">Recent Activities</span><button data-screen="timeline" class="wf-btn wf-btn--sm">Timeline</button></div>
             <div class="wf-card__body">${WF.timeline(MEETING_DATA.timeline.slice(0, 4))}</div>
           </div>
-        </div>
-        <div class="wf-card wf-mt-16"><div class="wf-card__header"><span class="wf-card__title">Meeting Success Rate Trend</span><button data-screen="analytics" class="wf-btn wf-btn--sm">Analytics</button></div>
-          <div class="wf-card__body"><div class="wf-chart-placeholder" style="height:200px">Line Chart — Success Rate & Completion by Month</div></div>
         </div>
       `
     },
@@ -385,7 +386,7 @@ const MEETINGS_MODULE = (() => {
                 </div>
               </div>
               <div class="wf-card"><div class="wf-card__header"><span class="wf-card__title">Map</span></div>
-                <div class="wf-card__body"><div class="wf-chart-placeholder" style="height:280px">Map — Indiranagar, Bengaluru · Pin location</div></div>
+                <div class="wf-card__body">${WF.chartPlaceholder("Map", "Indiranagar, Bengaluru · Pin location")}</div>
               </div>
               <div class="wf-card wf-mt-16"><div class="wf-card__header"><span class="wf-card__title">Site Visit Checklist</span></div>
                 <div class="wf-card__body">
@@ -456,11 +457,11 @@ const MEETINGS_MODULE = (() => {
           <div class="wf-stat-card"><div class="wf-stat-card__label">Follow-up Rate</div><div class="wf-stat-card__value">68%</div></div>
         </div>
         <div class="wf-grid-2 wf-mb-20">
-          <div class="wf-card"><div class="wf-card__header"><span class="wf-card__title">Meetings by Type</span></div><div class="wf-card__body"><div class="wf-chart-placeholder">Bar Chart — Discovery, Presentation, Site Visit, Legal…</div></div></div>
-          <div class="wf-card"><div class="wf-card__header"><span class="wf-card__title">Meetings by Status</span></div><div class="wf-card__body"><div class="wf-chart-placeholder">Donut Chart — Scheduled / Completed / Cancelled</div></div></div>
+          <div class="wf-card"><div class="wf-card__header"><span class="wf-card__title">Meetings by Type</span></div><div class="wf-card__body">${WF.chartPlaceholder("Bar Chart", "Discovery, Presentation, Site Visit, Legal…")}</div></div>
+          <div class="wf-card"><div class="wf-card__header"><span class="wf-card__title">Meetings by Status</span></div><div class="wf-card__body">${WF.chartPlaceholder("Donut Chart", "Scheduled / Completed / Cancelled")}</div></div>
         </div>
         <div class="wf-grid-2">
-          <div class="wf-card"><div class="wf-card__header"><span class="wf-card__title">Success Rate by Brand</span></div><div class="wf-card__body"><div class="wf-chart-placeholder">Horizontal Bar — Odette, OBC, Kasturi, Tea Time…</div></div></div>
+          <div class="wf-card"><div class="wf-card__header"><span class="wf-card__title">Success Rate by Brand</span></div><div class="wf-card__body">${WF.chartPlaceholder("Horizontal Bar", "Odette, OBC, Kasturi, Tea Time…")}</div></div>
           <div class="wf-card"><div class="wf-card__header"><span class="wf-card__title">Team Performance</span></div>
             <div class="wf-table-wrap" style="border:none"><table class="wf-table"><thead><tr><th>Organizer</th><th>Meetings</th><th>Completed</th><th>Success %</th></tr></thead>
             <tbody>
@@ -472,13 +473,14 @@ const MEETINGS_MODULE = (() => {
           </div>
         </div>
         <div class="wf-card wf-mt-16"><div class="wf-card__header"><span class="wf-card__title">Meeting Volume Trend</span></div>
-          <div class="wf-card__body"><div class="wf-chart-placeholder" style="height:240px">Area Chart — Meetings per Week (Scheduled vs Completed)</div></div>
+          <div class="wf-card__body">${WF.chartPlaceholder("Area Chart", "Meetings per Week (Scheduled vs Completed)")}</div>
         </div>
       `
     }
   ];
 
   function init() {
+    WF.resetViewRole(activeRole);
     WF_SPA.init({
       moduleKey: "meetings",
       moduleLabel: "Meeting Management",
@@ -491,15 +493,6 @@ const MEETINGS_MODULE = (() => {
     });
 
     document.body.addEventListener("click", (e) => {
-      const roleBtn = e.target.closest("[data-role]");
-      if (roleBtn) {
-        activeRole = roleBtn.getAttribute("data-role");
-        document.querySelectorAll("[data-role]").forEach((btn) => {
-          btn.classList.toggle("wf-btn--primary", btn.getAttribute("data-role") === activeRole);
-        });
-        WF.showToast(`Viewing as ${activeRole}`);
-      }
-
       const listView = e.target.closest("[data-list-view]");
       if (listView && WF_SPA.getCurrent() === "list") {
         const view = listView.getAttribute("data-list-view");

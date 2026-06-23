@@ -1,7 +1,7 @@
 /* Document Management — Mock Data */
 
 const DOCUMENT_DATA = {
-  roles: ["CEO", "Admin", "Operations Manager", "Accounts", "Sales Manager", "Sales Executive", "Brand Owner", "Customer"],
+  roles: ["CEO", "Co-Founder", "Admin", "Operations Manager", "Accounts", "Sales Manager", "Sales Executive", "Brand Owner", "Customer"],
   workflow: ["Uploaded", "Pending Verification", "Verified", "Approved", "Archived"],
   altStatuses: ["Rejected"],
   categories: [
@@ -40,7 +40,7 @@ const DOCUMENT_DATA = {
       module: "Agreements", customer: "Meera Iyer", brand: "Kasturi", model: "Kasturi Family Dining",
       linkedTo: "AGR-2024-018", uploadedBy: "Sumanth", uploadDate: "22 Jun 2024", uploadDateRaw: "2024-06-22",
       expiryDate: "22 Jun 2029", expiryDateRaw: "2029-06-22", size: "3.8 MB", fileType: "PDF", version: 3,
-      status: "Approved", verification: "Verified", approvedBy: "CEO",
+      status: "Approved", verification: "Verified", approvedBy: "Abdul Syed",
       agreement: "AGR-2024-018", payment: "", tags: ["agreement", "kasturi", "pune"], remarks: "Final signed agreement — CEO approved.",
       city: "Pune", downloads: 12
     },
@@ -103,7 +103,7 @@ const DOCUMENT_DATA = {
   ],
 
   versions: [
-    { version: 3, uploadedBy: "Sumanth", date: "22 Jun 2024", size: "3.8 MB", changes: "CEO countersigned — final version", current: true },
+    { version: 3, uploadedBy: "Abdul Syed", date: "22 Jun 2024", size: "3.8 MB", changes: "CEO countersigned — final version", current: true },
     { version: 2, uploadedBy: "Sumanth", date: "20 Jun 2024", size: "3.6 MB", changes: "Legal revisions incorporated", current: false },
     { version: 1, uploadedBy: "Sumanth", date: "18 Jun 2024", size: "3.5 MB", changes: "Initial draft uploaded", current: false }
   ],
@@ -129,7 +129,7 @@ const DOCUMENT_DATA = {
     { time: "24 Jun 2024, 3:00 PM", title: "Document uploaded", desc: "PAN Card — Rahul Sharma uploaded by Abdul Syed.", user: "Abdul Syed" },
     { time: "24 Jun 2024, 3:01 PM", title: "Pending verification", desc: "Queued for KYC verification.", user: "System" },
     { time: "23 Jun 2024, 11:30 AM", title: "Version updated", desc: "Aadhaar — Priya Nair updated to v2.", user: "Diksha" },
-    { time: "22 Jun 2024, 4:00 PM", title: "Document approved", desc: "Franchise Agreement — Meera Iyer approved by CEO.", user: "CEO" }
+    { time: "22 Jun 2024, 4:00 PM", title: "Document approved", desc: "Franchise Agreement — Meera Iyer approved by CEO.", user: "Abdul Syed" }
   ],
 
   auditLog: [
@@ -137,7 +137,7 @@ const DOCUMENT_DATA = {
     { timestamp: "24 Jun 2024, 15:01:05", user: "System", action: "UPLOAD", entity: "DOC-2024-156", details: "PAN Card uploaded — 420 KB PDF" },
     { timestamp: "24 Jun 2024, 10:15:33", user: "Abdul Syed", action: "SHARE", entity: "DOC-2024-140", details: "Shared Brand Deck with Rahul Sharma" },
     { timestamp: "23 Jun 2024, 11:30:18", user: "Diksha", action: "VERSION", entity: "DOC-2024-155", details: "Uploaded v2 — Aadhaar Priya Nair" },
-    { timestamp: "22 Jun 2024, 16:00:42", user: "CEO", action: "APPROVE", entity: "DOC-2024-154", details: "Franchise Agreement approved" },
+    { timestamp: "22 Jun 2024, 16:00:42", user: "Abdul Syed", action: "APPROVE", entity: "DOC-2024-154", details: "Franchise Agreement approved" },
     { timestamp: "15 Jun 2024, 14:20:08", user: "Fazil", action: "REJECT", entity: "DOC-2024-148", details: "Bank Statement rejected — outdated" }
   ],
 

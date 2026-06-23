@@ -1,7 +1,7 @@
 /* System Configuration — Mock Data */
 
 const CONFIG_DATA = {
-  viewRoles: ["Super Admin", "CEO", "Admin", "Operations Manager", "Security Administrator", "IT Administrator", "Accounts", "HR", "Read Only Administrator"],
+  viewRoles: ["Super Admin", "CEO", "Co-Founder", "Admin", "Operations Manager", "Security Administrator", "IT Administrator", "Accounts", "HR", "Read Only Administrator"],
   categories: ["General", "Organization", "Branding", "Communication", "Security", "Storage", "Automation", "API", "Integration", "Localization", "Compliance", "Licensing", "Performance", "Database"],
 
   categoryNav: [
@@ -37,7 +37,7 @@ const CONFIG_DATA = {
     name: "iFranchise",
     website: "https://www.ifranchise.com",
     supportEmail: "support@ifranchise.com",
-    supportPhone: "+91 80 4567 8900",
+    supportPhone: "+91 80456 78900",
     gst: "29AABCI1234F1Z5",
     pan: "AABCI1234F",
     address: "Indiranagar, Bengaluru, Karnataka 560038, India",
@@ -46,7 +46,7 @@ const CONFIG_DATA = {
   },
 
   branches: [
-    { name: "HQ — Bengaluru", city: "Bengaluru", head: "Sumanth", employees: 86, status: "Active" },
+    { name: "HQ — Bengaluru", city: "Bengaluru", head: "Abdul Syed", employees: 86, status: "Active" },
     { name: "Mumbai Office", city: "Mumbai", head: "Fazil", employees: 42, status: "Active" },
     { name: "Hyderabad Office", city: "Hyderabad", head: "Himani Bhargava", employees: 38, status: "Active" },
     { name: "Chennai Office", city: "Chennai", head: "Akshita", employees: 24, status: "Active" }

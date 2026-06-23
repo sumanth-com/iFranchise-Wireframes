@@ -16,15 +16,18 @@ const WF_SPA = (() => {
         <div class="wf-main">
           ${WF.topbar(moduleConfig.searchPlaceholder)}
           <main class="wf-content">
+            <div class="wf-ptr-indicator" id="wf-ptr-indicator">Pull to refresh</div>
             <nav class="wf-breadcrumb" id="wf-breadcrumb" aria-label="Breadcrumb"></nav>
             <div id="wf-screen-container"></div>
           </main>
         </div>
       </div>
+      ${WF.mobileBottomNav(moduleConfig.screens, moduleConfig.defaultScreen)}
       ${moduleConfig.modals ? moduleConfig.modals() : WF.modals()}
     `;
 
     document.body.dataset.wfShellBound = "";
+    document.body.classList.add("wf-spa-module");
     WF.bindEvents();
     bindSpaNav();
 
@@ -61,7 +64,9 @@ const WF_SPA = (() => {
       el.classList.toggle("wf-sidebar__link--active", el.getAttribute("data-screen") === screenId);
     });
 
-    document.title = `${screen.label} — ${config.moduleTitle} — FranchiseCRM`;
+    WF.updateBottomNavActive(screenId);
+
+    document.title = `${screen.label} — ${config.moduleTitle} — ${WF.BRAND_NAME}`;
     window.scrollTo({ top: 0, behavior: "smooth" });
     document.querySelector(".wf-content")?.scrollTo({ top: 0 });
 
@@ -79,6 +84,8 @@ const WF_SPA = (() => {
       if (!sid || !screens[sid]) return;
       e.preventDefault();
       navigate(sid);
+      document.getElementById("wf-sidebar")?.classList.remove("is-open");
+      document.getElementById("wf-sidebar-overlay")?.classList.remove("is-visible");
     });
   }
 

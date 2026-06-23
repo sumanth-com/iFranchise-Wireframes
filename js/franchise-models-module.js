@@ -21,7 +21,7 @@ const FRANCHISE_MODELS_MODULE = (() => {
     { id: "timeline", label: "Activity Log" }
   ], active);
 
-  const roleBar = () => WF.roleSwitcher(activeRole);
+  const roleBar = () => WF.roleSwitcher(WF.getViewRole(activeRole));
 
   const screens = [
     {
@@ -45,8 +45,8 @@ const FRANCHISE_MODELS_MODULE = (() => {
           <div class="wf-stat-card"><div class="wf-stat-card__label">Top Performing Brand</div><div class="wf-stat-card__value" style="font-size:14px">Odette</div></div>
         </div>
         <div class="wf-grid-2 wf-mb-20">
-          <div class="wf-card"><div class="wf-card__header"><span class="wf-card__title">Models by Status</span></div><div class="wf-card__body"><div class="wf-chart-placeholder">Donut Chart — Draft / Published / Archived</div></div></div>
-          <div class="wf-card"><div class="wf-card__header"><span class="wf-card__title">Investment vs ROI</span></div><div class="wf-card__body"><div class="wf-chart-placeholder">Scatter Plot — Investment vs ROI by Model</div></div></div>
+          <div class="wf-card"><div class="wf-card__header"><span class="wf-card__title">Models by Status</span></div><div class="wf-card__body">${WF.chartPlaceholder("Donut Chart", "Draft / Published / Archived")}</div></div>
+          <div class="wf-card"><div class="wf-card__header"><span class="wf-card__title">Investment vs ROI</span></div><div class="wf-card__body">${WF.chartPlaceholder("Scatter Plot", "Investment vs ROI by Model")}</div></div>
         </div>
         <div class="wf-grid-2">
           <div class="wf-card"><div class="wf-card__header"><span class="wf-card__title">Recent Activity</span><button data-screen="timeline" class="wf-btn wf-btn--sm">View All</button></div>
@@ -121,7 +121,7 @@ const FRANCHISE_MODELS_MODULE = (() => {
                 </div>
               </div>
               <div class="wf-grid-2">
-                <div class="wf-card"><div class="wf-card__header"><span class="wf-card__title">Sales Performance</span></div><div class="wf-card__body"><div class="wf-chart-placeholder">Revenue trend — ${WF.esc(mod.revenue)}</div></div></div>
+                <div class="wf-card"><div class="wf-card__header"><span class="wf-card__title">Sales Performance</span></div><div class="wf-card__body">${WF.chartPlaceholder("Revenue trend", "${WF.esc(mod.revenue)}")}</div></div>
                 <div class="wf-card"><div class="wf-card__header"><span class="wf-card__title">Internal Notes</span></div><div class="wf-card__body">${MODEL_DATA.notes.map(n => `<div class="wf-note"><div class="wf-note__header"><span class="wf-note__author">${WF.esc(n.author)}</span><span class="wf-note__time">${WF.esc(n.time)}</span></div><div class="wf-note__body">${WF.esc(n.body)}</div></div>`).join("")}</div></div>
               </div>
             </div>
@@ -158,7 +158,7 @@ const FRANCHISE_MODELS_MODULE = (() => {
               <tr><td><strong>Franchisees</strong></td>${compared.map(c => `<td>${c.franchisees}</td>`).join("")}</tr>
             </tbody>
           </table></div>
-          <div class="wf-card wf-mt-16"><div class="wf-card__header"><span class="wf-card__title">Visual Comparison</span></div><div class="wf-card__body"><div class="wf-chart-placeholder" style="height:240px">Grouped Bar Chart — Investment, Fee, ROI across models</div></div></div>
+          <div class="wf-card wf-mt-16"><div class="wf-card__header"><span class="wf-card__title">Visual Comparison</span></div><div class="wf-card__body">${WF.chartPlaceholder("Grouped Bar Chart", "Investment, Fee, ROI across models")}</div></div>
         `;
       }
     },
@@ -187,7 +187,7 @@ const FRANCHISE_MODELS_MODULE = (() => {
             <div class="wf-detail-info__row"><span class="wf-detail-info__label">Fit-out</span><span class="wf-detail-info__value">₹18,00,000</span></div>
             <div class="wf-detail-info__row"><span class="wf-detail-info__label">Working Capital</span><span class="wf-detail-info__value">₹4,00,000</span></div>
             <div class="wf-detail-info__row" style="font-weight:700;border-top:2px solid var(--wf-border)"><span class="wf-detail-info__label">Total Investment</span><span class="wf-detail-info__value">₹57,00,000</span></div>
-            <div class="wf-chart-placeholder wf-mt-16">Pie Chart — Investment Breakdown</div>
+            ${WF.chartPlaceholder("Pie Chart", "Investment Breakdown")}
           </div></div>
         </div>
       `
@@ -216,7 +216,7 @@ const FRANCHISE_MODELS_MODULE = (() => {
               <div class="wf-stat-card"><div class="wf-stat-card__label">Monthly Net</div><div class="wf-stat-card__value">₹1.3L</div></div>
               <div class="wf-stat-card"><div class="wf-stat-card__label">5-Year Return</div><div class="wf-stat-card__value">₹78L</div></div>
             </div>
-            <div class="wf-chart-placeholder">Line Chart — Cumulative Cash Flow</div>
+            ${WF.chartPlaceholder("Line Chart", "Cumulative Cash Flow")}
           </div></div>
         </div>
       `
@@ -236,7 +236,7 @@ const FRANCHISE_MODELS_MODULE = (() => {
           <div class="wf-stat-card"><div class="wf-stat-card__label">Coming Soon</div><div class="wf-stat-card__value">6</div></div>
         </div>
         <div class="wf-grid-2 wf-mb-16">
-          <div class="wf-card"><div class="wf-card__header"><span class="wf-card__title">Territory Map</span></div><div class="wf-card__body"><div class="wf-chart-placeholder" style="height:220px">Map — Available territories across India</div></div></div>
+          <div class="wf-card"><div class="wf-card__header"><span class="wf-card__title">Territory Map</span></div><div class="wf-card__body">${WF.chartPlaceholder("Map", "Available territories across India")}</div></div>
           <div class="wf-card"><div class="wf-card__header"><span class="wf-card__title">Preferred Cities — ${WF.esc(m().name)}</span></div><div class="wf-card__body">${m().preferredCities.map(c => `<span class="wf-badge" style="margin:4px">${WF.esc(c)}</span>`).join("")}</div></div>
         </div>
         <div class="wf-table-wrap wf-card"><table class="wf-table"><thead><tr><th>City</th><th>Zone</th><th>Model</th><th>Status</th><th>Slots</th><th>Actions</th></tr></thead>
@@ -338,14 +338,14 @@ const FRANCHISE_MODELS_MODULE = (() => {
               <div class="wf-timeline__item"><div class="wf-timeline__dot"></div><div class="wf-timeline__time">15 Jun 2024 · Himani Bhargava</div><div class="wf-timeline__title">Draft Created</div></div>
               <div class="wf-timeline__item"><div class="wf-timeline__dot"></div><div class="wf-timeline__time">20 Jun 2024 · Himani Bhargava</div><div class="wf-timeline__title">Submitted</div></div>
               <div class="wf-timeline__item"><div class="wf-timeline__dot"></div><div class="wf-timeline__time">21 Jun 2024 · Om Anil</div><div class="wf-timeline__title">Under Review — Team Lead</div></div>
-              <div class="wf-timeline__item"><div class="wf-timeline__dot"></div><div class="wf-timeline__time">22 Jun 2024 · Sumanth (CEO)</div><div class="wf-timeline__title">Approved</div></div>
+              <div class="wf-timeline__item"><div class="wf-timeline__dot"></div><div class="wf-timeline__time">22 Jun 2024 · Abdul Syed (CEO)</div><div class="wf-timeline__title">Approved</div></div>
               <div class="wf-timeline__item"><div class="wf-timeline__dot"></div><div class="wf-timeline__time">23 Jun 2024 · Admin</div><div class="wf-timeline__title">Published</div></div>
             </div>
           </div></div>
           <div class="wf-card"><div class="wf-card__header"><span class="wf-card__title">Role Permissions</span></div><div class="wf-card__body">
             <div class="wf-table-wrap" style="border:none"><table class="wf-table"><thead><tr><th>Role</th><th>Create</th><th>Submit</th><th>Approve</th><th>Publish</th></tr></thead>
             <tbody>
-              <tr><td>CEO</td><td>—</td><td>—</td><td>✓</td><td>✓</td></tr>
+              <tr><td>Abdul Syed</td><td>—</td><td>—</td><td>✓</td><td>✓</td></tr>
               <tr><td>Team Lead</td><td>✓</td><td>✓</td><td>✓</td><td>—</td></tr>
               <tr><td>Sales Executive</td><td>—</td><td>—</td><td>—</td><td>—</td></tr>
               <tr><td>Brand Owner</td><td>✓</td><td>✓</td><td>—</td><td>—</td></tr>
@@ -382,7 +382,7 @@ const FRANCHISE_MODELS_MODULE = (() => {
         <div class="wf-card"><div class="wf-card__header"><span class="wf-card__title">Publication History</span></div>
           <div class="wf-card__body">${WF.timeline([
             { time: "23 Jun 2024", title: "Published", desc: "Visible on franchise portal", user: "Admin" },
-            { time: "22 Jun 2024", title: "Approved", desc: "CEO approval received", user: "Sumanth" }
+            { time: "22 Jun 2024", title: "Approved", desc: "CEO approval received", user: "Abdul Syed" }
           ])}</div>
         </div>
       `
@@ -432,6 +432,7 @@ const FRANCHISE_MODELS_MODULE = (() => {
   ];
 
   function init() {
+    WF.resetViewRole(activeRole);
     WF_SPA.init({
       moduleKey: "franchiseModels",
       moduleLabel: "Franchise Models",
@@ -443,16 +444,6 @@ const FRANCHISE_MODELS_MODULE = (() => {
       screens
     });
 
-    document.body.addEventListener("click", (e) => {
-      const roleBtn = e.target.closest("[data-role]");
-      if (roleBtn) {
-        activeRole = roleBtn.getAttribute("data-role");
-        document.querySelectorAll("[data-role]").forEach((btn) => {
-          btn.classList.toggle("wf-btn--primary", btn.getAttribute("data-role") === activeRole);
-        });
-        WF.showToast(`Viewing as ${activeRole}`);
-      }
-    });
   }
 
   return { init, screens };

@@ -1,7 +1,7 @@
 /* Accounts & Payments — Mock Data */
 
 const ACCOUNTS_DATA = {
-  roles: ["CEO", "Accounts Team", "Finance Manager", "Admin", "Sales Manager", "Sales Executive", "Brand Owner"],
+  roles: ["CEO", "Co-Founder", "Accounts Team", "Finance Manager", "Admin", "Sales Manager", "Sales Executive", "Brand Owner"],
   workflow: ["Payment Initiated", "Pending Verification", "Verified", "Invoice Generated", "Completed"],
   altStatuses: ["Failed", "Refunded"],
   types: [

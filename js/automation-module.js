@@ -5,7 +5,7 @@ const AUTOMATION_MODULE = (() => {
   const k = () => d().kpis;
   let activeRole = "Automation Administrator";
 
-  const roleBar = () => WF.roleSwitcher(activeRole, d().roles);
+  const roleBar = () => WF.roleSwitcher(WF.getViewRole(activeRole), d().roles);
   const filters = () => WF.toolbar({ filters: ["Status", "Brand", "City", "Trigger", "Owner", "Workflow State"], showImport: true });
   const exports = () => WF.reportActions();
   const states = () => d().workflowStates;
@@ -446,6 +446,7 @@ const AUTOMATION_MODULE = (() => {
   }
 
   function init() {
+    WF.resetViewRole(activeRole);
     WF_SPA.init({
       moduleKey: "automation",
       moduleLabel: "Automation Engine",
@@ -458,16 +459,6 @@ const AUTOMATION_MODULE = (() => {
     });
 
     document.body.addEventListener("click", (e) => {
-      const roleBtn = e.target.closest("[data-role]");
-      if (roleBtn && roleBtn.closest(".wf-role-bar")) {
-        activeRole = roleBtn.getAttribute("data-role");
-        document.querySelectorAll(".wf-role-bar [data-role]").forEach((btn) => {
-          btn.classList.toggle("wf-btn--primary", btn.getAttribute("data-role") === activeRole);
-        });
-        const viewOnly = activeRole === "Sales Executive (View Only)";
-        WF.showToast(viewOnly ? "View only — cannot edit workflows" : `Viewing as ${activeRole}`);
-      }
-
       const node = e.target.closest(".wf-node");
       if (node) {
         document.querySelectorAll(".wf-node").forEach((n) => n.classList.remove("wf-node--selected"));

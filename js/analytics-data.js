@@ -1,7 +1,7 @@
 /* Reporting & Analytics — Mock Data */
 
 const ANALYTICS_DATA = {
-  roles: ["CEO", "Admin", "Operations Manager", "Accounts Manager", "Sales Manager", "Team Lead", "Sales Executive", "Brand Owner"],
+  roles: ["CEO", "Co-Founder", "Admin", "Operations Manager", "Accounts Manager", "Sales Manager", "Team Lead", "Sales Executive", "Brand Owner"],
   brands: ["Odette", "Original Burger Co.", "Kasturi", "Tea Time", "Belgian Waffle Co.", "Third Wave Coffee"],
   cities: ["Bengaluru", "Hyderabad", "Chennai", "Mumbai", "Delhi", "Pune", "Kochi", "Mysuru", "Ahmedabad", "Coimbatore", "Visakhapatnam", "Vijayawada"],
   users: ["Abdul Syed", "Abrar", "Himani Bhargava", "Om Anil", "Sumanth", "Fazil", "Diksha", "Akshita", "Swetha"],
@@ -78,10 +78,10 @@ const ANALYTICS_DATA = {
   ],
 
   auditLog: [
-    { timestamp: "25 Jun 2024, 11:00:15", user: "CEO", action: "EXPORT", entity: "Revenue Report", details: "PDF export — Q2 by Brand" },
+    { timestamp: "25 Jun 2024, 11:00:15", user: "Abdul Syed", action: "EXPORT", entity: "Revenue Report", details: "PDF export — Q2 by Brand" },
     { timestamp: "25 Jun 2024, 09:30:42", user: "Sales Manager", action: "VIEW", entity: "Team Performance", details: "Opened team performance dashboard" },
     { timestamp: "24 Jun 2024, 16:45:08", user: "Admin", action: "SCHEDULE", entity: "Weekly Sales", details: "Scheduled weekly report for CEO" },
     { timestamp: "24 Jun 2024, 14:20:33", user: "Himani Bhargava", action: "EXPORT", entity: "Lead Funnel", details: "CSV export — Jun 2024" },
-    { timestamp: "23 Jun 2024, 10:15:01", user: "CEO", action: "SHARE", entity: "Executive Dashboard", details: "Shared with management team" }
+    { timestamp: "23 Jun 2024, 10:15:01", user: "Abdul Syed", action: "SHARE", entity: "Executive Dashboard", details: "Shared with management team" }
   ]
 };

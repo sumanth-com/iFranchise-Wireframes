@@ -1,7 +1,7 @@
 /* User Management — Mock Data */
 
 const USER_DATA = {
-  roles: ["CEO", "Admin", "HR", "Operations Manager", "Sales Manager", "Team Lead", "Sales Executive", "Brand Owner", "Accounts"],
+  roles: ["CEO", "Co-Founder", "Admin", "HR", "Operations Manager", "Sales Manager", "Team Lead", "Sales Executive", "Brand Owner", "Accounts"],
   userStatuses: ["Invited", "Pending Verification", "Active", "On Leave", "Inactive", "Suspended", "Archived"],
   departments: ["Sales", "Operations", "Accounts", "Marketing", "HR", "Technology", "Legal", "Support"],
   offices: ["Bengaluru", "Hyderabad", "Chennai", "Mumbai", "Delhi", "Pune", "Kochi", "Ahmedabad"],
@@ -21,19 +21,39 @@ const USER_DATA = {
 
   users: [
     {
-      employeeId: "EMP-2019-001", name: "Sumanth", email: "sumanth@franchisecrm.com", phone: "+91 98765 10001",
-      role: "CEO", department: "Operations", team: "Executive", designation: "Chief Executive Officer",
+      employeeId: "EMP-2019-001", name: "Abdul Syed", email: "abdul.syed@franchisecrm.com", phone: "+91 98765 10014",
+      role: "CEO", department: "Executive", team: "Executive", designation: "Chief Executive Officer",
       city: "Bengaluru", state: "Karnataka", status: "Active", manager: "—", reportsTo: "—",
-      joiningDate: "2019-03-15", employmentType: "Full-time", dob: "1985-06-12",
+      joiningDate: "2019-03-15", employmentType: "Full-time", dob: "1993-11-05",
+      emergencyContact: "Fatima Syed — +91 98765 10015", address: "Whitefield, Bengaluru",
+      skills: ["Strategy", "Franchise Development", "Leadership"], certifications: ["Certified Franchise Executive"],
+      languages: ["English", "Hindi", "Urdu", "Kannada"], bankAccount: "****6674", notes: "Founding CEO — iFranchise",
+      leads: 0, customers: 0, meetings: 12, tasks: 8
+    },
+    {
+      employeeId: "EMP-2019-002", name: "Abrar", email: "abrar@franchisecrm.com", phone: "+91 98765 10018",
+      role: "Co-Founder", department: "Executive", team: "Executive", designation: "Co-Founder",
+      city: "Hyderabad", state: "Telangana", status: "Active", manager: "Abdul Syed", reportsTo: "Abdul Syed",
+      joiningDate: "2019-03-15", employmentType: "Full-time", dob: "1994-07-30",
+      emergencyContact: "Ahmed Abrar — +91 98765 10019", address: "Gachibowli, Hyderabad",
+      skills: ["Business Development", "Partnerships", "Strategy"], certifications: [],
+      languages: ["English", "Hindi", "Telugu", "Urdu"], bankAccount: "****3345", notes: "Co-Founder — iFranchise",
+      leads: 0, customers: 0, meetings: 18, tasks: 10
+    },
+    {
+      employeeId: "EMP-2019-003", name: "Sumanth", email: "sumanth@franchisecrm.com", phone: "+91 98765 10001",
+      role: "Operations Manager", department: "Technology", team: "Product", designation: "Director — Product & Technology",
+      city: "Bengaluru", state: "Karnataka", status: "Active", manager: "Abdul Syed", reportsTo: "Abdul Syed",
+      joiningDate: "2019-06-01", employmentType: "Full-time", dob: "1985-06-12",
       emergencyContact: "Priya Sumanth — +91 98765 10002", address: "Indiranagar, Bengaluru",
-      skills: ["Strategy", "Franchise Development", "Leadership"], certifications: ["MBA — IIM Bangalore"],
-      languages: ["English", "Hindi", "Kannada"], bankAccount: "****4521", notes: "Founding team member",
+      skills: ["Product Strategy", "CRM", "Technology"], certifications: ["MBA — IIM Bangalore"],
+      languages: ["English", "Hindi", "Kannada"], bankAccount: "****4521", notes: "Product & platform lead",
       leads: 0, customers: 0, meetings: 12, tasks: 8
     },
     {
       employeeId: "EMP-2020-003", name: "Om Anil", email: "om.anil@franchisecrm.com", phone: "+91 98765 10003",
       role: "Operations Manager", department: "Operations", team: "Operations HQ", designation: "Operations Manager",
-      city: "Bengaluru", state: "Karnataka", status: "Active", manager: "Sumanth", reportsTo: "Sumanth",
+      city: "Bengaluru", state: "Karnataka", status: "Active", manager: "Abdul Syed", reportsTo: "Abdul Syed",
       joiningDate: "2020-01-10", employmentType: "Full-time", dob: "1988-09-22",
       emergencyContact: "Anil Kumar — +91 98765 10004", address: "Koramangala, Bengaluru",
       skills: ["Operations", "Process Design", "Vendor Management"], certifications: ["Six Sigma Green Belt"],
@@ -43,32 +63,12 @@ const USER_DATA = {
     {
       employeeId: "EMP-2021-007", name: "Himani Bhargava", email: "himani.bhargava@franchisecrm.com", phone: "+91 98765 10007",
       role: "Sales Manager", department: "Sales", team: "Bengaluru Sales", designation: "Sales Manager — South",
-      city: "Bengaluru", state: "Karnataka", status: "Active", manager: "Sumanth", reportsTo: "Sumanth",
+      city: "Bengaluru", state: "Karnataka", status: "Active", manager: "Abdul Syed", reportsTo: "Abdul Syed",
       joiningDate: "2021-06-01", employmentType: "Full-time", dob: "1990-03-18",
       emergencyContact: "Rajesh Bhargava — +91 98765 10008", address: "HSR Layout, Bengaluru",
       skills: ["Sales Leadership", "Franchise Sales", "Negotiation"], certifications: ["Certified Franchise Executive"],
       languages: ["English", "Hindi", "Kannada"], bankAccount: "****2190", notes: "Top performer Q1 2024",
       leads: 45, customers: 28, meetings: 64, tasks: 22
-    },
-    {
-      employeeId: "EMP-2022-014", name: "Abdul Syed", email: "abdul.syed@franchisecrm.com", phone: "+91 98765 10014",
-      role: "Sales Executive", department: "Sales", team: "Bengaluru Sales", designation: "Senior Sales Executive",
-      city: "Bengaluru", state: "Karnataka", status: "Active", manager: "Himani Bhargava", reportsTo: "Himani Bhargava",
-      joiningDate: "2022-02-14", employmentType: "Full-time", dob: "1993-11-05",
-      emergencyContact: "Fatima Syed — +91 98765 10015", address: "Whitefield, Bengaluru",
-      skills: ["Lead Qualification", "CRM", "Presentation"], certifications: [],
-      languages: ["English", "Hindi", "Urdu", "Kannada"], bankAccount: "****6674", notes: "",
-      leads: 38, customers: 19, meetings: 42, tasks: 18
-    },
-    {
-      employeeId: "EMP-2022-018", name: "Abrar", email: "abrar@franchisecrm.com", phone: "+91 98765 10018",
-      role: "Sales Executive", department: "Sales", team: "Hyderabad Sales", designation: "Sales Executive",
-      city: "Hyderabad", state: "Telangana", status: "Active", manager: "Himani Bhargava", reportsTo: "Himani Bhargava",
-      joiningDate: "2022-08-01", employmentType: "Full-time", dob: "1994-07-30",
-      emergencyContact: "Ahmed Abrar — +91 98765 10019", address: "Gachibowli, Hyderabad",
-      skills: ["Outbound Sales", "Follow-up"], certifications: [],
-      languages: ["English", "Hindi", "Telugu", "Urdu"], bankAccount: "****3345", notes: "",
-      leads: 32, customers: 14, meetings: 35, tasks: 12
     },
     {
       employeeId: "EMP-2023-022", name: "Diksha", email: "diksha@franchisecrm.com", phone: "+91 98765 10022",
@@ -152,8 +152,9 @@ const USER_DATA = {
   ],
 
   orgChart: {
-    name: "Sumanth", title: "CEO",
+    name: "Abdul Syed", title: "CEO",
     children: [
+      { name: "Abrar", title: "Co-Founder", children: [] },
       {
         name: "Om Anil", title: "Operations Manager",
         children: [
@@ -165,19 +166,18 @@ const USER_DATA = {
       {
         name: "Himani Bhargava", title: "Sales Manager",
         children: [
-          { name: "Abdul Syed", title: "Senior Sales Executive", children: [] },
-          { name: "Diksha", title: "Team Lead — Hyderabad", children: [
-            { name: "Abrar", title: "Sales Executive", children: [] }
-          ]}
+          { name: "Diksha", title: "Team Lead — Hyderabad", children: [] }
         ]
-      }
+      },
+      { name: "Sumanth", title: "Director — Product & Technology", children: [] }
     ]
   },
 
   hierarchy: [
     {
-      name: "Sumanth", title: "CEO", department: "Operations",
+      name: "Abdul Syed", title: "CEO", department: "Executive",
       children: [
+        { name: "Abrar", title: "Co-Founder", department: "Executive", children: [] },
         {
           name: "Om Anil", title: "Operations Manager", department: "Operations",
           children: [
@@ -189,13 +189,10 @@ const USER_DATA = {
         {
           name: "Himani Bhargava", title: "Sales Manager", department: "Sales",
           children: [
-            { name: "Abdul Syed", title: "Senior Sales Executive", department: "Sales", children: [] },
-            {
-              name: "Diksha", title: "Team Lead", department: "Sales",
-              children: [{ name: "Abrar", title: "Sales Executive", department: "Sales", children: [] }]
-            }
+            { name: "Diksha", title: "Team Lead", department: "Sales", children: [] }
           ]
-        }
+        },
+        { name: "Sumanth", title: "Director — Product & Technology", department: "Technology", children: [] }
       ]
     }
   ],
@@ -235,7 +232,7 @@ const USER_DATA = {
 
   skills: [
     { user: "Himani Bhargava", skills: ["Sales Leadership", "Franchise Sales", "Negotiation"], certs: ["Certified Franchise Executive"], languages: ["English", "Hindi", "Kannada"] },
-    { user: "Abdul Syed", skills: ["Lead Qualification", "CRM", "Presentation"], certs: [], languages: ["English", "Hindi", "Urdu", "Kannada"] },
+    { user: "Abdul Syed", skills: ["Strategy", "Leadership", "Franchise Development"], certs: ["Certified Franchise Executive"], languages: ["English", "Hindi", "Urdu", "Kannada"] },
     { user: "Diksha", skills: ["Team Management", "Pipeline Review", "Coaching"], certs: ["Sales Leadership Certificate"], languages: ["English", "Hindi", "Telugu"] },
     { user: "Swetha", skills: ["Recruitment", "Onboarding", "HRIS"], certs: ["SHRM-CP"], languages: ["English", "Hindi", "Kannada", "Telugu"] }
   ],
@@ -249,10 +246,10 @@ const USER_DATA = {
   ],
 
   timeline: [
-    { title: "Joined company", time: "2022-02-14", user: "System", desc: "Abdul Syed — Senior Sales Executive" },
-    { title: "Promoted to Senior Sales Executive", time: "2023-08-01", user: "HR", desc: "Performance review — exceeds targets" },
-    { title: "Assigned to Bengaluru Sales team", time: "2022-02-14", user: "Himani Bhargava", desc: "Reports to Himani Bhargava" },
-    { title: "Completed CRM certification", time: "2023-03-15", user: "Abdul Syed", desc: "Internal training program" },
+    { title: "Appointed CEO", time: "2019-03-15", user: "Board", desc: "Abdul Syed — Chief Executive Officer" },
+    { title: "Co-Founder onboarded", time: "2019-03-15", user: "System", desc: "Abrar — Co-Founder" },
+    { title: "Platform launch", time: "2020-01-10", user: "Sumanth", desc: "FranchiseCRM v1.0 released" },
+    { title: "Completed franchise leadership program", time: "2023-03-15", user: "Abdul Syed", desc: "Executive training" },
     { title: "Profile updated", time: "2024-01-10", user: "Abdul Syed", desc: "Emergency contact updated" },
     { title: "Device registered", time: "2023-06-15", user: "System", desc: "Mobile — Android 14" }
   ],
@@ -266,7 +263,7 @@ const USER_DATA = {
   },
 
   birthdays: [
-    { name: "Abdul Syed", date: "05 Nov", department: "Sales" },
+    { name: "Abdul Syed", date: "05 Nov", department: "Executive" },
     { name: "Swetha", date: "14 Feb", department: "HR" },
     { name: "Om Anil", date: "22 Sep", department: "Operations" }
   ],

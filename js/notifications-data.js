@@ -1,7 +1,7 @@
 /* Notification Center — Mock Data */
 
 const NOTIFICATION_DATA = {
-  roles: ["CEO", "Admin", "Operations Manager", "Accounts", "Sales Manager", "Sales Executive", "Brand Owner", "Customer"],
+  roles: ["CEO", "Co-Founder", "Admin", "Operations Manager", "Accounts", "Sales Manager", "Sales Executive", "Brand Owner", "Customer"],
   workflow: ["Created", "Queued", "Sent", "Delivered", "Read"],
   altStatuses: ["Failed"],
   channels: ["In-App", "Email", "SMS", "WhatsApp", "Push Notification"],
@@ -30,7 +30,7 @@ const NOTIFICATION_DATA = {
     {
       id: "NOT-2024-088", title: "Meeting Reminder — Brand Presentation", type: "Meeting Reminder",
       message: "Brand Presentation with Rahul Sharma starts in 30 minutes. Google Meet link attached.",
-      priority: "High", recipient: "Abdul Syed", recipientRole: "Sales Executive", channel: "Push Notification",
+      priority: "High", recipient: "Abdul Syed", recipientRole: "CEO", channel: "Push Notification",
       sentAt: "25 Jun 2024, 9:30 AM", status: "Read", read: true,
       createdBy: "System", template: "Meeting Reminder", brand: "Odette", city: "Bengaluru",
       actionButton: "Join Meeting", actionUrl: "/meetings/online"
@@ -70,7 +70,7 @@ const NOTIFICATION_DATA = {
     {
       id: "NOT-2024-083", title: "Agreement Signed — Meera Iyer", type: "Agreement Signed",
       message: "Franchise agreement for Kasturi Family Dining (Pune) signed by Meera Iyer.",
-      priority: "Medium", recipient: "CEO", recipientRole: "CEO", channel: "In-App",
+      priority: "Medium", recipient: "Abdul Syed", recipientRole: "CEO", channel: "In-App",
       sentAt: "22 Jun 2024, 5:00 PM", status: "Read", read: true,
       createdBy: "System", template: "", brand: "Kasturi", city: "Pune",
       actionButton: "View Agreement", actionUrl: "/documents/agreement-docs"
@@ -141,7 +141,7 @@ const NOTIFICATION_DATA = {
     { timestamp: "25 Jun 2024, 10:22:18", user: "System", action: "FAIL", entity: "NOT-2024-089", details: "Push delivery failed — token expired" },
     { timestamp: "24 Jun 2024, 14:35:22", user: "System", action: "SEND", entity: "NOT-2024-087", details: "Payment received email to Fazil" },
     { timestamp: "21 Jun 2024, 10:01:33", user: "System", action: "FAIL", entity: "NOT-2024-084", details: "SMS failed — invalid number" },
-    { timestamp: "20 Jun 2024, 11:00:01", user: "CEO", action: "BROADCAST", entity: "NOT-2024-082", details: "Q2 announcement sent to all users" }
+    { timestamp: "20 Jun 2024, 11:00:01", user: "Abdul Syed", action: "BROADCAST", entity: "NOT-2024-082", details: "Q2 announcement sent to all users" }
   ],
 
   kpis: {
