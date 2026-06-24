@@ -130,11 +130,11 @@ const AUTOMATION_MODULE = (() => {
           </div>
           <div class="wf-card"><div class="wf-card__header"><span class="wf-card__title">Validation</span><button data-action="validate-workflow" class="wf-btn wf-btn--sm">Re-validate</button></div>
             <div class="wf-card__body">
-              <div class="wf-props__check wf-props__check--ok">✓ Trigger configured</div>
-              <div class="wf-props__check wf-props__check--ok">✓ No infinite loops detected</div>
-              <div class="wf-props__check wf-props__check--ok">✓ All actions connected</div>
-              <div class="wf-props__check wf-props__check--ok">✓ Permission validation passed</div>
-              <div class="wf-props__check wf-props__check--warn">⚠ API key expires in 14 days</div>
+              <div class="wf-props__check wf-props__check--ok">Trigger configured</div>
+              <div class="wf-props__check wf-props__check--ok">No infinite loops detected</div>
+              <div class="wf-props__check wf-props__check--ok">All actions connected</div>
+              <div class="wf-props__check wf-props__check--ok">Permission validation passed</div>
+              <div class="wf-props__check wf-props__check--warn">Note: API key expires in 14 days</div>
             </div>
           </div>
         </div>
@@ -338,9 +338,9 @@ const AUTOMATION_MODULE = (() => {
         </tr>`).join("")}</tbody></table></div>
         <div class="wf-card wf-mt-16"><div class="wf-card__header"><span class="wf-card__title">Webhook Validation</span></div>
           <div class="wf-card__body">
-            <div class="wf-props__check wf-props__check--ok">✓ URL format valid</div>
-            <div class="wf-props__check wf-props__check--ok">✓ SSL certificate valid</div>
-            <div class="wf-props__check wf-props__check--warn">⚠ WH-003 last 3 calls failed — check Slack token</div>
+            <div class="wf-props__check wf-props__check--ok">URL format valid</div>
+            <div class="wf-props__check wf-props__check--ok">SSL certificate valid</div>
+            <div class="wf-props__check wf-props__check--warn">Note: WH-003 last 3 calls failed — check Slack token</div>
           </div>
         </div>
       `
@@ -366,9 +366,9 @@ const AUTOMATION_MODULE = (() => {
         </div>
         <div class="wf-card wf-mt-16"><div class="wf-card__header"><span class="wf-card__title">API Validation Rules</span></div>
           <div class="wf-card__body" style="font-size:13px">
-            <div class="wf-props__check wf-props__check--ok">✓ Authentication headers configured</div>
-            <div class="wf-props__check wf-props__check--ok">✓ Rate limits within threshold</div>
-            <div class="wf-props__check wf-props__check--warn">⚠ Custom ERP — connection error since 22 Jun</div>
+            <div class="wf-props__check wf-props__check--ok">Authentication headers configured</div>
+            <div class="wf-props__check wf-props__check--ok">Rate limits within threshold</div>
+            <div class="wf-props__check wf-props__check--warn">Note: Custom ERP — connection error since 22 Jun</div>
           </div>
         </div>
       `
@@ -436,10 +436,10 @@ const AUTOMATION_MODULE = (() => {
       </div>
       <div class="wf-card wf-mt-16"><div class="wf-card__header"><span class="wf-card__title">Validation</span></div>
         <div class="wf-card__body">
-          ${key === "email" ? '<div class="wf-props__check wf-props__check--ok">✓ Email validation — SPF/DKIM configured</div><div class="wf-props__check wf-props__check--warn">⚠ 3 templates missing subject line</div>' : ""}
-          ${key === "sms" || key === "whatsapp" ? '<div class="wf-props__check wf-props__check--ok">✓ Phone validation — E.164 format</div><div class="wf-props__check wf-props__check--ok">✓ DND compliance check enabled</div>' : ""}
-          ${key === "approval" ? '<div class="wf-props__check wf-props__check--ok">✓ Permission validation for approvers</div>' : ""}
-          <div class="wf-props__check wf-props__check--ok">✓ API connection healthy</div>
+          ${key === "email" ? '<div class="wf-props__check wf-props__check--ok">Email validation — SPF/DKIM configured</div><div class="wf-props__check wf-props__check--warn">Note: 3 templates missing subject line</div>' : ""}
+          ${key === "sms" || key === "whatsapp" ? '<div class="wf-props__check wf-props__check--ok">Phone validation — E.164 format</div><div class="wf-props__check wf-props__check--ok">DND compliance check enabled</div>' : ""}
+          ${key === "approval" ? '<div class="wf-props__check wf-props__check--ok">Permission validation for approvers</div>' : ""}
+          <div class="wf-props__check wf-props__check--ok">API connection healthy</div>
         </div>
       </div>
     `;

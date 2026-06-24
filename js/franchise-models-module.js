@@ -38,11 +38,11 @@ const FRANCHISE_MODELS_MODULE = (() => {
           <div class="wf-stat-card"><div class="wf-stat-card__label">Pending Approval</div><div class="wf-stat-card__value">6</div></div>
           <div class="wf-stat-card"><div class="wf-stat-card__label">Archived Models</div><div class="wf-stat-card__value">4</div></div>
         </div>
-        <div class="wf-card-grid" style="grid-template-columns:repeat(4,1fr)">
-          <div class="wf-stat-card"><div class="wf-stat-card__label">Average Investment</div><div class="wf-stat-card__value" style="font-size:20px">₹28L</div></div>
-          <div class="wf-stat-card"><div class="wf-stat-card__label">Average ROI</div><div class="wf-stat-card__value" style="font-size:20px">24%</div></div>
-          <div class="wf-stat-card"><div class="wf-stat-card__label">Most Popular Model</div><div class="wf-stat-card__value" style="font-size:14px">Belgian Waffle Express</div></div>
-          <div class="wf-stat-card"><div class="wf-stat-card__label">Top Performing Brand</div><div class="wf-stat-card__value" style="font-size:14px">Odette</div></div>
+        <div class="wf-card-grid">
+          <div class="wf-stat-card"><div class="wf-stat-card__label">Average Investment</div><div class="wf-stat-card__value wf-stat-card__value--md">₹28L</div></div>
+          <div class="wf-stat-card"><div class="wf-stat-card__label">Average ROI</div><div class="wf-stat-card__value wf-stat-card__value--md">24%</div></div>
+          <div class="wf-stat-card"><div class="wf-stat-card__label">Most Popular Model</div><div class="wf-stat-card__value wf-stat-card__value--sm">Belgian Waffle Express</div></div>
+          <div class="wf-stat-card"><div class="wf-stat-card__label">Top Performing Brand</div><div class="wf-stat-card__value wf-stat-card__value--sm">Odette</div></div>
         </div>
         <div class="wf-grid-2 wf-mb-20">
           <div class="wf-card"><div class="wf-card__header"><span class="wf-card__title">Models by Status</span></div><div class="wf-card__body">${WF.chartPlaceholder("Donut Chart", "Draft / Published / Archived")}</div></div>
@@ -96,7 +96,7 @@ const FRANCHISE_MODELS_MODULE = (() => {
             <button data-screen="publish" class="wf-btn wf-btn--sm wf-btn--primary">Publish</button>
             <button class="wf-btn wf-btn--sm wf-btn--danger" data-modal="confirm-delete">Delete</button>
           `)}
-          ${WF.workflowStepper(mod.status)}
+          ${WF.workflowStepper(mod.status, null, { targetScreen: "workflow" })}
           ${modelTabs("details")}
           <div class="wf-detail-layout">
             <div class="wf-detail-sidebar">${WF.modelProfileCard(mod)}</div>
@@ -107,7 +107,7 @@ const FRANCHISE_MODELS_MODULE = (() => {
                 <div class="wf-stat-card"><div class="wf-stat-card__label">Interested Leads</div><div class="wf-stat-card__value">${mod.leads}</div></div>
                 <div class="wf-stat-card"><div class="wf-stat-card__label">Franchisees</div><div class="wf-stat-card__value">${mod.franchisees}</div></div>
               </div>
-              <div class="wf-card wf-mb-16"><div class="wf-card__header"><span class="wf-card__title">Overview</span><span class="wf-approval-badge">✓ Approved by ${WF.esc(mod.approvedBy || "Pending")}</span></div>
+              <div class="wf-card wf-mb-16"><div class="wf-card__header"><span class="wf-card__title">Overview</span><span class="wf-approval-badge">Approved by ${WF.esc(mod.approvedBy || "Pending")}</span></div>
                 <div class="wf-card__body">
                   <p style="font-size:13px;margin-bottom:16px">${WF.esc(mod.description)}</p>
                   <div class="wf-form__grid wf-form__grid--3">
@@ -331,7 +331,7 @@ const FRANCHISE_MODELS_MODULE = (() => {
         ${WF.pageHeader("Approval Workflow", m().name + " — Draft to Published pipeline", `
           <button class="wf-btn wf-btn--sm wf-btn--primary">Submit for Review</button>
         `)}
-        ${WF.workflowStepper(m().status)}
+        ${WF.workflowStepper(m().status, null, { targetScreen: "workflow" })}
         <div class="wf-grid-2">
           <div class="wf-card"><div class="wf-card__header"><span class="wf-card__title">Approval Chain</span></div><div class="wf-card__body">
             <div class="wf-timeline">
@@ -345,11 +345,11 @@ const FRANCHISE_MODELS_MODULE = (() => {
           <div class="wf-card"><div class="wf-card__header"><span class="wf-card__title">Role Permissions</span></div><div class="wf-card__body">
             <div class="wf-table-wrap" style="border:none"><table class="wf-table"><thead><tr><th>Role</th><th>Create</th><th>Submit</th><th>Approve</th><th>Publish</th></tr></thead>
             <tbody>
-              <tr><td>Abdul Syed</td><td>—</td><td>—</td><td>✓</td><td>✓</td></tr>
-              <tr><td>Team Lead</td><td>✓</td><td>✓</td><td>✓</td><td>—</td></tr>
+              <tr><td>Abdul Syed</td><td>—</td><td>—</td><td>Yes</td><td>Yes</td></tr>
+              <tr><td>Team Lead</td><td>Yes</td><td>Yes</td><td>Yes</td><td>—</td></tr>
               <tr><td>Sales Executive</td><td>—</td><td>—</td><td>—</td><td>—</td></tr>
-              <tr><td>Brand Owner</td><td>✓</td><td>✓</td><td>—</td><td>—</td></tr>
-              <tr><td>Admin</td><td>✓</td><td>✓</td><td>✓</td><td>✓</td></tr>
+              <tr><td>Brand Owner</td><td>Yes</td><td>Yes</td><td>—</td><td>—</td></tr>
+              <tr><td>Admin</td><td>Yes</td><td>Yes</td><td>Yes</td><td>Yes</td></tr>
             </tbody></table></div>
           </div></div>
         </div>
@@ -368,7 +368,7 @@ const FRANCHISE_MODELS_MODULE = (() => {
           <button class="wf-btn wf-btn--sm wf-btn--primary" data-modal="publish">Publish Model</button>
           <button class="wf-btn wf-btn--sm" data-modal="archive">Unpublish</button>
         `)}
-        ${WF.workflowStepper(m().status)}
+        ${WF.workflowStepper(m().status, null, { targetScreen: "workflow" })}
         <div class="wf-card wf-mb-16"><div class="wf-card__body">
           <p style="font-size:13px;margin-bottom:16px">Control visibility of <strong>${WF.esc(m().name)}</strong> on the franchise portal and sales CRM.</p>
           <div class="wf-form__grid">

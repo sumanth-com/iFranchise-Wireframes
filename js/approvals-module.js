@@ -106,7 +106,7 @@ const APPROVALS_MODULE = (() => {
             <button data-modal="return" class="wf-btn wf-btn--sm">Return</button>
             <button data-screen="decision" class="wf-btn wf-btn--sm">Decision Panel</button>
           `)}
-          ${WF.workflowStepper(ap.status, APPROVAL_DATA.workflow)}
+          ${WF.workflowStepper(ap.status, APPROVAL_DATA.workflow, { targetScreen: "workflow" })}
           ${approvalTabs("details")}
           <div class="wf-detail-layout">
             <div class="wf-detail-sidebar">${WF.approvalProfileCard(ap)}</div>
@@ -159,7 +159,7 @@ const APPROVALS_MODULE = (() => {
         ${WF.pageHeader("Multi-Level Approval Workflow", a().id + " · " + a().type)}
         ${approvalTabs("workflow")}
         <div class="wf-card wf-mb-16"><div class="wf-card__header"><span class="wf-card__title">Workflow Stages</span><span class="wf-approval-badge">Levels cannot be skipped</span></div>
-          <div class="wf-card__body">${WF.workflowStepper(a().status, APPROVAL_DATA.workflow)}</div>
+          <div class="wf-card__body">${WF.workflowStepper(a().status, APPROVAL_DATA.workflow, { targetScreen: "workflow" })}</div>
         </div>
         <div class="wf-card"><div class="wf-card__header"><span class="wf-card__title">Approval Levels</span></div>
           <div class="wf-card__body">${WF.approvalLevels(APPROVAL_DATA.levels, a().status)}</div>

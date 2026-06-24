@@ -76,7 +76,7 @@ const CALL_INTELLIGENCE_MODULE = (() => {
         ${WF.pageHeader("Call History", "Complete call log with outcomes and recordings")}
         ${filters()}${WF.reportActions()}
         <div class="wf-card"><div class="wf-card__body" style="padding:0"><div class="wf-table-wrap" style="border:none"><table class="wf-table"><thead><tr><th>Call ID</th><th>Contact</th><th>Agent</th><th>Direction</th><th>Duration</th><th>Outcome</th><th>Date</th><th>Recording</th><th>Actions</th></tr></thead>
-        <tbody>${d().callHistory.map((c) => `<tr><td style="font-size:12px">${WF.esc(c.id)}</td><td>${WF.esc(c.contact)}</td><td>${WF.esc(c.agent)}</td><td>${WF.esc(c.direction)}</td><td>${WF.esc(c.duration)}</td><td><span class="wf-badge">${WF.esc(c.outcome)}</span></td><td style="font-size:12px">${WF.esc(c.date)}</td><td>${c.recording ? "✓" : "—"}</td><td><button class="wf-btn wf-btn--sm">Details</button></td></tr>`).join("")}</tbody></table>${WF.pagination(1842)}</div></div></div>
+        <tbody>${d().callHistory.map((c) => `<tr><td style="font-size:12px">${WF.esc(c.id)}</td><td>${WF.esc(c.contact)}</td><td>${WF.esc(c.agent)}</td><td>${WF.esc(c.direction)}</td><td>${WF.esc(c.duration)}</td><td><span class="wf-badge">${WF.esc(c.outcome)}</span></td><td style="font-size:12px">${WF.esc(c.date)}</td><td>${c.recording ? "Yes" : "—"}</td><td><button class="wf-btn wf-btn--sm">Details</button></td></tr>`).join("")}</tbody></table>${WF.pagination(1842)}</div></div></div>
       `
     },
     {

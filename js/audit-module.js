@@ -102,10 +102,10 @@ const AUDIT_MODULE = (() => {
         ${WF.pagination(12480, 1, 50)}
         <div class="wf-card wf-mt-16"><div class="wf-card__header"><span class="wf-card__title">Validation</span></div>
           <div class="wf-card__body" style="font-size:13px">
-            <div class="wf-props__check wf-props__check--ok">✓ Immutable audit records — append only</div>
-            <div class="wf-props__check wf-props__check--ok">✓ Sensitive data masked in exports</div>
-            <div class="wf-props__check wf-props__check--ok">✓ Retention policy: 7 years</div>
-            <div class="wf-props__check wf-props__check--ok">✓ Export permission validated</div>
+            <div class="wf-props__check wf-props__check--ok">Immutable audit records — append only</div>
+            <div class="wf-props__check wf-props__check--ok">Sensitive data masked in exports</div>
+            <div class="wf-props__check wf-props__check--ok">Retention policy: 7 years</div>
+            <div class="wf-props__check wf-props__check--ok">Export permission validated</div>
           </div>
         </div>
       `
@@ -258,10 +258,10 @@ const AUDIT_MODULE = (() => {
           </div>
           <div class="wf-card"><div class="wf-card__header"><span class="wf-card__title">Restore Policy</span></div>
             <div class="wf-card__body" style="font-size:13px">
-              <div class="wf-props__check wf-props__check--ok">✓ Restore action logged immutably</div>
-              <div class="wf-props__check wf-props__check--ok">✓ Permission validation required</div>
-              <div class="wf-props__check wf-props__check--ok">✓ Retention window: 90 days</div>
-              <div class="wf-props__check wf-props__check--warn">⚠ PII records require Compliance Officer approval</div>
+              <div class="wf-props__check wf-props__check--ok">Restore action logged immutably</div>
+              <div class="wf-props__check wf-props__check--ok">Permission validation required</div>
+              <div class="wf-props__check wf-props__check--ok">Retention window: 90 days</div>
+              <div class="wf-props__check wf-props__check--warn">Note: PII records require Compliance Officer approval</div>
             </div>
           </div>
         </div>
@@ -287,10 +287,10 @@ const AUDIT_MODULE = (() => {
           </div></div>
           <div class="wf-card"><div class="wf-card__header"><span class="wf-card__title">Export Validation</span></div>
             <div class="wf-card__body">
-              <div class="wf-props__check wf-props__check--ok">✓ Export permission validated</div>
-              <div class="wf-props__check wf-props__check--ok">✓ Sensitive data masking enabled</div>
-              <div class="wf-props__check wf-props__check--ok">✓ Date range within retention policy</div>
-              <div class="wf-props__check wf-props__check--ok">✓ Export logged in audit trail</div>
+              <div class="wf-props__check wf-props__check--ok">Export permission validated</div>
+              <div class="wf-props__check wf-props__check--ok">Sensitive data masking enabled</div>
+              <div class="wf-props__check wf-props__check--ok">Date range within retention policy</div>
+              <div class="wf-props__check wf-props__check--ok">Export logged in audit trail</div>
             </div>
           </div>
         </div>

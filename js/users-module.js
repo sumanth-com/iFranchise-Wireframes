@@ -123,11 +123,11 @@ const USERS_MODULE = (() => {
         </div>
         <div class="wf-card wf-mt-16"><div class="wf-card__header"><span class="wf-card__title">Validation Status</span></div>
           <div class="wf-card__body">
-            <div class="wf-props__check wf-props__check--ok">✓ Unique Employee ID verified</div>
-            <div class="wf-props__check wf-props__check--ok">✓ Email unique and verified</div>
-            <div class="wf-props__check wf-props__check--ok">✓ Phone validated (E.164)</div>
-            <div class="wf-props__check wf-props__check--ok">✓ Manager assignment valid</div>
-            <div class="wf-props__check wf-props__check--ok">✓ Role permissions configured</div>
+            <div class="wf-props__check wf-props__check--ok">Unique Employee ID verified</div>
+            <div class="wf-props__check wf-props__check--ok">Email unique and verified</div>
+            <div class="wf-props__check wf-props__check--ok">Phone validated (E.164)</div>
+            <div class="wf-props__check wf-props__check--ok">Manager assignment valid</div>
+            <div class="wf-props__check wf-props__check--ok">Role permissions configured</div>
           </div>
         </div>
       `;
@@ -488,12 +488,12 @@ const USERS_MODULE = (() => {
           </div>
           <div class="wf-card"><div class="wf-card__header"><span class="wf-card__title">Import Validation</span></div>
             <div class="wf-card__body">
-              <div class="wf-props__check wf-props__check--ok">✓ Unique Employee ID check</div>
-              <div class="wf-props__check wf-props__check--ok">✓ Unique Email check</div>
-              <div class="wf-props__check wf-props__check--ok">✓ Phone format validation</div>
-              <div class="wf-props__check wf-props__check--ok">✓ Department & Role validation</div>
-              <div class="wf-props__check wf-props__check--ok">✓ Manager reference validation</div>
-              <div class="wf-props__check wf-props__check--ok">✓ Duplicate user prevention</div>
+              <div class="wf-props__check wf-props__check--ok">Unique Employee ID check</div>
+              <div class="wf-props__check wf-props__check--ok">Unique Email check</div>
+              <div class="wf-props__check wf-props__check--ok">Phone format validation</div>
+              <div class="wf-props__check wf-props__check--ok">Department & Role validation</div>
+              <div class="wf-props__check wf-props__check--ok">Manager reference validation</div>
+              <div class="wf-props__check wf-props__check--ok">Duplicate user prevention</div>
             </div>
           </div>
         </div>

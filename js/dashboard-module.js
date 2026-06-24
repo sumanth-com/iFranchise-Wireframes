@@ -13,9 +13,11 @@ const DASHBOARD_MODULE = (() => {
   };
 
   const roleBar = (activeRole) => `<div class="wf-role-bar">
-    <span class="wf-role-bar__label">View as:</span>
-    ${d().roles.map((r) => `<button type="button" class="wf-btn wf-btn--sm${r === activeRole ? " wf-btn--primary" : ""}" data-screen="${ROLE_SCREENS[r]}">${r}</button>`).join("")}
-    <span class="wf-approval-badge" style="margin-left:auto">Role-based dashboard</span>
+    <label class="wf-role-bar__label" for="wf-dashboard-role-select">View as:</label>
+    <select id="wf-dashboard-role-select" class="wf-role-bar__select wf-form__select" data-dashboard-role-select aria-label="View as dashboard role">
+      ${d().roles.map((r) => `<option value="${ROLE_SCREENS[r]}"${r === activeRole ? " selected" : ""}>${WF.esc(r)}</option>`).join("")}
+    </select>
+    <span class="wf-role-bar__badge wf-approval-badge">Role-based dashboard</span>
   </div>`;
 
   const dashToolbar = () => `<div class="wf-toolbar wf-mb-16">
@@ -249,11 +251,7 @@ const DASHBOARD_MODULE = (() => {
       render: () => {
         const ep = d().employeePerformance;
         return `
-        <div class="wf-role-bar">
-          <span class="wf-role-bar__label">View as:</span>
-          ${ep.viewRoles.map((r) => `<button type="button" class="wf-btn wf-btn--sm${r === "CEO" ? " wf-btn--primary" : ""}">${WF.esc(r)}</button>`).join("")}
-          <span class="wf-approval-badge" style="margin-left:auto">Performance tracking</span>
-        </div>
+        ${WF.roleSwitcher(WF.getViewRole("CEO"), ep.viewRoles, { badge: "Performance tracking" })}
         ${WF.pageHeader("Employee Performance Dashboard", "Leads, calls, meetings, conversions, and productivity scores", `
           <button class="wf-btn wf-btn--sm" id="wf-demo-loading">Refresh</button>
           <button class="wf-btn wf-btn--sm" data-action="export">Export</button>

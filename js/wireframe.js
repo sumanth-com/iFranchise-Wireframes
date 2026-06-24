@@ -244,13 +244,9 @@ const WF = (() => {
     return crumbs;
   }
 
-  function spaTabs(tabs, activeId) {
-    return `<div class="wf-tabs" role="tablist">
-      ${tabs.map((tab) => {
-        const active = tab.id === activeId ? " wf-tabs__item--active" : "";
-        return `<a href="#${tab.id}" data-screen="${tab.id}" class="wf-tabs__item${active}" role="tab">${esc(tab.label)}</a>`;
-      }).join("")}
-    </div>`;
+  function spaTabs() {
+    /* Sub-screens are listed in the sidebar — no duplicate tab bar in content. */
+    return "";
   }
 
   function topbar(searchPlaceholder) {
@@ -469,14 +465,9 @@ const WF = (() => {
     </div>`;
   }
 
-  function detailTabs(activeHref) {
-    return `<div class="wf-tabs" role="tablist">
-      ${CUSTOMER_DETAIL_TABS.map((tab) => {
-        const isActive = activeHref === tab.href || (activeHref === tab.label.toLowerCase());
-        const active = tab.href === activeHref ? " wf-tabs__item--active" : "";
-        return `<a href="${tab.href}" class="wf-tabs__item${active}" role="tab">${esc(tab.label)}</a>`;
-      }).join("")}
-    </div>`;
+  function detailTabs() {
+    /* Legacy customer pages — navigation via sidebar / links only. */
+    return "";
   }
 
   function customerProfileCard(customer) {
@@ -1227,6 +1218,7 @@ const WF = (() => {
   function bindEvents() {
     bindShellEvents();
     bindContentEvents();
+    bindWorkflowStepper();
     bindRoleSwitcher();
     enhanceMobileExperience();
   }
@@ -1267,48 +1259,39 @@ const WF = (() => {
     return "Role-based permissions filter visible actions and data on this screen.";
   }
 
-  function roleContextBanner(role) {
-    const readOnly = /read only|view only|own (activity|records)/i.test(role || "");
-    return `<div class="wf-role-context" data-role-context role="status" aria-live="polite">
-      <div class="wf-role-context__main">
-        <strong>Viewing as ${esc(role)}</strong>
-        <span class="wf-role-context__desc">${esc(rolePermissionSummary(role))}</span>
-      </div>
-      ${readOnly ? '<span class="wf-badge wf-badge--dark">Read-only mode</span>' : '<span class="wf-badge">Permissions active</span>'}
-    </div>`;
-  }
-
   function applyRoleViewState(role) {
     if (!role) return;
     const readOnly = /read only|view only|own (activity|records)/i.test(role);
     document.body.classList.toggle("wf-view-readonly", readOnly);
     document.body.dataset.viewRole = role;
+    document.querySelector(".wf-role-context")?.remove();
+  }
 
-    const bar = document.querySelector(".wf-role-bar");
-    let banner = document.querySelector(".wf-role-context");
-    if (bar) {
-      const html = roleContextBanner(role);
-      if (banner) banner.outerHTML = html;
-      else bar.insertAdjacentHTML("afterend", html);
-    } else if (banner) {
-      banner.remove();
-    }
+  function bindWorkflowStepper() {
+    if (document.body.dataset.workflowBound) return;
+    document.body.dataset.workflowBound = "1";
+
+    document.body.addEventListener("click", (e) => {
+      const step = e.target.closest("[data-workflow-step]");
+      if (!step) return;
+      const label = step.getAttribute("data-workflow-step");
+      const target = step.getAttribute("data-workflow-target");
+      showToast(`Workflow: ${label}`);
+      if (target && typeof WF_SPA !== "undefined" && WF_SPA.navigate) {
+        WF_SPA.navigate(target);
+      }
+    });
   }
 
   function bindRoleSwitcher() {
     if (document.body.dataset.roleSwitcherBound) return;
     document.body.dataset.roleSwitcherBound = "1";
 
-    document.body.addEventListener("click", (e) => {
-      const roleBtn = e.target.closest(".wf-role-bar [data-role]");
-      if (!roleBtn) return;
-      e.preventDefault();
-
-      const role = roleBtn.getAttribute("data-role");
+    function applyRoleChange(role) {
       setViewRole(role);
 
-      document.querySelectorAll(".wf-role-bar [data-role]").forEach((btn) => {
-        btn.classList.toggle("wf-btn--primary", btn.getAttribute("data-role") === role);
+      document.querySelectorAll("[data-role-select]").forEach((sel) => {
+        if (sel.value !== role) sel.value = role;
       });
 
       applyRoleViewState(role);
@@ -1324,6 +1307,20 @@ const WF = (() => {
       if (readOnly) msg = "Read-only mode — save and delete actions disabled";
       else if (ownOnly) msg = `Viewing own records only as ${role}`;
       showToast(msg);
+    }
+
+    document.body.addEventListener("change", (e) => {
+      const roleSelect = e.target.closest("[data-role-select]");
+      if (roleSelect) {
+        applyRoleChange(roleSelect.value);
+        return;
+      }
+
+      const dashSelect = e.target.closest("[data-dashboard-role-select]");
+      if (dashSelect && typeof WF_SPA !== "undefined") {
+        const screenId = dashSelect.value;
+        if (screenId) WF_SPA.navigate(screenId);
+      }
     });
   }
 
@@ -1451,12 +1448,24 @@ const WF = (() => {
     }
   }
 
-  function updateBottomNavActive(activeId) {
+  function updateBottomNavActive(activeId, screens) {
+    const shortcutIds = screens
+      ? pickBottomNavScreens(screens, activeId).map((s) => s.id)
+      : [];
+    const onShortcut = shortcutIds.includes(activeId);
+
     document.querySelectorAll(".wf-bottom-nav__item[data-screen]").forEach((el) => {
       const on = el.getAttribute("data-screen") === activeId;
       el.classList.toggle("wf-bottom-nav__item--active", on);
       el.setAttribute("aria-current", on ? "page" : "false");
     });
+
+    const menuBtn = document.getElementById("wf-bottom-nav-menu");
+    if (menuBtn) {
+      const onMenu = Boolean(activeId && !onShortcut);
+      menuBtn.classList.toggle("wf-bottom-nav__item--active", onMenu);
+      menuBtn.setAttribute("aria-current", onMenu ? "page" : "false");
+    }
   }
 
   function cellHtml(cell) {
@@ -1716,7 +1725,13 @@ const WF = (() => {
     bindPhoneInputs();
     if (isMobileViewport()) enhanceMobileModals();
     if (typeof WF_SPA !== "undefined" && typeof WF_SPA.getCurrent === "function") {
-      updateBottomNavActive(WF_SPA.getCurrent());
+      const current = WF_SPA.getCurrent();
+      const modConfig = typeof WF_SPA.getModuleConfig === "function" ? WF_SPA.getModuleConfig() : null;
+      if (modConfig && typeof WF_SPA.syncNavChrome === "function") {
+        WF_SPA.syncNavChrome();
+      } else {
+        updateBottomNavActive(current, modConfig ? modConfig.screens : null);
+      }
     }
     applyRoleViewState(getViewRole());
   }
@@ -1983,26 +1998,31 @@ const WF = (() => {
     return modals().replace(/Customers/g, "Brands").replace(/Customer/g, "Brand").replace(/Rahul Sharma \(CUS-2024-001\)/, "Odette (BRD-001)");
   }
 
-  function workflowStepper(currentStatus, steps) {
+  function workflowStepper(currentStatus, steps, options = {}) {
     const workflow = steps || ((typeof MODEL_DATA !== "undefined" && MODEL_DATA.workflow) ? MODEL_DATA.workflow : ["Draft", "Submitted", "Under Review", "Approved", "Published", "Archived"]);
     const idx = workflow.indexOf(currentStatus);
-    return `<div class="wf-workflow">${workflow.map((step, i) => {
+    const targetScreen = options.targetScreen || "";
+    return `<div class="wf-workflow" role="list" aria-label="Workflow progress">${workflow.map((step, i) => {
       const done = i < idx;
       const active = i === idx;
-      const line = i < workflow.length - 1 ? `<div class="wf-workflow__line${done ? " wf-workflow__line--done" : ""}"></div>` : "";
-      return `<div class="wf-workflow__step">
-        <div class="wf-workflow__dot${done ? " wf-workflow__dot--done" : ""}${active ? " wf-workflow__dot--active" : ""}">${done ? "✓" : i + 1}</div>
+      const line = i < workflow.length - 1 ? `<div class="wf-workflow__line${done ? " wf-workflow__line--done" : ""}" aria-hidden="true"></div>` : "";
+      const target = targetScreen && (active || done) ? ` data-workflow-target="${targetScreen}"` : "";
+      return `<button type="button" class="wf-workflow__step" data-workflow-step="${esc(step)}"${target} aria-current="${active ? "step" : "false"}" title="${esc(step)}">
+        <span class="wf-workflow__dot${done ? " wf-workflow__dot--done" : ""}${active ? " wf-workflow__dot--active" : ""}" aria-hidden="true">${done ? "" : i + 1}</span>
         <span class="wf-workflow__label${active ? " wf-workflow__label--active" : ""}">${esc(step)}</span>
-      </div>${line}`;
+      </button>${line}`;
     }).join("")}</div>`;
   }
 
-  function roleSwitcher(activeRole, roles) {
+  function roleSwitcher(activeRole, roles, options = {}) {
     const roleList = roles || (typeof CONFIG_DATA !== "undefined" && CONFIG_DATA.viewRoles) || (typeof AUDIT_DATA !== "undefined" && AUDIT_DATA.viewRoles) || (typeof ROLES_DATA !== "undefined" && ROLES_DATA.systemRoles) || (typeof USER_DATA !== "undefined" && USER_DATA.roles) || (typeof AUTOMATION_DATA !== "undefined" && AUTOMATION_DATA.roles) || (typeof ANALYTICS_DATA !== "undefined" && ANALYTICS_DATA.roles) || (typeof NOTIFICATION_DATA !== "undefined" && NOTIFICATION_DATA.roles) || (typeof DOCUMENT_DATA !== "undefined" && DOCUMENT_DATA.roles) || (typeof ACCOUNTS_DATA !== "undefined" && ACCOUNTS_DATA.roles) || (typeof APPROVAL_DATA !== "undefined" && APPROVAL_DATA.roles) || (typeof MEETING_DATA !== "undefined" && MEETING_DATA.roles) || (typeof MODEL_DATA !== "undefined" && MODEL_DATA.roles) || ["CEO", "Team Lead", "Sales Executive", "Brand Owner", "Admin"];
+    const badge = options.badge || "Role-based permissions active";
     return `<div class="wf-role-bar">
-      <span class="wf-role-bar__label">View as:</span>
-      ${roleList.map((r) => `<button type="button" class="wf-btn wf-btn--sm${r === activeRole ? " wf-btn--primary" : ""}" data-role="${esc(r)}">${esc(r)}</button>`).join("")}
-      <span class="wf-approval-badge" style="margin-left:auto">Role-based permissions active</span>
+      <label class="wf-role-bar__label" for="wf-role-select">View as:</label>
+      <select id="wf-role-select" class="wf-role-bar__select wf-form__select" data-role-select aria-label="View as role">
+        ${roleList.map((r) => `<option value="${esc(r)}"${r === activeRole ? " selected" : ""}>${esc(r)}</option>`).join("")}
+      </select>
+      <span class="wf-role-bar__badge wf-approval-badge">${esc(badge)}</span>
     </div>`;
   }
 
@@ -2154,14 +2174,18 @@ const WF = (() => {
         <span class="wf-badge">${esc(m.status || "Scheduled")}</span>
       </div>
     `).join("") : `
-      <div class="wf-list-item"><div class="wf-list-item__content">
-        <div class="wf-list-item__title">Brand Presentation — Rahul Sharma</div>
-        <div class="wf-list-item__subtitle">25 Jun 2024, 10:00 AM · Online</div>
-      </div></div>
-      <div class="wf-list-item"><div class="wf-list-item__content">
-        <div class="wf-list-item__title">Site Visit — Arjun Reddy</div>
-        <div class="wf-list-item__subtitle">26 Jun 2024, 2:00 PM · In Person</div>
-      </div></div>`;
+      <div class="wf-list-item" data-screen="details">
+        <div class="wf-list-item__content">
+          <div class="wf-list-item__title">Brand Presentation — Rahul Sharma</div>
+          <div class="wf-list-item__subtitle">25 Jun 2024, 10:00 AM · Online</div>
+        </div>
+      </div>
+      <div class="wf-list-item" data-screen="details">
+        <div class="wf-list-item__content">
+          <div class="wf-list-item__title">Site Visit — Arjun Reddy</div>
+          <div class="wf-list-item__subtitle">26 Jun 2024, 2:00 PM · In Person</div>
+        </div>
+      </div>`;
     return `<div class="wf-calendar-toolbar">
       <div class="wf-view-toggle">${views.map((v) => `<button type="button" class="wf-btn wf-btn--sm${v === activeView ? " wf-btn--primary" : ""}" data-cal-view="${v.toLowerCase()}">${v}</button>`).join("")}</div>
       <div class="wf-flex wf-gap-8" style="margin-left:auto">
@@ -2245,7 +2269,7 @@ const WF = (() => {
     const m = meeting || (typeof MEETING_DATA !== "undefined" ? MEETING_DATA.meetings[0] : {});
     return `<div class="wf-card">
       <div class="wf-card__body" style="text-align:center">
-        <div style="width:48px;height:48px;background:var(--wf-placeholder-dark);border-radius:50%;margin:0 auto 12px;display:flex;align-items:center;justify-content:center;font-size:20px">📅</div>
+        <div class="wf-avatar-lg" aria-hidden="true"></div>
         <div style="font-size:15px;font-weight:600">${esc(m.title)}</div>
         <div style="font-size:12px;color:var(--wf-text-muted)">${esc(m.id)}</div>
         <div style="margin-top:8px"><span class="wf-badge wf-badge--dark">${esc(m.status)}</span></div>
@@ -2396,7 +2420,7 @@ const WF = (() => {
     const a = approval || (typeof APPROVAL_DATA !== "undefined" ? APPROVAL_DATA.approvals[0] : {});
     return `<div class="wf-card">
       <div class="wf-card__body" style="text-align:center">
-        <div style="width:48px;height:48px;background:var(--wf-placeholder-dark);border-radius:50%;margin:0 auto 12px;display:flex;align-items:center;justify-content:center;font-size:20px">✓</div>
+        <div class="wf-avatar-lg" aria-hidden="true"></div>
         <div style="font-size:15px;font-weight:600">${esc(a.type)}</div>
         <div style="font-size:12px;color:var(--wf-text-muted)">${esc(a.id)}</div>
         <div style="margin-top:8px"><span class="wf-badge wf-badge--dark">${esc(a.status)}</span></div>
@@ -2452,7 +2476,7 @@ const WF = (() => {
       const done = l.status === "Completed" || l.status === "Approved";
       const active = l.status === "In Progress" || l.name === currentLevel;
       return `<div class="wf-approval-level${done ? " wf-approval-level--done" : ""}${active ? " wf-approval-level--active" : ""}">
-        <div class="wf-approval-level__num">${done ? "✓" : l.level}</div>
+        <div class="wf-approval-level__num">${done ? "" : l.level}</div>
         <div class="wf-approval-level__body">
           <div class="wf-approval-level__title">${esc(l.name)}</div>
           <div class="wf-approval-level__meta">${esc(l.approver)} · <span class="wf-badge">${esc(l.status)}</span></div>
@@ -2594,7 +2618,7 @@ const WF = (() => {
     const p = payment || (typeof ACCOUNTS_DATA !== "undefined" ? ACCOUNTS_DATA.payments[0] : {});
     return `<div class="wf-card">
       <div class="wf-card__body" style="text-align:center">
-        <div style="width:48px;height:48px;background:var(--wf-placeholder-dark);border-radius:50%;margin:0 auto 12px;display:flex;align-items:center;justify-content:center;font-size:20px">₹</div>
+        <div class="wf-avatar-lg" aria-hidden="true"></div>
         <div style="font-size:18px;font-weight:700">${formatINR(p.amount)}</div>
         <div style="font-size:12px;color:var(--wf-text-muted)">${esc(p.id)}</div>
         <div style="margin-top:8px"><span class="wf-badge wf-badge--dark">${esc(p.status)}</span></div>
@@ -2771,11 +2795,15 @@ const WF = (() => {
       </tr>
     `).join("");
     const count = (documents || []).length;
-    return `<div class="wf-table-wrap wf-table-wrap--scroll"><table class="wf-table wf-table--fit"><thead><tr>
+    const paginationHtml = hidePagination ? "" : pagination(count > 6 ? 284 : count);
+    return `<div class="wf-table-block">
+      <div class="wf-table-wrap wf-table-wrap--scroll"><table class="wf-table wf-table--fit"><thead><tr>
       ${selectable ? "<th><span class='wf-table__checkbox'></span></th>" : ""}
       <th></th><th>Name</th><th>Category</th><th>Type</th><th>Linked To</th><th>Uploaded By</th><th>Date</th><th>Size</th><th>Ver</th><th>Status</th><th>Expiry</th>
       ${showActions ? "<th>Actions</th>" : ""}
-    </tr></thead><tbody>${rows || `<tr><td colspan="14" style="text-align:center;padding:24px;color:var(--wf-text-muted)">No documents found</td></tr>`}</tbody></table>${hidePagination ? "" : pagination(count > 6 ? 284 : count)}</div>`;
+    </tr></thead><tbody>${rows || `<tr><td colspan="14" style="text-align:center;padding:24px;color:var(--wf-text-muted)">No documents found</td></tr>`}</tbody></table></div>
+    ${paginationHtml}
+    </div>`;
   }
 
   function documentProfileCard(doc) {
@@ -3018,9 +3046,14 @@ const WF = (() => {
 
   function channelToggle(channels, active) {
     const list = channels || ["In-App", "Email", "SMS", "WhatsApp", "Push Notification"];
+    const screenMap = {
+      "in-app": "center",
+      "push-notification": "push"
+    };
     return `<div class="wf-view-toggle">${list.map((c) => {
       const id = c.toLowerCase().replace(/\s+/g, "-");
-      return `<button type="button" class="wf-btn wf-btn--sm${c === active ? " wf-btn--primary" : ""}" data-screen="${id === "push-notification" ? "push" : id}">${esc(c)}</button>`;
+      const screenId = screenMap[id] || id;
+      return `<button type="button" class="wf-btn wf-btn--sm${c === active ? " wf-btn--primary" : ""}" data-screen="${screenId}">${esc(c)}</button>`;
     }).join("")}</div>`;
   }
 
@@ -3099,12 +3132,20 @@ const WF = (() => {
     return `<div class="wf-view-toggle wf-mb-16">${periods.map((p) => `<button type="button" class="wf-btn wf-btn--sm${p === active ? " wf-btn--primary" : ""}" data-period="${p.toLowerCase()}">${p}</button>`).join("")}</div>`;
   }
 
+  function statValueSizeClass(value, small) {
+    if (small) return " wf-stat-card__value--sm";
+    const text = String(value == null ? "" : value);
+    if (text.length > 16) return " wf-stat-card__value--sm";
+    if (text.length > 7) return " wf-stat-card__value--md";
+    return "";
+  }
+
   function kpiGrid(kpis) {
     const items = kpis || [];
     return `<div class="wf-card-grid">${items.map((k) => `
       <div class="wf-stat-card">
         <div class="wf-stat-card__label">${esc(k.label)}</div>
-        <div class="wf-stat-card__value"${k.small ? ' style="font-size:16px"' : ""}>${esc(k.value)}</div>
+        <div class="wf-stat-card__value${statValueSizeClass(k.value, k.small)}">${esc(k.value)}</div>
         ${k.change ? `<div class="wf-stat-card__change">${esc(k.change)}</div>` : ""}
       </div>
     `).join("")}</div>`;
@@ -3459,10 +3500,10 @@ const WF = (() => {
       <div class="wf-props__header"><span>Properties</span><button class="wf-btn wf-btn--sm" data-action="validate-workflow">Validate</button></div>
       <div class="wf-props__section"><div class="wf-props__section-title">Selected Node</div>${rows || '<div class="wf-empty" style="padding:12px;font-size:12px">Select a node on canvas</div>'}</div>
       <div class="wf-props__section"><div class="wf-props__section-title">Validation</div>
-        <div class="wf-props__check wf-props__check--ok">✓ Trigger configured</div>
-        <div class="wf-props__check wf-props__check--ok">✓ No infinite loops</div>
-        <div class="wf-props__check wf-props__check--ok">✓ All actions connected</div>
-        <div class="wf-props__check wf-props__check--warn">⚠ Email template not set</div>
+        <div class="wf-props__check wf-props__check--ok">Trigger configured</div>
+        <div class="wf-props__check wf-props__check--ok">No infinite loops</div>
+        <div class="wf-props__check wf-props__check--ok">All actions connected</div>
+        <div class="wf-props__check wf-props__check--warn">Note: Email template not set</div>
       </div>
       <div class="wf-props__section"><div class="wf-props__section-title">Version History</div>
         <div class="wf-timeline" style="padding:0 8px">
@@ -3674,9 +3715,9 @@ const WF = (() => {
     <div class="wf-modal-overlay" id="modal-activate-workflow">
       <div class="wf-modal"><div class="wf-modal__header"><span class="wf-modal__title">Activate Workflow</span><button class="wf-modal__close" data-close-modal>&times;</button></div>
         <div class="wf-modal__body"><p style="font-size:13px;margin-bottom:16px">Validation passed. Activate this workflow for production?</p>
-          <div class="wf-props__check wf-props__check--ok">✓ Trigger: Lead Created</div>
-          <div class="wf-props__check wf-props__check--ok">✓ 6 actions configured</div>
-          <div class="wf-props__check wf-props__check--ok">✓ Permissions verified</div>
+          <div class="wf-props__check wf-props__check--ok">Trigger: Lead Created</div>
+          <div class="wf-props__check wf-props__check--ok">6 actions configured</div>
+          <div class="wf-props__check wf-props__check--ok">Permissions verified</div>
         </div>
         <div class="wf-modal__footer"><button class="wf-btn" data-close-modal>Cancel</button><button class="wf-btn wf-btn--primary" data-action="confirm-activate-workflow">Activate</button></div>
       </div>
@@ -4057,7 +4098,7 @@ const WF = (() => {
     const rows = mods.map((m) => {
       const cells = perms.map((p, i) => {
         const same = i % 3 !== 2;
-        return `<td class="wf-perm-compare__cell${same ? "" : " wf-perm-compare__cell--diff"}">${same ? "✓" : "—"}</td>`;
+        return `<td class="wf-perm-compare__cell${same ? "" : " wf-perm-compare__cell--diff"}">${same ? "Yes" : "—"}</td>`;
       }).join("");
       return `<tr><td>${esc(m)}</td><td class="wf-perm-compare__role">${esc(a)}</td>${cells}<td class="wf-perm-compare__role">${esc(b)}</td>${cells}</tr>`;
     }).join("");
@@ -4088,9 +4129,9 @@ const WF = (() => {
         <div style="font-size:13px;margin-bottom:16px"><strong>Primary Role:</strong> ${esc(r)} · <strong>Department:</strong> Sales · <strong>Overrides:</strong> 2</div>
         ${permissionMatrix({ editable: false, compact: true })}
         <div class="wf-mt-16">
-          <div class="wf-props__check wf-props__check--ok">✓ Inherited from Sales Manager</div>
-          <div class="wf-props__check wf-props__check--ok">✓ Department scope: Sales + assigned cities</div>
-          <div class="wf-props__check wf-props__check--warn">⚠ Override: Export denied on Accounts module</div>
+          <div class="wf-props__check wf-props__check--ok">Inherited from Sales Manager</div>
+          <div class="wf-props__check wf-props__check--ok">Department scope: Sales + assigned cities</div>
+          <div class="wf-props__check wf-props__check--warn">Note: Override: Export denied on Accounts module</div>
         </div>
       </div>
     </div>`;
@@ -4229,8 +4270,8 @@ const WF = (() => {
       <div class="wf-modal"><div class="wf-modal__header"><span class="wf-modal__title">Restore Deleted Record</span><button class="wf-modal__close" data-close-modal>&times;</button></div>
         <div class="wf-modal__body">
           <p style="font-size:13px;margin-bottom:12px">Restore <strong>Lead — Rahul Sharma (LEAD-2024-089)</strong>? This action is logged in the audit trail.</p>
-          <div class="wf-props__check wf-props__check--ok">✓ Export permission validated</div>
-          <div class="wf-props__check wf-props__check--ok">✓ Retention policy allows restore</div>
+          <div class="wf-props__check wf-props__check--ok">Export permission validated</div>
+          <div class="wf-props__check wf-props__check--ok">Retention policy allows restore</div>
         </div>
         <div class="wf-modal__footer"><button class="wf-btn" data-close-modal>Cancel</button><button class="wf-btn wf-btn--primary" data-action="confirm-restore-record">Restore</button></div>
       </div>
@@ -4366,8 +4407,8 @@ const WF = (() => {
     <div class="wf-modal-overlay" id="modal-save-settings">
       <div class="wf-modal"><div class="wf-modal__header"><span class="wf-modal__title">Save Settings</span><button class="wf-modal__close" data-close-modal>&times;</button></div>
         <div class="wf-modal__body"><p style="font-size:13px">Save configuration changes? This will apply immediately for all users.</p>
-          <div class="wf-props__check wf-props__check--ok">✓ Permission validation passed</div>
-          <div class="wf-props__check wf-props__check--ok">✓ Required fields validated</div>
+          <div class="wf-props__check wf-props__check--ok">Permission validation passed</div>
+          <div class="wf-props__check wf-props__check--ok">Required fields validated</div>
         </div>
         <div class="wf-modal__footer"><button class="wf-btn" data-close-modal>Cancel</button><button class="wf-btn wf-btn--primary" data-action="confirm-save-settings">Save</button></div>
       </div>

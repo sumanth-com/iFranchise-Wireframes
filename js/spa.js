@@ -37,10 +37,61 @@ const WF_SPA = (() => {
     window.addEventListener("hashchange", () => navigate(location.hash.slice(1), false));
   }
 
+  function resolveBreadcrumb(screen) {
+    const bc = screen.breadcrumb;
+    if (typeof bc === "function") return bc();
+    return bc || [{ label: screen.label }];
+  }
+
+  function syncNavChrome() {
+    if (!config || !currentId) return;
+    const screen = screens[currentId];
+    if (!screen) return;
+
+    const breadcrumbEl = document.getElementById("wf-breadcrumb");
+    const mobileNavWrap = document.getElementById("wf-mobile-screen-nav-wrap");
+    if (!breadcrumbEl || !mobileNavWrap) return;
+
+    const crumbs = resolveBreadcrumb(screen);
+    breadcrumbEl.innerHTML = WF.spaBreadcrumb(
+      config.moduleLabel,
+      config.moduleHref,
+      crumbs
+    );
+
+    if (WF.isMobileViewport()) {
+      mobileNavWrap.innerHTML = WF.mobileScreenNavBar(config, { ...screen, breadcrumb: crumbs });
+      breadcrumbEl.classList.add("wf-hidden");
+      WF.refreshMobileBottomNav(config.screens, currentId);
+    } else {
+      mobileNavWrap.innerHTML = "";
+      breadcrumbEl.classList.remove("wf-hidden");
+    }
+
+    WF.updateBottomNavActive(currentId, config.screens);
+    highlightSidebarLink(currentId);
+  }
+
+  function highlightSidebarLink(screenId) {
+    document.querySelectorAll(".wf-sidebar__link[data-screen]").forEach((el) => {
+      el.classList.toggle("wf-sidebar__link--active", el.getAttribute("data-screen") === screenId);
+    });
+    const activeLink = document.querySelector(`.wf-sidebar__link[data-screen="${screenId}"]`);
+    if (activeLink) activeLink.scrollIntoView({ block: "nearest", behavior: "smooth" });
+  }
+
   function navigate(screenId, pushHash = true) {
     const screen = screens[screenId];
     if (!screen) {
-      navigate(config.defaultScreen, pushHash);
+      const fallback = screens[config.defaultScreen]
+        ? config.defaultScreen
+        : Object.keys(screens)[0];
+      if (!fallback) return;
+      if (pushHash) {
+        location.replace(`#${fallback}`);
+      } else {
+        navigate(fallback, true);
+      }
       return;
     }
 
@@ -55,28 +106,7 @@ const WF_SPA = (() => {
     void container.offsetWidth;
     container.classList.add("wf-screen-enter");
 
-    document.getElementById("wf-breadcrumb").innerHTML = WF.spaBreadcrumb(
-      config.moduleLabel,
-      config.moduleHref,
-      screen.breadcrumb || [{ label: screen.label }]
-    );
-
-    const mobileNavWrap = document.getElementById("wf-mobile-screen-nav-wrap");
-    const breadcrumbEl = document.getElementById("wf-breadcrumb");
-    if (WF.isMobileViewport()) {
-      mobileNavWrap.innerHTML = WF.mobileScreenNavBar(config, screen);
-      breadcrumbEl.classList.add("wf-hidden");
-    } else {
-      mobileNavWrap.innerHTML = "";
-      breadcrumbEl.classList.remove("wf-hidden");
-    }
-
-    document.querySelectorAll(".wf-sidebar__link[data-screen]").forEach((el) => {
-      el.classList.toggle("wf-sidebar__link--active", el.getAttribute("data-screen") === screenId);
-    });
-
-    WF.updateBottomNavActive(screenId);
-    if (WF.isMobileViewport()) WF.refreshMobileBottomNav(config.screens, screenId);
+    syncNavChrome();
 
     document.title = `${screen.label} — ${config.moduleTitle} — ${WF.BRAND_NAME}`;
     window.scrollTo({ top: 0, behavior: "smooth" });
@@ -105,5 +135,7 @@ const WF_SPA = (() => {
 
   function getCurrent() { return currentId; }
 
-  return { init, navigate: go, getCurrent };
+  function getModuleConfig() { return config; }
+
+  return { init, navigate: go, getCurrent, syncNavChrome, getModuleConfig };
 })();

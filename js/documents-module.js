@@ -69,10 +69,7 @@ const DOCUMENTS_MODULE = (() => {
           <button data-screen="upload" class="wf-btn wf-btn--sm wf-btn--primary">+ Upload</button>
         `)}
         ${WF.toolbar({ filters: ["Category", "Type", "Status", "Brand", "Customer", "Date Range", "File Type"] })}
-        <div class="wf-library-layout">
-          <div>${WF.folderTree(DOCUMENT_DATA.folders, "root")}</div>
-          <div id="wf-data-content">${WF.documentTable(DOCUMENT_DATA.documents)}</div>
-        </div>
+        <div id="wf-data-content">${WF.documentTable(DOCUMENT_DATA.documents)}</div>
         ${WF.loadingState()}
       `
     },

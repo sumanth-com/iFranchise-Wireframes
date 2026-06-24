@@ -1,23 +1,19 @@
 /* Meeting Management — Single Page Module (17 screens) */
 
 const MEETINGS_MODULE = (() => {
-  const m = () => MEETING_DATA.meetings[0];
+  const meetingIdx = { value: 0 };
+  const defaultMeeting = () => MEETING_DATA.meetings[meetingIdx.value] || MEETING_DATA.meetings[0];
+  const meetingCtx = () => defaultMeeting();
+  const m = () => meetingCtx();
+  const meetingParentScreen = () => (meetingIdx.value === 2 ? "offline" : "details");
+  const meetingTrail = (leaf) => () => {
+    const items = [{ label: "Meeting List", screen: "list" }, { label: m().title, screen: meetingParentScreen() }];
+    if (leaf) items.push({ label: leaf });
+    return items;
+  };
   let activeRole = "CEO";
 
   const roleBar = () => WF.roleSwitcher(WF.getViewRole(activeRole), MEETING_DATA.roles);
-
-  const meetingTabs = (active) => WF.spaTabs([
-    { id: "details", label: "Overview" },
-    { id: "agenda", label: "Agenda" },
-    { id: "participants", label: "Participants" },
-    { id: "notes", label: "Notes" },
-    { id: "documents", label: "Documents" },
-    { id: "timeline", label: "Timeline" },
-    { id: "followups", label: "Follow-ups" },
-    { id: "outcomes", label: "Outcomes" },
-    { id: "online", label: "Online" },
-    { id: "offline", label: "Offline" }
-  ], active);
 
   const screens = [
     {
@@ -102,7 +98,7 @@ const MEETINGS_MODULE = (() => {
     },
     {
       id: "details", label: "Meeting Details",
-      breadcrumb: [{ label: "Meeting List", screen: "list" }, { label: m().title }],
+      breadcrumb: () => [{ label: "Meeting List", screen: "list" }, { label: m().title }],
       render: () => {
         const mtg = m();
         return `
@@ -113,8 +109,7 @@ const MEETINGS_MODULE = (() => {
             <button data-modal="reschedule" class="wf-btn wf-btn--sm">Reschedule</button>
             <button class="wf-btn wf-btn--sm wf-btn--danger" data-modal="cancel-meeting">Cancel</button>
           `)}
-          ${WF.workflowStepper(mtg.status, MEETING_DATA.workflow)}
-          ${meetingTabs("details")}
+          ${WF.workflowStepper(mtg.status, MEETING_DATA.workflow, { targetScreen: "cancel-reschedule" })}
           <div class="wf-detail-layout">
             <div class="wf-detail-sidebar">${WF.meetingProfileCard(mtg)}</div>
             <div>
@@ -155,18 +150,17 @@ const MEETINGS_MODULE = (() => {
     },
     {
       id: "edit", label: "Edit Meeting",
-      breadcrumb: [{ label: "Meeting List", screen: "list" }, { label: m().title, screen: "details" }, { label: "Edit" }],
+      breadcrumb: meetingTrail("Edit"),
       render: () => `${roleBar()}${WF.pageHeader("Edit Meeting", m().id)}<div class="wf-card"><div class="wf-card__body">${WF.meetingForm(m(), "edit")}</div></div>`
     },
     {
       id: "agenda", label: "Meeting Agenda",
-      breadcrumb: [{ label: "Meeting List", screen: "list" }, { label: m().title, screen: "details" }, { label: "Agenda" }],
+      breadcrumb: meetingTrail("Agenda"),
       render: () => {
         const mtg = m();
         return `
           ${roleBar()}
           ${WF.pageHeader("Meeting Agenda", mtg.title, `<button data-screen="edit" class="wf-btn wf-btn--sm">Edit Agenda</button>`)}
-          ${meetingTabs("agenda")}
           <div class="wf-card"><div class="wf-card__header"><span class="wf-card__title">Agenda Items</span><button class="wf-btn wf-btn--sm">+ Add Item</button></div>
             <div class="wf-card__body">
               <div class="wf-timeline">
@@ -185,14 +179,13 @@ const MEETINGS_MODULE = (() => {
     },
     {
       id: "participants", label: "Meeting Participants",
-      breadcrumb: [{ label: "Meeting List", screen: "list" }, { label: m().title, screen: "details" }, { label: "Participants" }],
+      breadcrumb: meetingTrail("Participants"),
       render: () => `
         ${roleBar()}
         ${WF.pageHeader("Meeting Participants", m().title, `
           <button class="wf-btn wf-btn--sm" data-modal="send-email">Send Invite</button>
           <button class="wf-btn wf-btn--sm wf-btn--primary">+ Add Participant</button>
         `)}
-        ${meetingTabs("participants")}
         <div class="wf-card"><div class="wf-card__header"><span class="wf-card__title">Participants & Attendance</span></div>
           <div class="wf-table-wrap" style="border:none"><table class="wf-table"><thead><tr><th>Name</th><th>Role</th><th>Email</th><th>RSVP</th><th>Attendance</th><th>Actions</th></tr></thead>
           <tbody>${MEETING_DATA.participants.map(p => `<tr>
@@ -209,13 +202,12 @@ const MEETINGS_MODULE = (() => {
     },
     {
       id: "notes", label: "Meeting Notes",
-      breadcrumb: [{ label: "Meeting List", screen: "list" }, { label: m().title, screen: "details" }, { label: "Notes" }],
+      breadcrumb: meetingTrail("Notes"),
       render: () => `
         ${roleBar()}
         ${WF.pageHeader("Meeting Notes", "Discussion notes and internal comments", `
           <button class="wf-btn wf-btn--sm wf-btn--primary">+ Add Note</button>
         `)}
-        ${meetingTabs("notes")}
         <div class="wf-card"><div class="wf-card__header"><span class="wf-card__title">Discussion Notes</span></div>
           <div class="wf-card__body">
             <div class="wf-form__group"><textarea class="wf-form__textarea" rows="6" placeholder="Capture discussion points during the meeting…">${WF.esc(m().notes)}</textarea></div>
@@ -234,14 +226,13 @@ const MEETINGS_MODULE = (() => {
     },
     {
       id: "documents", label: "Meeting Documents",
-      breadcrumb: [{ label: "Meeting List", screen: "list" }, { label: m().title, screen: "details" }, { label: "Documents" }],
+      breadcrumb: meetingTrail("Documents"),
       render: () => `
         ${roleBar()}
         ${WF.pageHeader("Meeting Documents", "Attachments, decks, and meeting recordings", `
           <button class="wf-btn wf-btn--sm">Export</button>
           <button class="wf-btn wf-btn--sm wf-btn--primary">Upload</button>
         `)}
-        ${meetingTabs("documents")}
         <div class="wf-card"><div class="wf-card__header"><span class="wf-card__title">Documents</span></div>
           <div class="wf-table-wrap" style="border:none"><table class="wf-table"><thead><tr><th><span class="wf-table__checkbox"></span></th><th>Name</th><th>Type</th><th>Size</th><th>Uploaded</th><th>Actions</th></tr></thead>
           <tbody>${MEETING_DATA.documents.map(d => `<tr>
@@ -262,11 +253,10 @@ const MEETINGS_MODULE = (() => {
     },
     {
       id: "timeline", label: "Meeting Timeline",
-      breadcrumb: [{ label: "Meeting List", screen: "list" }, { label: m().title, screen: "details" }, { label: "Timeline" }],
+      breadcrumb: meetingTrail("Timeline"),
       render: () => `
         ${roleBar()}
         ${WF.pageHeader("Meeting Timeline", "Chronological activity and status changes")}
-        ${meetingTabs("timeline")}
         <div class="wf-card"><div class="wf-card__header"><span class="wf-card__title">Activity Timeline</span></div>
           <div class="wf-card__body">${WF.timeline(MEETING_DATA.timeline)}</div>
         </div>
@@ -301,13 +291,12 @@ const MEETINGS_MODULE = (() => {
     },
     {
       id: "outcomes", label: "Meeting Outcomes",
-      breadcrumb: [{ label: "Meeting List", screen: "list" }, { label: m().title, screen: "details" }, { label: "Outcomes" }],
+      breadcrumb: meetingTrail("Outcomes"),
       render: () => `
         ${roleBar()}
         ${WF.pageHeader("Meeting Outcomes", "Expected vs achieved outcomes", `
           <button class="wf-btn wf-btn--sm wf-btn--primary">+ Add Outcome</button>
         `)}
-        ${meetingTabs("outcomes")}
         <div class="wf-card"><div class="wf-card__header"><span class="wf-card__title">Expected Outcome</span></div>
           <div class="wf-card__body"><p style="font-size:13px">${WF.esc(m().outcome)}</p></div>
         </div>
@@ -324,7 +313,7 @@ const MEETINGS_MODULE = (() => {
     },
     {
       id: "online", label: "Online Meeting",
-      breadcrumb: [{ label: "Meeting List", screen: "list" }, { label: m().title, screen: "details" }, { label: "Online Meeting" }],
+      breadcrumb: meetingTrail("Online Meeting"),
       render: () => {
         const mtg = m();
         return `
@@ -333,7 +322,6 @@ const MEETINGS_MODULE = (() => {
             <button class="wf-btn wf-btn--sm wf-btn--primary">Join Google Meet</button>
             <button class="wf-btn wf-btn--sm">Copy Link</button>
           `)}
-          ${meetingTabs("online")}
           <div class="wf-grid-2">
             <div class="wf-card"><div class="wf-card__header"><span class="wf-card__title">Google Meet</span></div>
               <div class="wf-card__body">
@@ -372,9 +360,8 @@ const MEETINGS_MODULE = (() => {
           ${roleBar()}
           ${WF.pageHeader("Offline Meeting Details", offline.title, `
             <button class="wf-btn wf-btn--sm">Get Directions</button>
-            <button data-screen="edit" class="wf-btn wf-btn--sm">Edit Location</button>
+            <button data-screen="edit" data-meeting-idx="2" class="wf-btn wf-btn--sm">Edit Location</button>
           `)}
-          ${meetingTabs("offline")}
           <div class="wf-detail-layout">
             <div class="wf-detail-sidebar">${WF.meetingProfileCard(offline)}</div>
             <div>
@@ -491,6 +478,22 @@ const MEETINGS_MODULE = (() => {
       modals: WF.meetingModals,
       screens
     });
+
+    document.body.addEventListener("click", (e) => {
+      const idxEl = e.target.closest("[data-meeting-idx]");
+      if (idxEl) {
+        meetingIdx.value = parseInt(idxEl.getAttribute("data-meeting-idx"), 10) || 0;
+      }
+    }, true);
+
+    window.addEventListener("hashchange", () => {
+      const cur = location.hash.slice(1) || "dashboard";
+      if (cur === "offline") meetingIdx.value = 2;
+      else if (cur === "details" || cur === "list" || cur === "dashboard") meetingIdx.value = 0;
+    });
+
+    const initialScreen = location.hash.slice(1) || "dashboard";
+    if (initialScreen === "offline") meetingIdx.value = 2;
 
     document.body.addEventListener("click", (e) => {
       const listView = e.target.closest("[data-list-view]");

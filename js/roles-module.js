@@ -131,11 +131,11 @@ const ROLES_MODULE = (() => {
             </div>
             <div class="wf-card"><div class="wf-card__header"><span class="wf-card__title">Validation</span><button data-action="validate-permissions" class="wf-btn wf-btn--sm">Validate</button></div>
               <div class="wf-card__body">
-                <div class="wf-props__check wf-props__check--ok">✓ Unique role name</div>
-                <div class="wf-props__check wf-props__check--ok">✓ No permission conflicts</div>
-                <div class="wf-props__check wf-props__check--ok">✓ No circular hierarchy</div>
-                <div class="wf-props__check wf-props__check--ok">✓ Mandatory permissions present</div>
-                <div class="wf-props__check wf-props__check--warn">⚠ MFA recommended for this role level</div>
+                <div class="wf-props__check wf-props__check--ok">Unique role name</div>
+                <div class="wf-props__check wf-props__check--ok">No permission conflicts</div>
+                <div class="wf-props__check wf-props__check--ok">No circular hierarchy</div>
+                <div class="wf-props__check wf-props__check--ok">Mandatory permissions present</div>
+                <div class="wf-props__check wf-props__check--warn">Note: MFA recommended for this role level</div>
               </div>
             </div>
           </div>
@@ -312,10 +312,10 @@ const ROLES_MODULE = (() => {
         `)}
         <div class="wf-table-wrap"><table class="wf-table"><thead><tr><th>Role</th><th>View Workflows</th><th>Create</th><th>Edit</th><th>Activate</th><th>Delete</th><th>Test</th></tr></thead>
         <tbody>
-          <tr><td>Super Admin</td><td>✓</td><td>✓</td><td>✓</td><td>✓</td><td>✓</td><td>✓</td></tr>
-          <tr><td>Operations Manager</td><td>✓</td><td>✓</td><td>✓</td><td>✓</td><td>—</td><td>✓</td></tr>
-          <tr><td>Sales Manager</td><td>✓</td><td>✓</td><td>Own</td><td>—</td><td>—</td><td>✓</td></tr>
-          <tr><td>Team Lead</td><td>✓</td><td>—</td><td>—</td><td>—</td><td>—</td><td>✓</td></tr>
+          <tr><td>Super Admin</td><td>Yes</td><td>Yes</td><td>Yes</td><td>Yes</td><td>Yes</td><td>Yes</td></tr>
+          <tr><td>Operations Manager</td><td>Yes</td><td>Yes</td><td>Yes</td><td>Yes</td><td>—</td><td>Yes</td></tr>
+          <tr><td>Sales Manager</td><td>Yes</td><td>Yes</td><td>Own</td><td>—</td><td>—</td><td>Yes</td></tr>
+          <tr><td>Team Lead</td><td>Yes</td><td>—</td><td>—</td><td>—</td><td>—</td><td>Yes</td></tr>
           <tr><td>Sales Executive</td><td>—</td><td>—</td><td>—</td><td>—</td><td>—</td><td>—</td></tr>
         </tbody></table></div>
       `
