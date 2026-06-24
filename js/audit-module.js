@@ -168,11 +168,7 @@ const AUDIT_MODULE = (() => {
           <button data-screen="security-dashboard" class="wf-btn wf-btn--sm">Security Dashboard</button>
         `)}
         ${filters()}
-        ${d().securityEvents.map((e) => `<div class="wf-security-alert wf-security-alert--${e.severity.toLowerCase()}">
-          <div style="flex:1"><strong>${e.type}</strong> · ${e.id}<br><span style="font-size:12px">${e.detail}</span><br><span style="font-size:11px;color:var(--wf-text-muted)">${e.time} · ${e.user}</span></div>
-          ${WF.severityBadge(e.severity)}
-          <button data-screen="explorer" class="wf-btn wf-btn--sm">Details</button>
-        </div>`).join("")}
+        ${WF.securityEventList(d().securityEvents)}
       `
     },
     {
@@ -341,7 +337,7 @@ const AUDIT_MODULE = (() => {
           ${WF.chartCard("Security Events by Severity", "Donut Chart", { height: 240, drillScreen: "security-events" })}
         </div>
         <div class="wf-card"><div class="wf-card__header"><span class="wf-card__title">Active Threats</span><button data-screen="suspicious" class="wf-btn wf-btn--sm">Investigate</button></div>
-          <div class="wf-card__body">${d().securityEvents.slice(0, 3).map((e) => `<div class="wf-security-alert wf-security-alert--${e.severity.toLowerCase()}"><div><strong>${e.type}</strong><br><span style="font-size:12px">${e.detail}</span></div></div>`).join("")}</div>
+          <div class="wf-card__body">${WF.securityEventList(d().securityEvents.slice(0, 3), { compact: true })}</div>
         </div>
       `
     },

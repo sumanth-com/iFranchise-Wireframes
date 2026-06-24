@@ -47,9 +47,7 @@ const ROLES_MODULE = (() => {
         <div class="wf-grid-2">
           <div class="wf-card"><div class="wf-card__header"><span class="wf-card__title">Security Alerts</span><button data-screen="analytics" class="wf-btn wf-btn--sm">Analytics</button></div>
             <div class="wf-card__body">
-              ${d().securityAlerts.map((a) => `<div class="wf-security-alert wf-security-alert--${a.severity.toLowerCase()}">
-                <div><strong>${a.type}</strong> · ${a.severity}<br><span style="font-size:12px;color:var(--wf-text-muted)">${a.detail} · ${a.time}</span></div>
-              </div>`).join("")}
+              ${WF.securityEventList(d().securityAlerts, { compact: true })}
             </div>
           </div>
           <div class="wf-card"><div class="wf-card__header"><span class="wf-card__title">Pending Access Requests</span><button data-screen="access-requests" class="wf-btn wf-btn--sm">View All</button></div>
@@ -521,9 +519,7 @@ const ROLES_MODULE = (() => {
           </div>
           <div class="wf-card"><div class="wf-card__header"><span class="wf-card__title">Alerts & Incidents</span></div>
             <div class="wf-card__body">
-              ${d().securityAlerts.map((a) => `<div class="wf-security-alert wf-security-alert--${a.severity.toLowerCase()}">
-                <div><strong>${a.type}</strong> (${a.severity})<br><span style="font-size:12px">${a.detail}</span><br><span style="font-size:11px;color:var(--wf-text-muted)">${a.time}</span></div>
-              </div>`).join("")}
+              ${WF.securityEventList(d().securityAlerts, { compact: true })}
             </div>
           </div>
         </div>

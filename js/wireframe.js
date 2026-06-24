@@ -115,6 +115,155 @@ const WF = (() => {
     return defaults[key] || [];
   }
 
+  function uniqFilterOptions(items) {
+    const seen = new Set();
+    return (items || []).filter((item) => {
+      const key = String(item || "").trim();
+      if (!key || seen.has(key)) return false;
+      seen.add(key);
+      return true;
+    });
+  }
+
+  function customerNames() {
+    if (typeof DOCUMENT_DATA !== "undefined" && DOCUMENT_DATA.customers) return DOCUMENT_DATA.customers;
+    if (typeof WF_DATA !== "undefined" && WF_DATA.customers) return WF_DATA.customers.map((c) => c.name);
+    return ["Rahul Sharma", "Priya Nair", "Arjun Reddy"];
+  }
+
+  function filterOptionsFor(label) {
+    const users = shared("users");
+    const cities = shared("cities");
+    const brands = shared("brands");
+    const statuses = shared("statuses");
+    const sources = shared("sources");
+    const dateRanges = ["Today", "Yesterday", "Last 7 days", "Last 30 days", "This month", "Last month", "This quarter", "This year", "Custom range"];
+    const callAgents = typeof CALL_DATA !== "undefined"
+      ? CALL_DATA.employeeActivity.map((e) => e.name)
+      : users;
+    const callOutcomes = typeof CALL_DATA !== "undefined"
+      ? uniqFilterOptions(CALL_DATA.callHistory.map((c) => c.outcome).concat([
+        "Meeting Scheduled", "Qualified Lead", "No Answer", "Proposal Sent", "Follow-up", "Callback Scheduled", "Not Interested"
+      ]))
+      : ["Meeting Scheduled", "Qualified Lead", "No Answer", "Proposal Sent", "Follow-up"];
+    const docCategories = typeof DOCUMENT_DATA !== "undefined" ? DOCUMENT_DATA.categories : ["Customer Documents", "Brand Documents", "Agreement Documents"];
+    const docTypes = typeof DOCUMENT_DATA !== "undefined" ? DOCUMENT_DATA.types : ["PAN", "Aadhaar", "Agreement", "Invoice"];
+    const docStatuses = typeof DOCUMENT_DATA !== "undefined"
+      ? uniqFilterOptions([...(DOCUMENT_DATA.workflow || []), ...(DOCUMENT_DATA.altStatuses || [])])
+      : statuses;
+    const modules = typeof DOCUMENT_DATA !== "undefined"
+      ? DOCUMENT_DATA.modules
+      : ["Leads", "Customers", "Brands", "Meetings", "Approvals", "Payments", "Documents"];
+    const roles = typeof ROLES_DATA !== "undefined" && ROLES_DATA.systemRoles
+      ? ROLES_DATA.systemRoles
+      : ["CEO", "Co-Founder", "Admin", "Team Lead", "Sales Executive", "Brand Owner", "Accounts"];
+
+    const catalog = {
+      "Date Range": dateRanges,
+      "Date": ["Today", "Yesterday", "Last 7 days", "Last 30 days", "This month"],
+      "Due Date": ["Overdue", "Due today", "Next 7 days", "Next 30 days", "No due date"],
+      "Escalated Date": dateRanges,
+      "Expiry Range": ["Expired", "Expiring in 7 days", "Expiring in 30 days", "Expiring in 90 days", "No expiry"],
+      "Expiry": ["Expired", "Expiring soon", "Valid", "No expiry"],
+      "Agent": callAgents,
+      "Direction": ["Inbound", "Outbound"],
+      "Outcome": callOutcomes,
+      "Brand": brands,
+      "City": cities,
+      "Status": uniqFilterOptions([...statuses, ...docStatuses, "Connected", "Missed", "Ringing", "Queued", "Completed", "Cancelled", "Draft", "Approved", "Rejected", "Pending", "Verified", "Published", "Archived", "Invited", "Suspended", "Read", "Unread", "Sent", "Delivered", "Failed"]),
+      "Assigned To": users,
+      "Assignee": users,
+      "Organizer": users,
+      "Approver": users,
+      "Owner": users,
+      "User": users,
+      "Collector": users,
+      "Submitted By": users,
+      "Approved By": users,
+      "Rejected By": users,
+      "Shared By": users,
+      "Sales Executive": users,
+      "Recipient": uniqFilterOptions([...users, "All Sales", "All Customers", "CEO", "Accounts Team"]),
+      "Category": docCategories,
+      "Type": uniqFilterOptions([...docTypes, "Initial Discussion", "Discovery Call", "Brand Presentation", "Site Visit", "Payment", "Refund", "Invoice", "Agreement", "Approval Request", "Document Review", "System Alert"]),
+      "File Type": ["PDF", "DOCX", "XLSX", "JPG", "PNG", "ZIP"],
+      "Customer": customerNames(),
+      "Priority": ["Critical", "High", "Medium", "Low"],
+      "Mode": ["Online", "Offline", "Hybrid"],
+      "Department": ["Sales", "Accounts", "Operations", "Marketing", "Legal", "HR", "IT", "Executive"],
+      "Module": modules,
+      "Permission": ["View", "Edit", "Download", "Share", "Full Access", "Admin Only"],
+      "Shared With": uniqFilterOptions([...users, "Sales Team", "Accounts Team", "Brand Owners", "Customers"]),
+      "Role": roles,
+      "Team": ["Sales — North", "Sales — South", "Sales — West", "Accounts", "Operations", "Executive"],
+      "Employment Type": ["Full-time", "Part-time", "Contract", "Intern"],
+      "Industry": ["Food & Beverage", "Retail", "Education", "Healthcare", "Services", "Hospitality"],
+      "Investment": ["Under ₹15 Lakhs", "₹15–25 Lakhs", "₹25–50 Lakhs", "₹50+ Lakhs"],
+      "Model Type": ["Premium", "Standard", "Express", "Cloud Kitchen", "Kiosk", "Flagship"],
+      "Franchise Model": ["Odette Premium", "OBC Flagship", "Kasturi Classic", "BWC Express", "Chai Point Standard"],
+      "Model": ["Odette Premium", "OBC Flagship", "Kasturi Classic", "BWC Express"],
+      "Region": ["South", "North", "West", "East", "Central"],
+      "Campaign": typeof MARKETING_DATA !== "undefined"
+        ? MARKETING_DATA.campaignSources.map((c) => c.campaign)
+        : ["Meta — Q2 Lead Gen", "Google — Franchise Search", "LinkedIn B2B"],
+      "Lead Source": typeof MARKETING_DATA !== "undefined"
+        ? MARKETING_DATA.leadSources.map((s) => s.source)
+        : sources,
+      "Platform": ["Meta", "Google", "LinkedIn", "Website", "Offline", "Referral", "Email"],
+      "Channel": ["In-App", "Email", "SMS", "WhatsApp", "Push Notification"],
+      "Read/Unread": ["Read", "Unread"],
+      "Method": ["NEFT", "RTGS", "UPI", "Cheque", "Cash", "Card", "Bank Transfer"],
+      "Verification": ["Verified", "Pending Verification", "Rejected", "Not Submitted"],
+      "Amount Range": ["Under ₹1 L", "₹1–5 L", "₹5–10 L", "₹10–25 L", "₹25 L+"],
+      "Amount": ["Under ₹50 K", "₹50 K–1 L", "₹1–5 L", "₹5 L+"],
+      "Period": ["Today", "This week", "This month", "This quarter", "This year", "Last month", "Last quarter"],
+      "State": shared("states"),
+      "Tax Type": ["GST", "IGST", "CGST + SGST", "TDS", "TCS"],
+      "Transaction Type": ["Payment", "Refund", "Adjustment", "Invoice", "Credit Note"],
+      "Payment Type": ["Franchise Fee", "Royalty", "Security Deposit", "Marketing Fee", "Renewal"],
+      "Report Type": ["Summary", "Detailed", "Comparative", "Trend", "Executive"],
+      "Format": ["PDF", "Excel", "CSV", "On-screen"],
+      "Compare": ["Previous period", "Same period last year", "By brand", "By city", "No comparison"],
+      "Action": ["Created", "Updated", "Deleted", "Approved", "Rejected", "Downloaded", "Shared", "Logged in", "Exported"],
+      "Entity": ["Customer", "Brand", "Document", "Payment", "Approval", "Meeting", "User", "Call"],
+      "Event": ["Login", "Export", "Approval", "Payment", "Upload", "Status Change"],
+      "Severity": ["Critical", "High", "Medium", "Low", "Info"],
+      "Trigger": ["Lead Created", "Status Changed", "Payment Received", "Document Uploaded", "Approval Pending", "Meeting Scheduled"],
+      "Workflow State": ["Draft", "Active", "Paused", "Testing", "Archived"],
+      "Approval Type": ["Franchise Agreement", "Payment Release", "Document Verification", "Brand Onboarding", "Territory Allocation"],
+      "Payment Ref": ["PAY-2024-001", "PAY-2024-002", "INV-2024-089", "PAY-2024-045"],
+      "Meeting": ["Brand Presentation — Rahul Sharma", "Site Visit — Indiranagar", "Investment Discussion — Priya Nair"],
+      "Level": ["L1", "L2", "L3", "CEO", "Board"],
+      "Reason": ["Incomplete documents", "Payment pending", "Customer withdrew", "Duplicate entry", "Policy violation"],
+      "Required": ["Mandatory", "Optional", "Conditional"],
+      "Asset Type": ["Logo", "Brochure", "Video", "Banner", "Template", "Guideline"],
+      "Event Type": ["Status Change", "Note Added", "Document Uploaded", "Meeting Held", "Payment Recorded"],
+      "Recipient Role": ["CEO", "Sales Executive", "Team Lead", "Accounts", "Customer", "Brand Owner"],
+      "Error Type": ["Delivery Failed", "Bounced", "Timeout", "Invalid Number", "Provider Error"],
+      "Retries": ["0 retries", "1 retry", "2 retries", "3+ retries"],
+      "Report": ["Sales Pipeline", "Revenue Summary", "Lead Conversion", "Call Analytics", "Document Audit"]
+    };
+
+    if (catalog[label]) return catalog[label];
+
+    if (/date|period|range/i.test(label)) return dateRanges;
+    if (/user|agent|assignee|owner|organizer|approver|collector|recipient|executive/i.test(label)) return users;
+    if (/brand/i.test(label)) return brands;
+    if (/city/i.test(label)) return cities;
+    if (/status/i.test(label)) return catalog.Status;
+    if (/type/i.test(label)) return catalog.Type;
+
+    return ["Value 1", "Value 2", "Value 3"];
+  }
+
+  function filterSelectHtml(label, customOptions) {
+    const values = customOptions && customOptions.length ? customOptions : filterOptionsFor(label);
+    const options = [`<option>${esc(label)}: All</option>`]
+      .concat(values.map((v) => `<option>${esc(v)}</option>`))
+      .join("");
+    return `<select class="wf-filter-select" aria-label="Filter by ${esc(label)}">${options}</select>`;
+  }
+
   function sidebarLogo(moduleLabel) {
     return `<a href="../index.html" class="wf-sidebar__logo" style="text-decoration:none;color:inherit">
       <div class="wf-sidebar__logo-icon" aria-hidden="true">${BRAND_MARK}</div>
@@ -306,11 +455,11 @@ const WF = (() => {
       filters = ["Status", "Brand", "City", "Assigned To"]
     } = options;
 
-    const filterHtml = filters.map((f) =>
-      `<select class="wf-filter-select" aria-label="Filter by ${f}">
-        <option>${f}: All</option>
-      </select>`
-    ).join("");
+    const filterHtml = filters.map((f) => {
+      if (typeof f === "string") return filterSelectHtml(f);
+      const label = f.label || f.name || "Filter";
+      return filterSelectHtml(label, f.options);
+    }).join("");
 
     const advBtn = showAdvanced
       ? `<button class="wf-btn wf-btn--sm" id="wf-adv-filter-toggle">Advanced Filters</button>`
@@ -4183,6 +4332,32 @@ const WF = (() => {
     return `<span class="wf-badge wf-severity wf-severity--${s}${cls}">${esc(severity || "Info")}</span>`;
   }
 
+  function securityEventCard(event, options = {}) {
+    const e = event || {};
+    const severity = (e.severity || "Info").toLowerCase();
+    const { compact = false, detailScreen = "explorer", actionLabel = "Details" } = options;
+    const aside = compact
+      ? `<div class="wf-security-card__aside">${severityBadge(e.severity)}</div>`
+      : `<div class="wf-security-card__aside">
+          ${severityBadge(e.severity)}
+          <button type="button" data-screen="${esc(detailScreen)}" class="wf-btn wf-btn--sm">${esc(actionLabel)}</button>
+        </div>`;
+    return `<article class="wf-security-card wf-security-card--${esc(severity)}">
+      <div class="wf-security-card__body">
+        <div class="wf-security-card__title">${esc(e.type || "Security Event")}<span class="wf-security-card__id">${e.id ? ` · ${esc(e.id)}` : ""}</span></div>
+        ${e.detail ? `<div class="wf-security-card__detail">${esc(e.detail)}</div>` : ""}
+        <div class="wf-security-card__meta">${esc(e.time || "—")}${e.user ? ` · ${esc(e.user)}` : ""}</div>
+      </div>
+      ${aside}
+    </article>`;
+  }
+
+  function securityEventList(events, options = {}) {
+    const list = events || [];
+    if (!list.length) return emptyState("No security events", "Adjust filters to see more results.");
+    return `<div class="wf-security-card-list" role="list">${list.map((e) => securityEventCard(e, options)).join("")}</div>`;
+  }
+
   function auditDiff(before, after) {
     return `<div class="wf-audit-diff">
       <div class="wf-audit-diff__col"><div class="wf-audit-diff__label">Before</div><pre class="wf-audit-diff__val">${esc(before || "—")}</pre></div>
@@ -4556,6 +4731,8 @@ const WF = (() => {
     effectivePermissionsPanel,
     securityModals,
     severityBadge,
+    securityEventCard,
+    securityEventList,
     auditDiff,
     auditDetailPanel,
     auditLogTable,

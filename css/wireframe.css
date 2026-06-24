@@ -2832,23 +2832,86 @@ body.wf-view-readonly .wf-content .wf-form__textarea {
   font-weight: 500;
 }
 
-.wf-security-alert {
+.wf-security-alert,
+.wf-security-card {
   display: flex;
-  gap: 12px;
-  padding: 12px 14px;
-  border: 1px solid var(--wf-border);
+  align-items: stretch;
+  gap: 16px;
+  padding: 14px 16px;
+  background: var(--wf-surface);
+  border: 1px solid var(--wf-border-light);
   border-radius: var(--wf-radius);
-  margin-bottom: 8px;
   font-size: 13px;
 }
 
-.wf-security-alert--high {
+.wf-security-alert {
+  margin-bottom: 8px;
+}
+
+.wf-security-card-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.wf-security-card__body {
+  flex: 1;
+  min-width: 0;
+}
+
+.wf-security-card__title {
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 1.35;
+  color: var(--wf-text);
+  margin-bottom: 4px;
+}
+
+.wf-security-card__id {
+  font-weight: 500;
+  color: var(--wf-text-secondary);
+}
+
+.wf-security-card__detail {
+  font-size: 13px;
+  line-height: 1.45;
+  color: var(--wf-text);
+  margin-bottom: 6px;
+}
+
+.wf-security-card__meta {
+  font-size: 11px;
+  color: var(--wf-text-muted);
+}
+
+.wf-security-card__aside {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  justify-content: center;
+  gap: 10px;
+  flex-shrink: 0;
+  min-width: 88px;
+}
+
+.wf-security-alert--high,
+.wf-security-card--high {
   border-left: 4px solid #888;
 }
 
-.wf-security-alert--critical {
-  border-left: 4px solid #333;
+.wf-security-alert--critical,
+.wf-security-card--critical {
+  border-left: 4px solid var(--wf-text);
   background: var(--wf-surface-alt);
+}
+
+.wf-security-card--medium {
+  border-left: 4px solid #c8c8c8;
+}
+
+.wf-security-card--low,
+.wf-security-card--info {
+  border-left: 4px solid var(--wf-border);
 }
 
 /* ── Audit & Activity Logs ── */
@@ -3942,6 +4005,19 @@ body.wf-view-readonly .wf-content .wf-form__textarea {
   .wf-builder__main,
   .wf-config-layout {
     grid-template-columns: 1fr;
+  }
+
+  .wf-security-card {
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .wf-security-card__aside {
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+    min-width: 0;
   }
 
   /* Notification list full width */
