@@ -17,11 +17,14 @@ const CALL_INTELLIGENCE_MODULE = (() => {
   ]);
   const filters = () => WF.toolbar({ filters: ["Date Range", "Agent", "Direction", "Outcome", "Brand", "City"], showImport: false });
 
-  const integrationBanner = () => `<div class="wf-card wf-mb-16"><div class="wf-card__body" style="display:flex;align-items:center;gap:16px;padding:12px 16px;font-size:13px">
-    <div style="width:40px;height:40px;background:var(--wf-placeholder);border-radius:8px;flex-shrink:0"></div>
-    <div style="flex:1"><strong>${WF.esc(d().integration.name)}</strong> — ${WF.esc(d().integration.note)}
-      <span class="wf-badge" style="margin-left:8px">${WF.esc(d().integration.status)}</span></div>
-    <button class="wf-btn wf-btn--sm">Configure Integration</button>
+  const integrationBanner = () => `<div class="wf-card wf-mb-16"><div class="wf-card__body" style="padding:12px 16px">
+    <div style="font-size:12px;font-weight:600;text-transform:uppercase;letter-spacing:0.5px;color:var(--wf-text-muted);margin-bottom:10px">Call Intelligence Integrations</div>
+    ${d().integrations.map((int) => `<div style="display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid var(--wf-border-light);font-size:13px">
+      <div style="width:36px;height:36px;background:var(--wf-placeholder);border-radius:8px;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700">CZ</div>
+      <div style="flex:1;min-width:0"><strong>${WF.esc(int.name)}</strong><div style="font-size:12px;color:var(--wf-text-muted);margin-top:2px">${WF.esc(int.note)}</div></div>
+      <span class="wf-badge">${WF.esc(int.status)}</span>
+      <button class="wf-btn wf-btn--sm">Configure</button>
+    </div>`).join("")}
   </div></div>`;
 
   const screens = [
@@ -94,6 +97,23 @@ const CALL_INTELLIGENCE_MODULE = (() => {
         ${filters()}${callKpis()}
         <div class="wf-card"><div class="wf-card__body" style="padding:0"><div class="wf-table-wrap" style="border:none"><table class="wf-table"><thead><tr><th>Contact</th><th>Agent</th><th>Duration</th><th>Outcome</th><th>Date</th></tr></thead>
         <tbody>${d().callHistory.filter((c) => c.direction === "Outbound").map((c) => `<tr><td>${WF.esc(c.contact)}</td><td>${WF.esc(c.agent)}</td><td>${WF.esc(c.duration)}</td><td><span class="wf-badge">${WF.esc(c.outcome)}</span></td><td>${WF.esc(c.date)}</td></tr>`).join("")}</tbody></table></div></div></div>
+      `
+    },
+    {
+      id: "connected-calls", label: "Connected Calls",
+      render: () => `
+        ${roleBar()}
+        ${WF.pageHeader("Connected Calls", "Successfully connected inbound and outbound calls")}
+        ${filters()}
+        ${WF.kpiGrid([
+          { label: "Connected Today", value: "88" },
+          { label: "Inbound Connected", value: "42" },
+          { label: "Outbound Connected", value: "46" },
+          { label: "Avg Talk Time", value: k().avgDuration },
+          { label: "Connection Rate", value: k().successRate }
+        ])}
+        <div class="wf-card"><div class="wf-card__body" style="padding:0"><div class="wf-table-wrap" style="border:none"><table class="wf-table"><thead><tr><th>Contact</th><th>Agent</th><th>Direction</th><th>Duration</th><th>Talk Time</th><th>Outcome</th><th>Date</th></tr></thead>
+        <tbody>${d().callHistory.filter((c) => c.duration !== "0m 00s").map((c) => `<tr><td>${WF.esc(c.contact)}</td><td>${WF.esc(c.agent)}</td><td>${WF.esc(c.direction)}</td><td>${WF.esc(c.duration)}</td><td>${WF.esc(c.duration)}</td><td><span class="wf-badge">${WF.esc(c.outcome)}</span></td><td>${WF.esc(c.date)}</td></tr>`).join("")}</tbody></table></div></div></div>
       `
     },
     {
@@ -185,6 +205,22 @@ const CALL_INTELLIGENCE_MODULE = (() => {
           { label: "Conversions", value: d().dailyReport.conversions }
         ])}
         <div class="wf-grid-2">${WF.chartCard("Hourly Call Volume", "Bar Chart")}${WF.chartCard("Agent Breakdown", "Stacked Bar")}</div>
+      `
+    },
+    {
+      id: "weekly-report", label: "Weekly Call Report",
+      render: () => `
+        ${roleBar()}
+        ${WF.pageHeader("Weekly Call Report", `Call summary — ${d().weeklyReport.week}`, `<button class="wf-btn wf-btn--sm" data-action="export-pdf">Export PDF</button>`)}
+        ${WF.kpiGrid([
+          { label: "Total Calls", value: d().weeklyReport.totalCalls.toLocaleString() },
+          { label: "Connected", value: d().weeklyReport.connected.toLocaleString() },
+          { label: "Missed", value: d().weeklyReport.missed },
+          { label: "Talk Time", value: d().weeklyReport.talkTime },
+          { label: "Success Rate", value: d().weeklyReport.successRate },
+          { label: "Conversions", value: d().weeklyReport.conversions }
+        ])}
+        <div class="wf-grid-2">${WF.chartCard("Daily Call Volume", "Bar Chart")}${WF.chartCard("Agent Performance", "Bar Chart", { drillScreen: "employee-activity" })}</div>
       `
     },
     {

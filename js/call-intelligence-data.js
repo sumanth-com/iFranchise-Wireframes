@@ -2,7 +2,10 @@
 
 const CALL_DATA = {
   roles: ["CEO", "Admin", "Team Lead", "Sales Manager", "Sales Executive"],
-  integration: { name: "Call Laser Biz", status: "Planned", note: "Future integration — API connector ready" },
+  integrations: [
+    { name: "CALLYZER", status: "Planned", note: "Future integration — mobile call tracking & sync" },
+    { name: "Callyzer Business", status: "Planned", note: "Future integration — team analytics, recordings & reports" }
+  ],
 
   kpis: {
     totalCalls: 2846,
@@ -45,6 +48,17 @@ const CALL_DATA = {
     date: "25 Jun 2024",
     inbound: 48, outbound: 62, missed: 14, connected: 88,
     talkTime: "6h 42m", avgDuration: "4m 18s", conversions: 8
+  },
+
+  weeklyReport: {
+    week: "24–30 Jun 2024",
+    totalCalls: 684,
+    connected: 528,
+    missed: 98,
+    talkTime: "42h 18m",
+    avgDuration: "4m 06s",
+    successRate: "77.2%",
+    conversions: 38
   },
 
   monthlyReport: {

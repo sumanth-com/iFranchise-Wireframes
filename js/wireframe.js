@@ -28,6 +28,13 @@ const WF = (() => {
     auth: { label: "Authentication", href: "../auth/login.html" }
   };
 
+  const MODULE_ORDER = [
+    "dashboard", "leads", "customers", "brands", "franchiseModels", "meetings",
+    "approvals", "accounts", "documents", "notifications", "analytics", "automation",
+    "users", "roles", "audit", "settings", "masterData", "callIntelligence",
+    "marketingIntelligence", "templates", "auth"
+  ];
+
   const CUSTOMER_NAV = [
     { label: "Dashboard", href: "dashboard.html", icon: "dashboard" },
     { label: "Customer List", href: "list.html", icon: "list" },
@@ -137,18 +144,31 @@ const WF = (() => {
       </a>`;
 
     const exit = `<div class="wf-sidebar__exit">
-      <div class="wf-sidebar__section">Exit</div>
-      <a href="../index.html" class="wf-sidebar__link wf-sidebar__link--back">
-        <span class="wf-sidebar__icon"></span>← All Modules
+      <a href="../index.html" class="wf-sidebar__link wf-sidebar__link--hub">
+        <span class="wf-sidebar__hub-icon" aria-hidden="true">${bottomNavIconSvg("modules")}</span>
+        <span>All Modules</span>
       </a>
     </div>`;
 
     return `<aside class="wf-sidebar" id="wf-sidebar">
       ${sidebarLogo(mod.label)}
+      ${spaModuleSwitcher(activeModule)}
       <nav class="wf-sidebar__nav">${nav}</nav>
       ${exit}
     </aside>
     <div class="wf-sidebar-overlay" id="wf-sidebar-overlay"></div>`;
+  }
+
+  function spaModuleSwitcher(currentKey) {
+    const links = MODULE_ORDER.filter((key) => MODULES[key]).map((key) => {
+      const m = MODULES[key];
+      const active = key === currentKey ? " wf-sidebar__link--module-active" : "";
+      return `<a href="${m.href}" class="wf-sidebar__link wf-sidebar__link--module${active}">${esc(m.label)}</a>`;
+    }).join("");
+    return `<div class="wf-sidebar__module-switch">
+      <div class="wf-sidebar__section">CRM Modules</div>
+      ${links}
+    </div>`;
   }
 
   function spaSidebar(moduleConfig) {
@@ -163,18 +183,51 @@ const WF = (() => {
     });
 
     const exit = `<div class="wf-sidebar__exit">
-      <div class="wf-sidebar__section">Exit</div>
-      <a href="../index.html" class="wf-sidebar__link wf-sidebar__link--back">
-        <span class="wf-sidebar__icon"></span>← All Modules
+      <a href="../index.html" class="wf-sidebar__link wf-sidebar__link--hub">
+        <span class="wf-sidebar__hub-icon" aria-hidden="true">${bottomNavIconSvg("modules")}</span>
+        <span>All Modules</span>
       </a>
     </div>`;
 
     return `<aside class="wf-sidebar" id="wf-sidebar">
       ${sidebarLogo(mod ? mod.label : moduleLabel)}
+      ${spaModuleSwitcher(moduleKey)}
       <nav class="wf-sidebar__nav">${nav}</nav>
       ${exit}
     </aside>
     <div class="wf-sidebar-overlay" id="wf-sidebar-overlay"></div>`;
+  }
+
+  function mobileScreenNavBar(moduleConfig, screen) {
+    const crumbs = screen.breadcrumb || [{ label: screen.label }];
+    let backScreen = moduleConfig.defaultScreen;
+    let backLabel = moduleConfig.moduleLabel;
+    if (crumbs.length > 1) {
+      const prev = crumbs[crumbs.length - 2];
+      if (prev.screen) backScreen = prev.screen;
+      backLabel = prev.label;
+    }
+
+    const trail = crumbs.map((c, i) => {
+      if (c.screen && i < crumbs.length - 1) {
+        return `<a href="#${c.screen}" data-screen="${c.screen}" class="wf-mobile-screen-nav__crumb">${esc(c.label)}</a>`;
+      }
+      return `<span class="wf-mobile-screen-nav__crumb wf-mobile-screen-nav__crumb--current">${esc(c.label)}</span>`;
+    }).join('<span class="wf-mobile-screen-nav__sep" aria-hidden="true">›</span>');
+
+    const backSvg = bottomNavIconSvg("back");
+    return `<div class="wf-mobile-screen-nav" id="wf-mobile-screen-nav">
+      <div class="wf-mobile-screen-nav__top">
+        <button type="button" class="wf-mobile-screen-nav__back" data-screen="${backScreen}" aria-label="Back to ${esc(backLabel)}">
+          <span aria-hidden="true">${backSvg}</span>
+        </button>
+        <div class="wf-mobile-screen-nav__meta">
+          <div class="wf-mobile-screen-nav__module">${esc(moduleConfig.moduleLabel)}</div>
+          <div class="wf-mobile-screen-nav__title">${esc(screen.label)}</div>
+        </div>
+      </div>
+      <div class="wf-mobile-screen-nav__breadcrumb" aria-label="Breadcrumb">${trail}</div>
+    </div>`;
   }
 
   function spaBreadcrumb(moduleLabel, moduleHref, items) {
@@ -203,18 +256,22 @@ const WF = (() => {
   function topbar(searchPlaceholder) {
     const placeholder = searchPlaceholder || "Search records, documents, agreements…";
     return `<header class="wf-topbar">
-      <button class="wf-topbar__menu-btn" id="wf-menu-btn" aria-label="Toggle menu">
-        <span></span><span></span><span></span>
+      <button type="button" class="wf-topbar__menu-btn" id="wf-menu-btn" aria-label="Open screen menu" aria-expanded="false" aria-controls="wf-sidebar">
+        <span class="wf-topbar__menu-bar" aria-hidden="true"></span>
+        <span class="wf-topbar__menu-bar" aria-hidden="true"></span>
+        <span class="wf-topbar__menu-bar" aria-hidden="true"></span>
       </button>
+      <a href="../index.html" class="wf-topbar__hub-btn" aria-label="All modules" title="All modules">
+        <span class="wf-topbar__hub-btn-icon" aria-hidden="true">${bottomNavIconSvg("modules")}</span>
+      </a>
       <div class="wf-topbar__search">
-        <span class="wf-topbar__search-icon"></span>
-        <input type="search" placeholder="${esc(placeholder)}" id="wf-global-search">
+        <span class="wf-topbar__search-icon" aria-hidden="true"></span>
+        <input type="search" placeholder="${esc(placeholder)}" id="wf-global-search" aria-label="Search">
       </div>
       <div class="wf-topbar__actions">
-        <button class="wf-topbar__icon-btn" title="Notifications" data-modal="notifications"></button>
-        <button class="wf-topbar__icon-btn" title="Help"></button>
+        <button type="button" class="wf-topbar__icon-btn" title="Notifications" aria-label="Notifications" data-modal="notifications"></button>
         <div class="wf-topbar__user">
-          <div class="wf-topbar__avatar"></div>
+          <div class="wf-topbar__avatar" aria-hidden="true"></div>
           <span>Abdul Syed</span>
         </div>
       </div>
@@ -798,12 +855,15 @@ const WF = (() => {
     const overlay = document.getElementById("wf-sidebar-overlay");
 
     menuBtn?.addEventListener("click", () => {
-      sidebarEl.classList.toggle("is-open");
-      overlay.classList.toggle("is-visible");
+      const open = !sidebarEl.classList.contains("is-open");
+      sidebarEl.classList.toggle("is-open", open);
+      overlay.classList.toggle("is-visible", open);
+      menuBtn.setAttribute("aria-expanded", open ? "true" : "false");
     });
     overlay?.addEventListener("click", () => {
       sidebarEl.classList.remove("is-open");
       overlay.classList.remove("is-visible");
+      menuBtn?.setAttribute("aria-expanded", "false");
     });
 
     document.body.addEventListener("click", (e) => {
@@ -1273,41 +1333,129 @@ const WF = (() => {
     return window.matchMedia("(max-width: 768px)").matches;
   }
 
-  function pickBottomNavScreens(screens) {
+  function bottomNavIconSvg(kind) {
+    const attrs = 'xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"';
+    const icons = {
+      home: `<svg ${attrs}><path d="M4 10.5 12 4l8 6.5V19a1 1 0 0 1-1 1h-5v-6H10v6H5a1 1 0 0 1-1-1v-8.5z"/></svg>`,
+      live: `<svg ${attrs}><circle cx="12" cy="12" r="2.5"/><path d="M12 4v2M12 18v2M4 12H2M22 12h-2"/></svg>`,
+      history: `<svg ${attrs}><circle cx="12" cy="12" r="9"/><path d="M12 8v4l2.5 2"/></svg>`,
+      list: `<svg ${attrs}><path d="M9 6h12M9 12h12M9 18h12"/><circle cx="4" cy="6" r="1"/><circle cx="4" cy="12" r="1"/><circle cx="4" cy="18" r="1"/></svg>`,
+      reports: `<svg ${attrs}><path d="M6 20V10M12 20V4M18 20v-6"/></svg>`,
+      calendar: `<svg ${attrs}><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M16 3v4M8 3v4M3 10h18"/></svg>`,
+      menu: `<svg ${attrs}><path d="M4 7h16M4 12h16M4 17h16"/></svg>`,
+      modules: `<svg ${attrs}><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>`,
+      back: `<svg ${attrs}><path d="M15 6l-6 6 6 6"/></svg>`
+    };
+    return icons[kind] || icons.list;
+  }
+
+  function bottomNavKindForScreen(screen) {
+    const id = screen.id;
+    const label = (screen.label || "").toLowerCase();
+    if (/^(dashboard|executive|ceo)$/.test(id) || /dashboard|overview/.test(label)) return "home";
+    if (/live/.test(id) || /\blive\b/.test(label)) return "live";
+    if (/history|timeline/.test(id) || /\bhistory\b/.test(label)) return "history";
+    if (/calendar/.test(id)) return "calendar";
+    if (/analytics|reports|kpi/.test(id) && !/employee/.test(id)) return "reports";
+    if (/list|directory|library|inbox|explorer/.test(id)) return "list";
+    if (/schedule|create|invite/.test(id)) return "calendar";
+    return "list";
+  }
+
+  function mobileNavShortLabel(screen, usedLabels) {
+    const presets = {
+      dashboard: "Home",
+      executive: "Overview",
+      ceo: "CEO",
+      "live-calls": "Live",
+      history: "History",
+      calendar: "Calendar",
+      analytics: "Reports",
+      "reports-dashboard": "Reports",
+      list: "List",
+      directory: "Team",
+      inbox: "Inbox",
+      settings: "Settings",
+      recordings: "Recordings",
+      performance: "Stats"
+    };
+    let label = presets[screen.id];
+    if (!label) {
+      const skip = new Set(["call", "management", "module", "modules", "center", "system", "intelligence"]);
+      const words = screen.label.replace(/—/g, " ").split(/\s+/).filter(Boolean);
+      const word = words.find((w) => !skip.has(w.toLowerCase()) && w.length > 2) || words[words.length - 1] || "Screen";
+      label = word.length > 11 ? `${word.slice(0, 10)}…` : word;
+    }
+    let final = label;
+    let n = 2;
+    while (usedLabels.has(final.toLowerCase())) {
+      final = `${label} ${n}`;
+      n += 1;
+    }
+    usedLabels.add(final.toLowerCase());
+    return final;
+  }
+
+  function pickBottomNavScreens(screens, activeId) {
     if (!screens || !screens.length) return [];
     const byId = (id) => screens.find((s) => s.id === id);
-    const find = (re) => screens.find((s) => re.test(s.id));
+    const find = (re) => screens.find((s) => re.test(s.id) || re.test(s.label));
     const picked = [];
-    const add = (s) => { if (s && !picked.includes(s)) picked.push(s); };
-    add(byId("dashboard") || screens[0]);
-    add(find(/list|directory|library|inbox|all|explorer/) || screens[1]);
-    add(find(/create|new|invite|schedule/) || screens[2]);
-    add(find(/calendar|analytics|reports|settings/) || screens[3]);
+    const add = (s) => { if (s && !picked.some((p) => p.id === s.id)) picked.push(s); };
+
+    add(byId("dashboard") || byId("executive") || screens[0]);
+    add(byId("live-calls") || find(/\blive\b/i));
+    add(byId("history") || find(/\bhistory\b/i) || byId("calendar") || find(/\blist|directory|library|inbox\b/i));
+    if (picked.length < 3) add(find(/\banalytics|reports\b/i));
+    for (const s of screens) {
+      if (picked.length >= 3) break;
+      add(s);
+    }
+
+    const active = activeId ? byId(activeId) : null;
+    if (active && !picked.some((p) => p.id === active.id)) picked[2] = active;
+
     return picked.slice(0, 3);
   }
 
   function mobileBottomNav(screens, activeId) {
-    const primary = pickBottomNavScreens(screens);
+    const primary = pickBottomNavScreens(screens, activeId);
+    const usedLabels = new Set();
     const items = primary.map((s) => {
       const active = s.id === activeId ? " wf-bottom-nav__item--active" : "";
-      const label = s.label.length > 10 ? s.label.split(" ")[0] : s.label;
-      return `<a href="#${s.id}" data-screen="${s.id}" class="wf-bottom-nav__item${active}" aria-label="${esc(s.label)}">
-        <span class="wf-bottom-nav__icon" aria-hidden="true"></span>
+      const kind = bottomNavKindForScreen(s);
+      const label = mobileNavShortLabel(s, usedLabels);
+      return `<a href="#${s.id}" data-screen="${s.id}" class="wf-bottom-nav__item${active}" aria-label="${esc(s.label)}" aria-current="${s.id === activeId ? "page" : "false"}">
+        <span class="wf-bottom-nav__icon wf-bottom-nav__icon--${kind}" aria-hidden="true">${bottomNavIconSvg(kind)}</span>
         <span class="wf-bottom-nav__label">${esc(label)}</span>
       </a>`;
     }).join("");
     return `<nav class="wf-bottom-nav" id="wf-bottom-nav" aria-label="Quick navigation">
       ${items}
-      <button type="button" class="wf-bottom-nav__item" id="wf-bottom-nav-menu" aria-label="All screens menu">
-        <span class="wf-bottom-nav__icon" aria-hidden="true"></span>
-        <span class="wf-bottom-nav__label">Menu</span>
+      <button type="button" class="wf-bottom-nav__item" id="wf-bottom-nav-menu" aria-label="All screens">
+        <span class="wf-bottom-nav__icon wf-bottom-nav__icon--menu" aria-hidden="true">${bottomNavIconSvg("menu")}</span>
+        <span class="wf-bottom-nav__label">Screens</span>
       </button>
     </nav>`;
   }
 
+  function refreshMobileBottomNav(screens, activeId) {
+    const existing = document.getElementById("wf-bottom-nav");
+    if (!existing || !screens) return;
+    const wrap = document.createElement("div");
+    wrap.innerHTML = mobileBottomNav(screens, activeId);
+    const next = wrap.firstElementChild;
+    if (next) {
+      existing.replaceWith(next);
+      bindBottomNavMenu();
+    }
+  }
+
   function updateBottomNavActive(activeId) {
     document.querySelectorAll(".wf-bottom-nav__item[data-screen]").forEach((el) => {
-      el.classList.toggle("wf-bottom-nav__item--active", el.getAttribute("data-screen") === activeId);
+      const on = el.getAttribute("data-screen") === activeId;
+      el.classList.toggle("wf-bottom-nav__item--active", on);
+      el.setAttribute("aria-current", on ? "page" : "false");
     });
   }
 
@@ -1475,9 +1623,20 @@ const WF = (() => {
     });
   }
 
-  function enhanceSwipeableCharts(scope = document) {
-    scope.querySelectorAll(".wf-dashboard-charts, .wf-dashboard-charts--2, .wf-card-grid").forEach((el) => {
-      el.classList.add("wf-swipe-scroll");
+  function enhanceSwipeableCharts() {
+    /* Desktop grids only — mobile/tablet use responsive CSS columns (no horizontal scroll). */
+  }
+
+  function enhanceMobileReports(scope = document) {
+    if (!isMobileViewport()) return;
+    scope.querySelectorAll(".wf-report-table").forEach((table) => {
+      const wrap = table.closest(".wf-table-wrap");
+      if (wrap && !wrap.dataset.mobileReport) {
+        wrap.dataset.mobileReport = "1";
+      }
+    });
+    scope.querySelectorAll(".wf-comparison-bar, .wf-period-toggle").forEach((el) => {
+      el.classList.add("wf-mobile-wrap");
     });
   }
 
@@ -1550,6 +1709,7 @@ const WF = (() => {
     enhanceMobileFilters();
     enhanceCollapsibleWidgets();
     enhanceSwipeableCharts();
+    enhanceMobileReports();
     enhanceCalendarAgenda();
     bindBottomNavMenu();
     bindPullToRefresh();
@@ -4259,6 +4419,8 @@ const WF = (() => {
     modals,
     bindEvents,
     spaSidebar,
+    spaModuleSwitcher,
+    mobileScreenNavBar,
     spaBreadcrumb,
     spaTabs,
     customerTable,
@@ -4376,6 +4538,7 @@ const WF = (() => {
     formatPhone,
     formatPhoneInText,
     PHONE_FORMAT,
+    refreshMobileBottomNav,
     mobileBottomNav,
     enhanceMobileExperience,
     updateBottomNavActive,

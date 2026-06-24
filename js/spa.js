@@ -17,6 +17,7 @@ const WF_SPA = (() => {
           ${WF.topbar(moduleConfig.searchPlaceholder)}
           <main class="wf-content">
             <div class="wf-ptr-indicator" id="wf-ptr-indicator">Pull to refresh</div>
+            <div id="wf-mobile-screen-nav-wrap"></div>
             <nav class="wf-breadcrumb" id="wf-breadcrumb" aria-label="Breadcrumb"></nav>
             <div id="wf-screen-container"></div>
           </main>
@@ -60,11 +61,22 @@ const WF_SPA = (() => {
       screen.breadcrumb || [{ label: screen.label }]
     );
 
+    const mobileNavWrap = document.getElementById("wf-mobile-screen-nav-wrap");
+    const breadcrumbEl = document.getElementById("wf-breadcrumb");
+    if (WF.isMobileViewport()) {
+      mobileNavWrap.innerHTML = WF.mobileScreenNavBar(config, screen);
+      breadcrumbEl.classList.add("wf-hidden");
+    } else {
+      mobileNavWrap.innerHTML = "";
+      breadcrumbEl.classList.remove("wf-hidden");
+    }
+
     document.querySelectorAll(".wf-sidebar__link[data-screen]").forEach((el) => {
       el.classList.toggle("wf-sidebar__link--active", el.getAttribute("data-screen") === screenId);
     });
 
     WF.updateBottomNavActive(screenId);
+    if (WF.isMobileViewport()) WF.refreshMobileBottomNav(config.screens, screenId);
 
     document.title = `${screen.label} — ${config.moduleTitle} — ${WF.BRAND_NAME}`;
     window.scrollTo({ top: 0, behavior: "smooth" });

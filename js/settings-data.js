@@ -72,7 +72,8 @@ const CONFIG_DATA = {
     { name: "Resend", status: "Connected", screen: "smtp" },
     { name: "Supabase", status: "Connected", screen: "api" },
     { name: "Google Maps", status: "Connected", screen: "integrations" },
-    { name: "Call Laser Biz", status: "Planned", screen: "integrations" },
+    { name: "CALLYZER", status: "Planned", screen: "integrations" },
+    { name: "Callyzer Business", status: "Planned", screen: "integrations" },
     { name: "Meta Ads", status: "Planned", screen: "integrations" },
     { name: "Google Ads", status: "Planned", screen: "integrations" },
     { name: "Google Analytics", status: "Planned", screen: "integrations" },
@@ -100,7 +101,7 @@ const CONFIG_DATA = {
     { name: "Enable Reports", desc: "Analytics and reporting module", enabled: true },
     { name: "Enable Audit Logs", desc: "Immutable audit trail", enabled: true },
     { name: "Enable Notifications", desc: "Multi-channel notification center", enabled: true },
-    { name: "Enable Call Intelligence", desc: "Call tracking and Call Laser Biz integration", enabled: true },
+    { name: "Enable Call Intelligence", desc: "Call tracking with CALLYZER & Callyzer Business", enabled: true },
     { name: "Enable Marketing Intelligence", desc: "Marketing analytics and ad platform sync", enabled: true },
     { name: "Enable Master Data Management", desc: "Configurable reference data without code changes", enabled: true },
     { name: "Enable Template Management", desc: "Template library with automation triggers", enabled: true }
