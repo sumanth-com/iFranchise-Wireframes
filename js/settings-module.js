@@ -19,10 +19,10 @@ const SETTINGS_MODULE = (() => {
     { label: "License", value: k().licenseStatus }
   ]);
 
-  const cfg = (screenId, title, subtitle, body, actions = "") => `
+  const cfg = (_screenId, title, subtitle, body, actions = "") => `
     ${roleBar()}
     ${WF.pageHeader(title, subtitle, actions)}
-    ${WF.configLayout(screenId, body)}
+    ${body}
   `;
 
   const formCard = (content) => `<div class="wf-card"><div class="wf-card__body">${content}</div></div>`;
@@ -60,6 +60,7 @@ const SETTINGS_MODULE = (() => {
             <div class="wf-card__body" style="display:flex;flex-wrap:wrap;gap:8px">
               <button data-screen="feature-flags" class="wf-btn wf-btn--sm">Feature Flags</button>
               <button data-screen="integrations" class="wf-btn wf-btn--sm">Integrations</button>
+              <a href="../master-data/index.html" class="wf-btn wf-btn--sm">Master Data</a>
               <button data-screen="backup" class="wf-btn wf-btn--sm">Backup</button>
               <button data-screen="security" class="wf-btn wf-btn--sm">Security</button>
               <button data-screen="license" class="wf-btn wf-btn--sm">License</button>

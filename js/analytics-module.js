@@ -1,4 +1,4 @@
-/* Reporting & Analytics — Single Page Module (17 screens) */
+/* Reporting & Analytics — Single Page Module (25 screens) */
 
 const ANALYTICS_MODULE = (() => {
   const k = () => ANALYTICS_DATA.kpis;
@@ -56,8 +56,8 @@ const ANALYTICS_MODULE = (() => {
           <button data-screen="custom-builder" class="wf-btn wf-btn--sm wf-btn--primary">+ Custom Report</button>
         `)}
         <div class="wf-card-grid" style="grid-template-columns:repeat(3,1fr)">
-          ${["Sales Reports", "Lead Conversion", "Customer Reports", "Brand Performance", "Franchise Models", "Meeting Reports", "Revenue Reports", "Payment Reports", "Team Performance", "Geographic Analytics", "KPI Dashboard", "Scheduled Reports"].map((r, i) => {
-            const ids = ["sales", "lead-conversion", "customers", "brands", "franchise-models", "meetings", "revenue", "payments", "team", "geographic", "kpi", "scheduled"];
+          ${["Sales Reports", "Lead Conversion", "Customer Reports", "Brand Performance", "Franchise Models", "Meeting Reports", "Revenue Reports", "Payment Reports", "Team Performance", "Geographic Analytics", "KPI Dashboard", "Scheduled Reports", "Employee Performance", "Call Performance", "Marketing ROI", "Lead Source Reports", "Sales Funnel", "Campaign Performance", "State-wise Reports", "City-wise Reports"].map((r, i) => {
+            const ids = ["sales", "lead-conversion", "customers", "brands", "franchise-models", "meetings", "revenue", "payments", "team", "geographic", "kpi", "scheduled", "employee-performance", "call-performance", "marketing-roi", "lead-source", "sales-funnel", "campaign-performance", "state-wise", "city-wise"];
             return `<div class="wf-card" style="cursor:pointer" data-screen="${ids[i]}"><div class="wf-card__body" style="text-align:center;padding:24px">
               <div style="width:40px;height:40px;background:var(--wf-placeholder);border-radius:8px;margin:0 auto 12px"></div>
               <div style="font-size:13px;font-weight:600">${r}</div>
@@ -379,6 +379,133 @@ const ANALYTICS_MODULE = (() => {
             <td><button class="wf-btn wf-btn--sm">Download</button></td>
           </tr>`).join("")}</tbody></table>${WF.pagination(24)}</div>
         </div>
+      `
+    },
+    {
+      id: "employee-performance", label: "Employee Performance Reports",
+      render: () => `
+        ${roleBar()}
+        ${WF.pageHeader("Employee Performance Reports", "Leads, calls, meetings, conversions, revenue, and productivity scores")}
+        ${filters()}${exports()}${WF.periodToggle("Monthly")}
+        ${WF.kpiGrid([
+          { label: "Top Performer", value: k().topExec, small: true },
+          { label: "Avg Conversion", value: "78%" },
+          { label: "Total Revenue", value: WF.formatINR(k().totalRevenue) },
+          { label: "Target Achievement", value: "94%" }
+        ])}
+        <div class="wf-card wf-mb-16">${WF.chartCard("Productivity Score Trend", "Line Chart", { height: 260 })}</div>
+        <div class="wf-card"><div class="wf-card__body" style="padding:0">${WF.reportDataTable(["Executive", "Leads", "Calls", "Meetings", "Conv %", "Revenue", "Activity", "Productivity"], ANALYTICS_DATA.teamPerformance.map((t) => [t[0], t[3], "—", "—", t[6], t[5], "—", "—"]))}</div></div>
+      `
+    },
+    {
+      id: "call-performance", label: "Call Performance Reports",
+      render: () => `
+        ${roleBar()}
+        ${WF.pageHeader("Call Performance Reports", "Call volume, connect rates, talk time, and conversion")}
+        ${filters()}${exports()}
+        ${WF.kpiGrid([
+          { label: "Total Calls", value: "2,846" },
+          { label: "Connected", value: "2,184" },
+          { label: "Success Rate", value: "76.7%" },
+          { label: "Call Conversion", value: "18.4%" }
+        ])}
+        <div class="wf-grid-2">${WF.chartCard("Call Volume Trend", "Line Chart")}${WF.chartCard("Talk Time by Agent", "Bar Chart")}</div>
+        <div class="wf-card wf-mt-16"><div class="wf-card__body" style="font-size:13px;color:var(--wf-text-muted)"><a href="../call-intelligence/index.html">Open Call Intelligence module →</a> for live calls, recordings, and detailed analytics.</div></div>
+      `
+    },
+    {
+      id: "marketing-roi", label: "Marketing ROI Reports",
+      render: () => `
+        ${roleBar()}
+        ${WF.pageHeader("Marketing ROI Reports", "Spend, CPL, ROAS, and return on marketing investment")}
+        ${filters()}${exports()}${WF.periodToggle("Quarterly")}
+        ${WF.kpiGrid([
+          { label: "Marketing Spend", value: "₹42.8 L" },
+          { label: "ROI", value: k().roi + "%" },
+          { label: "ROAS", value: "4.2x" },
+          { label: "Cost Per Deal", value: "₹1.42 L" }
+        ])}
+        <div class="wf-grid-2">${WF.chartCard("ROI Trend", "Line Chart")}${WF.chartCard("Spend vs Revenue", "Area Chart")}</div>
+        <div class="wf-card wf-mt-16"><div class="wf-card__body" style="font-size:13px;color:var(--wf-text-muted)"><a href="../marketing-intelligence/index.html">Open Marketing Intelligence module →</a> for campaign and funnel analytics.</div></div>
+      `
+    },
+    {
+      id: "lead-source", label: "Lead Source Reports",
+      render: () => `
+        ${roleBar()}
+        ${WF.pageHeader("Lead Source Reports", "Acquisition channel performance and economics")}
+        ${filters()}${exports()}
+        ${WF.kpiGrid([
+          { label: "Total Leads", value: k().totalLeads },
+          { label: "Top Source", value: "Website", change: "286 leads" },
+          { label: "Best CPL", value: "₹938", change: "Referral" },
+          { label: "Best Conversion", value: "38%", change: "Referral" }
+        ])}
+        ${WF.chartCard("Leads by Source", "Pie Chart", { height: 280 })}
+        <div class="wf-card wf-mt-16"><div class="wf-card__body" style="padding:0">${WF.reportDataTable(["Source", "Leads", "Qualified", "Conversion %"], [["Website", 286, 142, "28%"], ["Referral", 224, 168, "38%"], ["Meta Ads", 192, 86, "22%"], ["Google Ads", 148, 72, "24%"]])}</div></div>
+      `
+    },
+    {
+      id: "sales-funnel", label: "Sales Funnel Reports",
+      render: () => `
+        ${roleBar()}
+        ${WF.pageHeader("Sales Funnel Reports", "End-to-end funnel from lead to closed deal")}
+        ${filters()}${exports()}${WF.periodToggle("Monthly")}
+        ${WF.kpiGrid([
+          { label: "Pipeline Value", value: WF.formatINR(k().pipelineValue) },
+          { label: "Conversion Rate", value: k().conversionRate + "%" },
+          { label: "Avg Deal Size", value: WF.formatINR(k().avgDealSize) },
+          { label: "Deals Closed", value: k().convertedCustomers }
+        ])}
+        <div class="wf-grid-2">${WF.chartCard("Sales Funnel", "Funnel Chart", { height: 280 })}${WF.chartCard("Stage Drop-off", "Bar Chart", { height: 280 })}</div>
+        <div class="wf-card wf-mt-16"><div class="wf-card__body" style="padding:0">${WF.reportDataTable(["Stage", "Count", "Conversion %"], ANALYTICS_DATA.leadFunnel)}</div></div>
+      `
+    },
+    {
+      id: "campaign-performance", label: "Campaign Performance Reports",
+      render: () => `
+        ${roleBar()}
+        ${WF.pageHeader("Campaign Performance Reports", "Campaign spend, leads, CPL, and ROAS")}
+        ${filters()}${exports()}
+        ${WF.kpiGrid([
+          { label: "Active Campaigns", value: "8" },
+          { label: "Total Spend", value: "₹42.8 L" },
+          { label: "Avg CPL", value: "₹4,180" },
+          { label: "Best ROAS", value: "4.1x", change: "Google Search" }
+        ])}
+        <div class="wf-card"><div class="wf-card__body" style="padding:0">${WF.reportDataTable(["Campaign", "Platform", "Spend", "Leads", "CPL", "ROAS"], [["Meta — Q2 Lead Gen", "Meta", "₹8.2 L", 124, "₹6,613", "3.8x"], ["Google — Franchise Search", "Google", "₹6.4 L", 98, "₹6,531", "4.1x"], ["LinkedIn B2B", "LinkedIn", "₹3.2 L", 42, "₹7,619", "2.9x"]])}</div></div>
+      `
+    },
+    {
+      id: "state-wise", label: "State-wise Reports",
+      render: () => `
+        ${roleBar()}
+        ${WF.pageHeader("State-wise Reports", "Revenue, leads, and expansion by state")}
+        ${filters()}${exports()}${WF.comparisonToggle("state")}
+        ${WF.kpiGrid([
+          { label: "Active States", value: "5" },
+          { label: "Top State", value: "Karnataka" },
+          { label: "State Revenue", value: "₹6.2 Cr", change: "Karnataka · 33%" },
+          { label: "Expansion Targets", value: "2", change: "New states Q3" }
+        ])}
+        ${WF.chartCard("Revenue by State", "Bar Chart", { height: 280 })}
+        <div class="wf-card wf-mt-16"><div class="wf-card__body" style="padding:0">${WF.reportDataTable(["State", "Revenue", "Leads", "Customers"], [["Karnataka", "₹6.2 Cr", 286, 92], ["Maharashtra", "₹4.8 Cr", 224, 78], ["Telangana", "₹3.4 Cr", 168, 64], ["Tamil Nadu", "₹2.8 Cr", 142, 58]])}</div></div>
+      `
+    },
+    {
+      id: "city-wise", label: "City-wise Reports",
+      render: () => `
+        ${roleBar()}
+        ${WF.pageHeader("City-wise Reports", "City-level revenue, leads, and performance")}
+        ${filters()}${exports()}${WF.comparisonToggle("city")}
+        ${WF.kpiGrid([
+          { label: "Active Cities", value: "12" },
+          { label: "Top City", value: "Bengaluru" },
+          { label: "City Revenue", value: "₹92 L", change: "Bengaluru · 32%" },
+          { label: "New Cities", value: "3", change: "Q3 expansion" }
+        ])}
+        <div class="wf-grid-2">${WF.chartCard("India Geo Map", "Geo Map", { height: 280 })}${WF.chartCard("Revenue by City", "Bar Chart", { height: 280 })}</div>
+        <div class="wf-card wf-mt-16"><div class="wf-card__body" style="padding:0">${WF.reportDataTable(["City", "Revenue", "Share", "Growth"], ANALYTICS_DATA.revenueByCity)}</div></div>
       `
     },
     {

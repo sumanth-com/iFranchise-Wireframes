@@ -21,6 +21,10 @@ const WF = (() => {
     roles: { label: "Role & Permission Management", href: "../roles/index.html" },
     audit: { label: "Audit & Activity Logs", href: "../audit/index.html" },
     settings: { label: "System Configuration", href: "../settings/index.html" },
+    masterData: { label: "Master Data Management", href: "../master-data/index.html" },
+    callIntelligence: { label: "Call Intelligence", href: "../call-intelligence/index.html" },
+    marketingIntelligence: { label: "Marketing Intelligence", href: "../marketing-intelligence/index.html" },
+    templates: { label: "Template Management", href: "../templates/index.html" },
     auth: { label: "Authentication", href: "../auth/login.html" }
   };
 
@@ -4100,17 +4104,41 @@ const WF = (() => {
     </div>`;
   }
 
-  function settingsCategoryNav(activeId) {
-    const cats = (typeof CONFIG_DATA !== "undefined" ? CONFIG_DATA.categoryNav : []);
-    return `<nav class="wf-settings-nav">
-      ${cats.map((c) => `<a href="#${c.screen}" data-screen="${c.screen}" class="wf-settings-nav__item${c.screen === activeId ? " wf-settings-nav__item--active" : ""}">${esc(c.label)}</a>`).join("")}
-    </nav>`;
+  function configLayout(_activeScreen, content) {
+    return content;
   }
 
-  function configLayout(activeScreen, content) {
-    return `<div class="wf-config-layout">
-      ${settingsCategoryNav(activeScreen)}
-      <div class="wf-config-layout__main">${content}</div>
+  function masterDataLayout(_activeScreen, content) {
+    return content;
+  }
+
+  function masterDataTable(records, columns) {
+    const statusBadge = (status) => {
+      const cls = status === "Active" ? " wf-badge--dark" : "";
+      return `<span class="wf-badge${cls}">${esc(status)}</span>`;
+    };
+    const actionBtns = `<div class="wf-table-actions">
+      <button class="wf-btn wf-btn--sm" title="Edit">Edit</button>
+      <button class="wf-btn wf-btn--sm" title="Archive">Archive</button>
+      <button class="wf-btn wf-btn--sm" title="Activate">Activate</button>
+      <button class="wf-btn wf-btn--sm" title="Deactivate">Deactivate</button>
+    </div>`;
+    return `<div class="wf-table-wrap"><table class="wf-table wf-table--responsive">
+      <thead><tr>${columns.map((c) => `<th>${esc(c.label)}</th>`).join("")}<th>Status</th><th>Actions</th></tr></thead>
+      <tbody>${records.map((r) => `<tr>${columns.map((c) => `<td${c.clip ? ' class="wf-table__cell-clip"' : ""}>${esc(r[c.key] ?? "—")}</td>`).join("")}<td>${statusBadge(r.status || "Active")}</td><td>${actionBtns}</td></tr>`).join("")}</tbody>
+    </table></div>`;
+  }
+
+  function masterDataToolbar(entityLabel) {
+    return `<div class="wf-toolbar wf-mb-16">
+      <div class="wf-toolbar__filters">
+        <input type="search" class="wf-form__input" placeholder="Search ${esc(entityLabel)}…" style="max-width:220px">
+        <select class="wf-filter-select" aria-label="Status filter"><option>All Status</option><option>Active</option><option>Inactive</option><option>Archived</option></select>
+      </div>
+      <div class="wf-toolbar__actions wf-sticky-actions">
+        <button class="wf-btn wf-btn--sm wf-btn--primary">+ Add ${esc(entityLabel)}</button>
+        <button class="wf-btn wf-btn--sm" data-action="export">Export</button>
+      </div>
     </div>`;
   }
 
@@ -4333,13 +4361,15 @@ const WF = (() => {
     auditModals,
     settingsFormFooter,
     statusIndicator,
-    settingsCategoryNav,
     configLayout,
     companySettingsForm,
     integrationPanel,
     featureFlagGrid,
     storageUsagePanel,
     settingsModals,
+    masterDataLayout,
+    masterDataTable,
+    masterDataToolbar,
     DETAIL_SCREENS,
     CUSTOMER_DETAIL_TABS,
     showToast,

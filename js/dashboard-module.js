@@ -1,10 +1,11 @@
-/* Dashboard Module — 6 role-based dashboards (SPA) */
+/* Dashboard Module — 8 role-based dashboards + Command Center + Employee Performance (SPA) */
 
 const DASHBOARD_MODULE = (() => {
   const d = () => DASHBOARD_DATA;
   const ROLE_SCREENS = {
     CEO: "ceo",
     "Team Lead": "team-lead",
+    "Sales Manager": "employee-performance",
     "Sales Executive": "sales-exec",
     "Brand Owner": "brand-owner",
     Accounts: "accounts",
@@ -106,8 +107,9 @@ const DASHBOARD_MODULE = (() => {
         ${roleBar("CEO")}
         ${WF.pageHeader("CEO Dashboard", "Company KPI overview — Abdul Syed · Chief Executive Officer", `
           <button class="wf-btn wf-btn--sm" id="wf-demo-loading">Refresh</button>
+          <button data-screen="command-center" class="wf-btn wf-btn--sm wf-btn--primary">Command Center</button>
           <button class="wf-btn wf-btn--sm" data-action="export">Export</button>
-          <button class="wf-btn wf-btn--sm wf-btn--primary" data-modal="send-email">Executive Brief</button>
+          <button class="wf-btn wf-btn--sm" data-modal="send-email">Executive Brief</button>
         `)}
         ${dashToolbar()}
         ${kpiRow(data.kpis)}
@@ -169,6 +171,110 @@ const DASHBOARD_MODULE = (() => {
         <div class="wf-grid-2 wf-mb-20">
           ${calendarWidget(data.meetingsToday)}
           ${quickActions(data.quickActions)}
+        </div>
+      `;
+      }
+    },
+    {
+      id: "command-center",
+      label: "CEO Command Center",
+      render: () => {
+        const cc = d().commandCenter;
+        const ceo = d().ceo;
+        return `
+        ${roleBar("CEO")}
+        ${WF.pageHeader("CEO Executive Command Center", "Consolidated view — revenue, pipeline, marketing, sales, calls, and performance", `
+          <button class="wf-btn wf-btn--sm" id="wf-demo-loading">Refresh</button>
+          <button data-screen="ceo" class="wf-btn wf-btn--sm">CEO Dashboard</button>
+          <button class="wf-btn wf-btn--sm" data-action="export">Export Brief</button>
+        `)}
+        ${dashToolbar()}
+        ${kpiRow([
+          { label: "Revenue (YTD)", value: cc.revenue.ytd, change: "↑ " + cc.revenue.growth + " vs last year" },
+          { label: "Pipeline Value", value: cc.pipelineValue },
+          { label: "Collections (MTD)", value: cc.collections },
+          { label: "Pending Approvals", value: cc.pendingApprovals, change: "Requires action" },
+          { label: "Franchise Growth", value: cc.franchiseGrowth, change: "New outlets Q2" },
+          { label: "Marketing ROI", value: cc.marketingRoi },
+          { label: "Call Success Rate", value: cc.callMetrics.successRate, change: cc.callMetrics.connected + " connected" },
+          { label: "Conversion Rate", value: "24.2%", change: "Lead to customer" }
+        ])}
+        <div class="wf-dashboard-charts wf-mb-20">
+          <div class="wf-card"><div class="wf-card__header"><span class="wf-card__title">Lead Funnel</span></div>
+            <div class="wf-card__body">${WF.miniBarChart(ceo.salesFunnel)}</div></div>
+          <div class="wf-card"><div class="wf-card__header"><span class="wf-card__title">Revenue Trend</span></div>
+            <div class="wf-card__body">${WF.miniLineChart(["Jan", "Feb", "Mar", "Apr", "May", "Jun"])}</div></div>
+          <div class="wf-card"><div class="wf-card__header"><span class="wf-card__title">Marketing Performance</span></div>
+            <div class="wf-card__body">${WF.miniBarChart(ceo.leadsBySource)}</div></div>
+        </div>
+        <div class="wf-grid-2 wf-mb-20">
+          <div class="wf-card"><div class="wf-card__header"><span class="wf-card__title">Sales Performance</span><button data-screen="employee-performance" class="wf-btn wf-btn--sm">Details</button></div>
+            <div class="wf-card__body" style="padding:0">${simpleTable(["Executive", "Revenue", "Target %"], ceo.leaderboard.slice(0, 5).map((r) => [WF.esc(r.name), WF.esc(r.revenue), r.pct + "%"]))}</div>
+          </div>
+          <div class="wf-card"><div class="wf-card__header"><span class="wf-card__title">Call Analytics</span><a href="../call-intelligence/index.html" class="wf-btn wf-btn--sm">Call Module →</a></div>
+            <div class="wf-card__body">
+              <div class="wf-card-grid" style="grid-template-columns:repeat(3,1fr)">
+                <div class="wf-stat-card"><div class="wf-stat-card__label">Total Calls</div><div class="wf-stat-card__value">${cc.callMetrics.total.toLocaleString()}</div></div>
+                <div class="wf-stat-card"><div class="wf-stat-card__label">Connected</div><div class="wf-stat-card__value">${cc.callMetrics.connected.toLocaleString()}</div></div>
+                <div class="wf-stat-card"><div class="wf-stat-card__label">Success Rate</div><div class="wf-stat-card__value">${cc.callMetrics.successRate}</div></div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="wf-grid-2 wf-mb-20">
+          <div class="wf-card"><div class="wf-card__header"><span class="wf-card__title">Brand Performance</span></div>
+            <div class="wf-card__body" style="padding:0">${simpleTable(["Brand", "Revenue", "Outlets", "Growth"], ceo.topBrands.map((b) => [WF.esc(b.brand), WF.esc(b.revenue), b.outlets, WF.esc(b.growth)]))}</div>
+          </div>
+          <div class="wf-card"><div class="wf-card__header"><span class="wf-card__title">State-wise Performance</span></div>
+            <div class="wf-card__body" style="padding:0">${simpleTable(["State", "Revenue", "Leads"], cc.statePerformance.map((s) => [WF.esc(s.state), WF.esc(s.revenue), s.leads]))}</div>
+          </div>
+        </div>
+        <div class="wf-grid-2 wf-mb-20">
+          <div class="wf-card"><div class="wf-card__header"><span class="wf-card__title">Top Performers</span></div>
+            <div class="wf-card__body" style="padding:0">${simpleTable(["Employee", "Role", "Score", "Revenue"], cc.topPerformers.map((p) => [WF.esc(p.name), WF.esc(p.role), p.score, WF.esc(p.revenue)]))}</div>
+          </div>
+          <div class="wf-card"><div class="wf-card__header"><span class="wf-card__title">Bottom Performers</span><span class="wf-badge">Coaching</span></div>
+            <div class="wf-card__body" style="padding:0">${simpleTable(["Employee", "Role", "Score", "Revenue"], cc.bottomPerformers.map((p) => [WF.esc(p.name), WF.esc(p.role), p.score, WF.esc(p.revenue)]))}</div>
+          </div>
+        </div>
+        <div class="wf-card"><div class="wf-card__header"><span class="wf-card__title">City-wise Performance</span></div>
+          <div class="wf-card__body">${WF.miniBarChart(ceo.cityPerformance)}</div>
+        </div>
+      `;
+      }
+    },
+    {
+      id: "employee-performance",
+      label: "Employee Performance",
+      render: () => {
+        const ep = d().employeePerformance;
+        return `
+        <div class="wf-role-bar">
+          <span class="wf-role-bar__label">View as:</span>
+          ${ep.viewRoles.map((r) => `<button type="button" class="wf-btn wf-btn--sm${r === "CEO" ? " wf-btn--primary" : ""}">${WF.esc(r)}</button>`).join("")}
+          <span class="wf-approval-badge" style="margin-left:auto">Performance tracking</span>
+        </div>
+        ${WF.pageHeader("Employee Performance Dashboard", "Leads, calls, meetings, conversions, and productivity scores", `
+          <button class="wf-btn wf-btn--sm" id="wf-demo-loading">Refresh</button>
+          <button class="wf-btn wf-btn--sm" data-action="export">Export</button>
+          <a href="../analytics/index.html#employee-performance" class="wf-btn wf-btn--sm">Full Reports →</a>
+        `)}
+        ${dashToolbar()}
+        <div class="wf-card-grid wf-mb-20">
+          ${ep.metrics.map((m) => `<div class="wf-stat-card"><div class="wf-stat-card__label">${WF.esc(m.label)}</div><div class="wf-stat-card__value">${WF.esc(m.value)}</div></div>`).join("")}
+        </div>
+        <div class="wf-card wf-mb-20"><div class="wf-card__header"><span class="wf-card__title">Team Performance</span></div>
+          <div class="wf-card__body" style="padding:0">${simpleTable(
+            ["Employee", "Leads", "Calls", "Talk Time", "Meetings", "Follow-ups", "Conv %", "Revenue", "Target", "Closures", "Activity", "Productivity"],
+            ep.team.map((e) => [
+              WF.esc(e.name), e.leads, e.calls, WF.esc(e.talkTime), e.meetings, e.followUps,
+              WF.esc(e.conversion), WF.esc(e.revenue), WF.esc(e.target), e.closures, e.activity, e.productivity
+            ])
+          )}</div>
+        </div>
+        <div class="wf-grid-2">
+          ${WF.chartCard("Activity Score Trend", "Line Chart", { height: 220 })}
+          ${WF.chartCard("Productivity by Employee", "Bar Chart", { height: 220 })}
         </div>
       `;
       }

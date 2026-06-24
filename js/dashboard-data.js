@@ -1,7 +1,7 @@
 /* Dashboard Module — Mock Data (Indian enterprise franchise CRM) */
 
 const DASHBOARD_DATA = {
-  roles: ["CEO", "Team Lead", "Sales Executive", "Brand Owner", "Accounts", "Admin"],
+  roles: ["CEO", "Team Lead", "Sales Manager", "Sales Executive", "Brand Owner", "Accounts", "Admin"],
   cities: ["Bengaluru", "Hyderabad", "Chennai", "Mumbai", "Pune", "Delhi", "Kochi", "Mysuru"],
   brands: ["Odette", "Original Burger Co.", "Kasturi", "Chai Point", "Wow! Momo"],
   users: ["Abdul Syed", "Abrar", "Himani Bhargava", "Om Anil", "Sumanth", "Fazil", "Diksha", "Akshita", "Swetha"],
@@ -305,6 +305,54 @@ const DASHBOARD_DATA = {
       { title: "Storage at 68% — review retention policy", time: "2 hrs ago", priority: "Medium" },
       { title: "3 failed login attempts blocked", time: "4 hrs ago", priority: "High" },
       { title: "Scheduled backup completed", time: "Yesterday", priority: "Low" }
+    ]
+  },
+
+  commandCenter: {
+    revenue: { ytd: "₹18.6 Cr", mtd: "₹2.84 Cr", growth: "+14%" },
+    pipelineValue: "₹4.2 Cr",
+    pendingApprovals: 12,
+    collections: "₹1.92 Cr",
+    franchiseGrowth: "+18 outlets",
+    callMetrics: { total: 2846, connected: 2184, successRate: "76.7%" },
+    marketingRoi: "320%",
+    statePerformance: [
+      { state: "Karnataka", revenue: "₹6.2 Cr", leads: 286 },
+      { state: "Maharashtra", revenue: "₹4.8 Cr", leads: 224 },
+      { state: "Telangana", revenue: "₹3.4 Cr", leads: 168 },
+      { state: "Tamil Nadu", revenue: "₹2.8 Cr", leads: 142 }
+    ],
+    topPerformers: [
+      { name: "Himani Bhargava", role: "Sales Manager", score: 94, revenue: "₹3.2 Cr" },
+      { name: "Diksha", role: "Team Lead", score: 88, revenue: "₹1.8 Cr" },
+      { name: "Abrar", role: "Co-Founder", score: 86, revenue: "₹1.4 Cr" }
+    ],
+    bottomPerformers: [
+      { name: "New Hire — Raj", role: "Sales Executive", score: 52, revenue: "₹12 L" },
+      { name: "Intern — Priya", role: "Sales Executive", score: 48, revenue: "₹8 L" }
+    ]
+  },
+
+  employeePerformance: {
+    viewRoles: ["CEO", "Admin", "Team Lead", "Sales Manager", "Individual Employee"],
+    metrics: [
+      { label: "Leads Assigned", value: "45" },
+      { label: "Calls Made", value: "186" },
+      { label: "Talk Time", value: "18h 24m" },
+      { label: "Meetings Completed", value: "28" },
+      { label: "Follow-ups Completed", value: "42" },
+      { label: "Conversion Rate", value: "22%" },
+      { label: "Revenue Generated", value: "₹3.2 Cr" },
+      { label: "Target Achievement", value: "112%" },
+      { label: "Deal Closures", value: "14" },
+      { label: "Activity Score", value: "94/100" },
+      { label: "Productivity Score", value: "91/100" }
+    ],
+    team: [
+      { name: "Himani Bhargava", leads: 45, calls: 186, talkTime: "18h 24m", meetings: 28, followUps: 42, conversion: "22%", revenue: "₹3.2 Cr", target: "112%", closures: 14, activity: 94, productivity: 91 },
+      { name: "Diksha", leads: 28, calls: 142, talkTime: "14h 12m", meetings: 22, followUps: 36, conversion: "19%", revenue: "₹1.8 Cr", target: "98%", closures: 9, activity: 88, productivity: 86 },
+      { name: "Swetha", leads: 18, calls: 128, talkTime: "11h 48m", meetings: 16, followUps: 28, conversion: "16%", revenue: "₹68 L", target: "76%", closures: 5, activity: 82, productivity: 78 },
+      { name: "Abrar", leads: 22, calls: 98, talkTime: "9h 36m", meetings: 18, followUps: 24, conversion: "21%", revenue: "₹1.4 Cr", target: "94%", closures: 8, activity: 86, productivity: 84 }
     ]
   }
 };
