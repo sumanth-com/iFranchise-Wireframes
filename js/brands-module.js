@@ -274,7 +274,7 @@ const BRAND_MODULE = (() => {
       id: "contacts", label: "Brand Contacts",
       breadcrumb: [{ label: b().name, screen: "details" }, { label: "Brand Contacts" }],
       render: () => `
-        ${WF.pageHeader("Brand Contacts", b().name, `<button class="wf-btn wf-btn--sm wf-btn--primary" data-modal="send-email">Schedule Meeting</button>`)}
+        ${WF.pageHeader("Brand Contacts", b().name, `${WF.moduleLink(WF.MODULE_NAV.meetingsSchedule, "Schedule Meeting", { primary: true })}`)}
         ${brandTabs("contacts")}
         <div class="wf-card-grid" style="grid-template-columns:repeat(2,1fr)">
           ${BRAND_DATA.contacts.map(c => `<div class="wf-card"><div class="wf-card__body">

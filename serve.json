@@ -1,0 +1,28 @@
+{
+  "rewrites": [
+    { "source": "auth", "destination": "/auth/index.html" },
+    { "source": "auth/**", "destination": "/auth/index.html" },
+    { "source": "leads", "destination": "/leads/index.html" },
+    { "source": "leads/**", "destination": "/leads/index.html" },
+    { "source": "dashboard", "destination": "/dashboard/index.html" },
+    { "source": "dashboard/**", "destination": "/dashboard/index.html" },
+    { "source": "customers/**", "destination": "/customers/index.html" },
+    { "source": "brands/**", "destination": "/brands/index.html" },
+    { "source": "franchise-models/**", "destination": "/franchise-models/index.html" },
+    { "source": "meetings/**", "destination": "/meetings/index.html" },
+    { "source": "approvals/**", "destination": "/approvals/index.html" },
+    { "source": "accounts/**", "destination": "/accounts/index.html" },
+    { "source": "documents/**", "destination": "/documents/index.html" },
+    { "source": "notifications/**", "destination": "/notifications/index.html" },
+    { "source": "analytics/**", "destination": "/analytics/index.html" },
+    { "source": "automation/**", "destination": "/automation/index.html" },
+    { "source": "users/**", "destination": "/users/index.html" },
+    { "source": "roles/**", "destination": "/roles/index.html" },
+    { "source": "audit/**", "destination": "/audit/index.html" },
+    { "source": "settings/**", "destination": "/settings/index.html" },
+    { "source": "master-data/**", "destination": "/master-data/index.html" },
+    { "source": "call-intelligence/**", "destination": "/call-intelligence/index.html" },
+    { "source": "marketing-intelligence/**", "destination": "/marketing-intelligence/index.html" },
+    { "source": "templates/**", "destination": "/templates/index.html" }
+  ]
+}

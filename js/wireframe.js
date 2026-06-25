@@ -5,27 +5,27 @@ const WF = (() => {
   const BRAND_MARK = "iF";
 
   const MODULES = {
-    dashboard: { label: "Dashboard", href: "../dashboard/index.html" },
-    leads: { label: "Lead Management", href: "../leads/index.html" },
-    customers: { label: "Customer Management", href: "../customers/index.html" },
-    brands: { label: "Brand Management", href: "../brands/index.html" },
-    franchiseModels: { label: "Franchise Models", href: "../franchise-models/index.html" },
-    meetings: { label: "Meeting Management", href: "../meetings/index.html" },
-    approvals: { label: "Approval Management", href: "../approvals/index.html" },
-    accounts: { label: "Accounts & Payments", href: "../accounts/index.html" },
-    documents: { label: "Document Management", href: "../documents/index.html" },
-    notifications: { label: "Notification Center", href: "../notifications/index.html" },
-    analytics: { label: "Reporting & Analytics", href: "../analytics/index.html" },
-    automation: { label: "Automation Engine", href: "../automation/index.html" },
-    users: { label: "User Management", href: "../users/index.html" },
-    roles: { label: "Role & Permission Management", href: "../roles/index.html" },
-    audit: { label: "Audit & Activity Logs", href: "../audit/index.html" },
-    settings: { label: "System Configuration", href: "../settings/index.html" },
-    masterData: { label: "Master Data Management", href: "../master-data/index.html" },
-    callIntelligence: { label: "Call Intelligence", href: "../call-intelligence/index.html" },
-    marketingIntelligence: { label: "Marketing Intelligence", href: "../marketing-intelligence/index.html" },
-    templates: { label: "Template Management", href: "../templates/index.html" },
-    auth: { label: "Authentication", href: "../auth/login.html" }
+    dashboard: { label: "Dashboard", href: "/dashboard/ceo" },
+    leads: { label: "Lead Management", href: "/leads/dashboard" },
+    customers: { label: "Customer Management", href: "/customers/dashboard" },
+    brands: { label: "Brand Management", href: "/brands/dashboard" },
+    franchiseModels: { label: "Franchise Models", href: "/franchise-models/dashboard" },
+    meetings: { label: "Meeting Management", href: "/meetings/dashboard" },
+    approvals: { label: "Approval Management", href: "/approvals/dashboard" },
+    accounts: { label: "Accounts & Payments", href: "/accounts/finance-dashboard" },
+    documents: { label: "Document Management", href: "/documents/dashboard" },
+    notifications: { label: "Notification Center", href: "/notifications/dashboard" },
+    analytics: { label: "Reporting & Analytics", href: "/analytics/executive" },
+    automation: { label: "Automation Engine", href: "/automation/dashboard" },
+    users: { label: "User Management", href: "/users/dashboard" },
+    roles: { label: "Role & Permission Management", href: "/roles/dashboard" },
+    audit: { label: "Audit & Activity Logs", href: "/audit/dashboard" },
+    settings: { label: "System Configuration", href: "/settings/dashboard" },
+    masterData: { label: "Master Data Management", href: "/master-data/dashboard" },
+    callIntelligence: { label: "Call Intelligence", href: "/call-intelligence/dashboard" },
+    marketingIntelligence: { label: "Marketing Intelligence", href: "/marketing-intelligence/dashboard" },
+    templates: { label: "Template Management", href: "/templates/dashboard" },
+    auth: { label: "Authentication", href: "/auth/login" }
   };
 
   const MODULE_ORDER = [
@@ -34,6 +34,39 @@ const WF = (() => {
     "users", "roles", "audit", "settings", "masterData", "callIntelligence",
     "marketingIntelligence", "templates", "auth"
   ];
+
+  const MODULE_NAV = {
+    notifications: "/notifications/all",
+    announcements: "/notifications/announcements",
+    meetingsSchedule: "/meetings/schedule",
+    meetingsList: "/meetings/list",
+    approvalsInbox: "/approvals/inbox",
+    leadsCreate: "/leads/create",
+    leadsList: "/leads/list",
+    analytics: "/analytics/executive",
+    analyticsReports: "/analytics/reports-dashboard",
+    brands: "/brands/dashboard",
+    customers: "/customers/dashboard",
+    rolesMatrix: "/roles/permission-matrix"
+  };
+
+  function screenHref(screenId) {
+    if (typeof WF_SPA !== "undefined" && WF_SPA.screenUrl) {
+      return WF_SPA.screenUrl(screenId);
+    }
+    return screenId ? `#${screenId}` : "#";
+  }
+
+  const MODAL_NAV_FALLBACKS = {
+    notifications: MODULE_NAV.notifications
+  };
+
+  function moduleLink(href, label, options = {}) {
+    const classes = ["wf-btn", "wf-btn--sm"];
+    if (options.primary) classes.push("wf-btn--primary");
+    if (options.className) classes.push(options.className);
+    return `<a href="${href}" class="${classes.join(" ")}">${esc(label)}</a>`;
+  }
 
   const CUSTOMER_NAV = [
     { label: "Dashboard", href: "dashboard.html", icon: "dashboard" },
@@ -209,6 +242,12 @@ const WF = (() => {
       "Lead Source": typeof MARKETING_DATA !== "undefined"
         ? MARKETING_DATA.leadSources.map((s) => s.source)
         : sources,
+      "Current Stage": typeof LEAD_DATA !== "undefined"
+        ? LEAD_DATA.pipeline
+        : ["New Lead", "Contacted", "Qualified", "Meeting Scheduled", "Proposal Shared", "Negotiation", "Agreement", "Payment", "Customer Converted", "Completed"],
+      "Stage": typeof LEAD_DATA !== "undefined"
+        ? LEAD_DATA.pipeline
+        : ["New Lead", "Contacted", "Qualified", "Meeting Scheduled", "Proposal Shared", "Negotiation", "Agreement", "Payment", "Customer Converted", "Completed"],
       "Platform": ["Meta", "Google", "LinkedIn", "Website", "Offline", "Referral", "Email"],
       "Channel": ["In-App", "Email", "SMS", "WhatsApp", "Push Notification"],
       "Read/Unread": ["Read", "Unread"],
@@ -324,23 +363,40 @@ const WF = (() => {
     const { moduleKey, moduleLabel, screens } = moduleConfig;
     const mod = MODULES[moduleKey];
 
-    let nav = `<div class="wf-sidebar__section">${esc(moduleLabel)}</div>`;
-    screens.forEach((s) => {
-      nav += `<a href="#${s.id}" data-screen="${s.id}" class="wf-sidebar__link">
-        <span class="wf-sidebar__icon"></span>${esc(s.label)}
+    const screenLink = (s) => `<a href="${screenHref(s.id)}" data-screen="${s.id}" class="wf-sidebar__link">
+        ${esc(s.label)}
       </a>`;
-    });
+
+    let nav = "";
+    if (moduleConfig.screenGroups) {
+      moduleConfig.screenGroups.forEach((group) => {
+        nav += `<div class="wf-sidebar__section">${esc(group.label)}</div>`;
+        group.screenIds.forEach((id) => {
+          const s = screens.find((sc) => sc.id === id);
+          if (s) nav += screenLink(s);
+        });
+      });
+    } else {
+      nav += `<div class="wf-sidebar__section">${esc(moduleLabel)}</div>`;
+      screens.forEach((s) => { nav += screenLink(s); });
+    }
+
+    const createBtn = moduleConfig.sidebarCreate
+      ? `<div class="wf-sidebar__cta">
+          <a href="${screenHref(moduleConfig.sidebarCreate)}" data-screen="${moduleConfig.sidebarCreate}" class="wf-sidebar__create-btn">+ Create New Lead</a>
+        </div>`
+      : "";
 
     const exit = `<div class="wf-sidebar__exit">
       <a href="../index.html" class="wf-sidebar__link wf-sidebar__link--hub">
-        <span class="wf-sidebar__hub-icon" aria-hidden="true">${bottomNavIconSvg("modules")}</span>
         <span>All Modules</span>
       </a>
     </div>`;
 
     return `<aside class="wf-sidebar" id="wf-sidebar">
       ${sidebarLogo(mod ? mod.label : moduleLabel)}
-      ${spaModuleSwitcher(moduleKey)}
+      ${createBtn}
+      ${moduleConfig.screenGroups ? "" : spaModuleSwitcher(moduleKey)}
       <nav class="wf-sidebar__nav">${nav}</nav>
       ${exit}
     </aside>
@@ -359,7 +415,7 @@ const WF = (() => {
 
     const trail = crumbs.map((c, i) => {
       if (c.screen && i < crumbs.length - 1) {
-        return `<a href="#${c.screen}" data-screen="${c.screen}" class="wf-mobile-screen-nav__crumb">${esc(c.label)}</a>`;
+        return `<a href="${screenHref(c.screen)}" data-screen="${c.screen}" class="wf-mobile-screen-nav__crumb">${esc(c.label)}</a>`;
       }
       return `<span class="wf-mobile-screen-nav__crumb wf-mobile-screen-nav__crumb--current">${esc(c.label)}</span>`;
     }).join('<span class="wf-mobile-screen-nav__sep" aria-hidden="true">›</span>');
@@ -385,7 +441,7 @@ const WF = (() => {
     items.forEach((item, i) => {
       crumbs += `<span class="wf-breadcrumb__sep">/</span>`;
       if (item.screen && i < items.length - 1) {
-        crumbs += `<a href="#${item.screen}" data-screen="${item.screen}">${esc(item.label)}</a>`;
+        crumbs += `<a href="${screenHref(item.screen)}" data-screen="${item.screen}">${esc(item.label)}</a>`;
       } else {
         crumbs += `<span>${esc(item.label)}</span>`;
       }
@@ -414,7 +470,7 @@ const WF = (() => {
         <input type="search" placeholder="${esc(placeholder)}" id="wf-global-search" aria-label="Search">
       </div>
       <div class="wf-topbar__actions">
-        <button type="button" class="wf-topbar__icon-btn" title="Notifications" aria-label="Notifications" data-modal="notifications"></button>
+        <a href="/notifications/all" class="wf-topbar__icon-btn" title="Notifications" aria-label="Notifications"></a>
         <div class="wf-topbar__user">
           <div class="wf-topbar__avatar" aria-hidden="true"></div>
           <span>Abdul Syed</span>
@@ -767,6 +823,418 @@ const WF = (() => {
     </form>`;
   }
 
+  function leadAdvancedFilters() {
+    const d = typeof LEAD_DATA !== "undefined" ? LEAD_DATA : {};
+    const opt = (arr) => (arr || []).map((v) => `<option>${esc(v)}</option>`).join("");
+    return `<div class="wf-advanced-filters" id="wf-advanced-filters">
+      <div class="wf-advanced-filters__grid">
+        <div class="wf-form__group"><label class="wf-form__label">Date Range</label><select class="wf-form__select"><option>Last 30 days</option><option>Last 90 days</option><option>Custom</option></select></div>
+        <div class="wf-form__group"><label class="wf-form__label">Current Stage</label><select class="wf-form__select"><option>All</option>${opt(d.pipeline)}</select></div>
+        <div class="wf-form__group"><label class="wf-form__label">Lead Source</label><select class="wf-form__select"><option>All</option>${opt(d.sources || shared("sources"))}</select></div>
+        <div class="wf-form__group"><label class="wf-form__label">Priority</label><select class="wf-form__select"><option>All</option>${opt(d.priorities || ["Critical", "High", "Medium", "Low"])}</select></div>
+        <div class="wf-form__group"><label class="wf-form__label">Investment Budget</label><select class="wf-form__select"><option>All</option>${opt(d.budgets || ["₹10–15 Lakhs", "₹15–25 Lakhs", "₹25–50 Lakhs", "₹50+ Lakhs"])}</select></div>
+        <div class="wf-form__group"><label class="wf-form__label">Lead Score</label><select class="wf-form__select"><option>All</option><option>80+</option><option>60–79</option><option>Below 60</option></select></div>
+        <div class="wf-form__group"><label class="wf-form__label">Team Lead</label><select class="wf-form__select"><option>All</option>${opt(d.users || shared("users"))}</select></div>
+        <div class="wf-form__group"><label class="wf-form__label">Expected Closure</label><input type="date" class="wf-form__input" value="2024-07-31"></div>
+      </div>
+      <div class="wf-advanced-filters__actions">
+        <button class="wf-btn wf-btn--sm" id="wf-adv-filter-clear">Clear All</button>
+        <button class="wf-btn wf-btn--sm wf-btn--primary" id="wf-adv-filter-apply">Apply Filters</button>
+      </div>
+    </div>`;
+  }
+
+  function leadToolbar(options = {}) {
+    const {
+      showAdvanced = true,
+      showExport = true,
+      showImport = true,
+      filters = ["Current Stage", "Brand", "City", "Priority", "Lead Source", "Assigned To"]
+    } = options;
+    const filterHtml = filters.map((f) => {
+      if (typeof f === "string") return filterSelectHtml(f);
+      const label = f.label || f.name || "Filter";
+      return filterSelectHtml(label, f.options);
+    }).join("");
+    const advBtn = showAdvanced ? `<button class="wf-btn wf-btn--sm" id="wf-adv-filter-toggle">Advanced Filters</button>` : "";
+    const exportBtn = showExport ? `<button class="wf-btn wf-btn--sm" data-action="export">Export</button>` : "";
+    const importBtn = showImport ? `<button class="wf-btn wf-btn--sm" data-action="import">Import</button>` : "";
+    return `<div class="wf-toolbar">
+      <div class="wf-toolbar__filters">
+        <input type="search" class="wf-filter-input" placeholder="Search leads…" style="min-width:200px" id="wf-local-search">
+        ${filterHtml}
+        ${advBtn}
+      </div>
+      <div class="wf-toolbar__actions">${exportBtn}${importBtn}</div>
+    </div>
+    ${showAdvanced ? leadAdvancedFilters() : ""}`;
+  }
+
+  function leadSortSelect() {
+    return `<select class="wf-filter-select" aria-label="Sort leads">
+      <option>Sort: Newest first</option>
+      <option>Sort: Oldest first</option>
+      <option>Sort: Lead Score (High → Low)</option>
+      <option>Sort: Lead Score (Low → High)</option>
+      <option>Sort: Expected Closure</option>
+      <option>Sort: Priority</option>
+      <option>Sort: Name (A → Z)</option>
+    </select>`;
+  }
+
+  function leadBulkBar(count = 4) {
+    return `<div class="wf-card wf-mb-16" style="padding:12px 16px;display:flex;flex-wrap:wrap;gap:8px;align-items:center;background:var(--wf-bg-muted, #f5f5f5)">
+      <span style="font-size:13px;font-weight:600">${count} leads selected</span>
+      <button class="wf-btn wf-btn--sm" data-screen="assignment">Assign</button>
+      <button class="wf-btn wf-btn--sm" data-screen="followup">Schedule Follow-up</button>
+      <button class="wf-btn wf-btn--sm" data-modal="bulk-assign">Bulk Assign</button>
+      <button class="wf-btn wf-btn--sm" data-action="export">Export Selected</button>
+      <button class="wf-btn wf-btn--sm wf-btn--danger" data-modal="archive-lead">Archive</button>
+      <button class="wf-btn wf-btn--sm wf-btn--ghost" style="margin-left:auto">Clear Selection</button>
+    </div>`;
+  }
+
+  function leadTable(leads, options = {}) {
+    const { selectable = true, showActions = true, compact = false, hidePagination = false } = options;
+    const total = leads.length > 6 ? 186 : leads.length;
+
+    if (compact) {
+      const rows = leads.map((l) => `
+        <tr data-lead-id="${esc(l.id)}">
+          <td class="wf-table__cell-clip"><a href="#details" data-screen="details" class="wf-table__link">${esc(l.name)}</a></td>
+          <td class="wf-table__cell-clip">${esc(l.brand)}</td>
+          <td><span class="wf-badge">${esc(l.stage)}</span></td>
+          <td>${l.score}</td>
+          <td class="wf-table__cell-clip">${esc(l.salesExec)}</td>
+        </tr>
+      `).join("");
+      return `<div class="wf-table-wrap wf-table-wrap--fit">
+        <table class="wf-table wf-table--fit wf-table--compact">
+          <thead><tr><th>Lead</th><th>Brand</th><th>Stage</th><th>Score</th><th>Assigned To</th></tr></thead>
+          <tbody>${rows}</tbody>
+        </table>
+      </div>`;
+    }
+
+    const rows = leads.map((l) => `
+      <tr data-lead-id="${esc(l.id)}">
+        ${selectable ? `<td><span class="wf-table__checkbox" role="checkbox" tabindex="0"></span></td>` : ""}
+        <td class="wf-table__cell-clip"><a href="#details" data-screen="details" class="wf-table__link">${esc(l.id)}</a></td>
+        <td class="wf-table__cell-clip"><a href="#details" data-screen="details" class="wf-table__link">${esc(l.name)}</a></td>
+        <td class="wf-table__cell-clip">${esc(l.email)}</td>
+        <td class="wf-table__cell-clip">${esc(formatPhone(l.phone))}</td>
+        <td>${esc(l.city)}</td>
+        <td class="wf-table__cell-clip">${esc(l.brand)}</td>
+        <td><span class="wf-badge">${esc(l.stage)}</span></td>
+        <td><span class="wf-badge wf-badge--outline">${esc(l.priority)}</span></td>
+        <td>${l.score}</td>
+        <td class="wf-table__cell-clip">${esc(l.salesExec)}</td>
+        ${showActions ? `<td><div class="wf-table__actions">
+          <button data-screen="details" class="wf-btn wf-btn--sm">View</button>
+          <button data-screen="edit" class="wf-btn wf-btn--sm">Edit</button>
+        </div></td>` : ""}
+      </tr>
+    `).join("");
+
+    return `<div class="wf-table-wrap wf-table-wrap--scroll">
+      <table class="wf-table wf-table--fit">
+        <thead><tr>
+          ${selectable ? "<th><span class='wf-table__checkbox'></span></th>" : ""}
+          <th>Lead ID</th><th>Full Name</th><th>Email</th><th>Mobile</th><th>City</th><th>Brand</th><th>Stage</th><th>Priority</th><th>Score</th><th>Executive</th>
+          ${showActions ? "<th>Actions</th>" : ""}
+        </tr></thead>
+        <tbody>${rows}</tbody>
+      </table>
+      ${hidePagination ? "" : pagination(total)}
+    </div>`;
+  }
+
+  function leadProfileCard(lead) {
+    const l = lead || (typeof LEAD_DATA !== "undefined" ? LEAD_DATA.leads[0] : {});
+    return `<div class="wf-card">
+      <div class="wf-card__body" style="text-align:center">
+        <div class="wf-avatar-lg"></div>
+        <div style="font-size:16px;font-weight:600">${esc(l.name)}</div>
+        <div style="font-size:12px;color:var(--wf-text-muted)">${esc(l.id)}</div>
+        <div style="margin-top:8px"><span class="wf-badge wf-badge--dark">${esc(l.stage)}</span></div>
+        <div style="margin-top:6px;font-size:13px">Score: <strong>${l.score}</strong>/100</div>
+      </div>
+      <div class="wf-card__body" style="padding-top:0">
+        <div class="wf-detail-info__row"><span class="wf-detail-info__label">Email</span><span class="wf-detail-info__value">${esc(l.email)}</span></div>
+        <div class="wf-detail-info__row"><span class="wf-detail-info__label">Mobile</span><span class="wf-detail-info__value">${esc(formatPhone(l.phone))}</span></div>
+        <div class="wf-detail-info__row"><span class="wf-detail-info__label">City</span><span class="wf-detail-info__value">${esc(l.city)}</span></div>
+        <div class="wf-detail-info__row"><span class="wf-detail-info__label">Brand</span><span class="wf-detail-info__value">${esc(l.brand)}</span></div>
+        <div class="wf-detail-info__row"><span class="wf-detail-info__label">Budget</span><span class="wf-detail-info__value">${esc(l.budget)}</span></div>
+        <div class="wf-detail-info__row"><span class="wf-detail-info__label">Executive</span><span class="wf-detail-info__value">${esc(l.salesExec)}</span></div>
+        <div class="wf-detail-info__row"><span class="wf-detail-info__label">Team Lead</span><span class="wf-detail-info__value">${esc(l.teamLead)}</span></div>
+        <div class="wf-detail-info__row"><span class="wf-detail-info__label">Source</span><span class="wf-detail-info__value">${esc(l.source)}</span></div>
+      </div>
+      <div class="wf-card__footer">
+        <button data-screen="edit" class="wf-btn wf-btn--sm">Edit</button>
+        <button data-screen="followup" class="wf-btn wf-btn--sm">Follow-up</button>
+        <button data-screen="schedule-meeting" class="wf-btn wf-btn--sm wf-btn--primary">Meeting</button>
+      </div>
+    </div>`;
+  }
+
+  function leadForm(lead, mode = "create") {
+    const l = lead || {};
+    const isEdit = mode === "edit";
+    const d = typeof LEAD_DATA !== "undefined" ? LEAD_DATA : {};
+    const opt = (arr, selected) => (arr || []).map((v) =>
+      `<option${v === selected ? " selected" : ""}>${esc(v)}</option>`
+    ).join("");
+
+    return `<form class="wf-form" id="wf-lead-form" data-mode="${mode}">
+      <div class="wf-form__section">
+        <div class="wf-form__section-title">Lead Information</div>
+        <div class="wf-form__grid">
+          <div class="wf-form__group"><label class="wf-form__label">Lead ID</label><input class="wf-form__input" value="${esc(l.id || "Auto-generated")}" ${isEdit ? "" : "readonly"}></div>
+          <div class="wf-form__group"><label class="wf-form__label wf-form__label--required">Full Name</label><input class="wf-form__input" value="${esc(l.name || "")}" required></div>
+          <div class="wf-form__group"><label class="wf-form__label wf-form__label--required">Mobile Number</label><input class="wf-form__input" type="tel" data-phone-input value="${esc(formatPhone(l.phone || ""))}" placeholder="${PHONE_FORMAT}" required></div>
+          <div class="wf-form__group"><label class="wf-form__label wf-form__label--required">Email</label><input class="wf-form__input" type="email" value="${esc(l.email || "")}" required></div>
+          <div class="wf-form__group"><label class="wf-form__label">City</label><select class="wf-form__select">${opt(d.cities || shared("cities"), l.city)}</select></div>
+          <div class="wf-form__group"><label class="wf-form__label">State</label><select class="wf-form__select">${opt(d.states || shared("states"), l.state)}</select></div>
+          <div class="wf-form__group"><label class="wf-form__label">Brand Interested</label><select class="wf-form__select">${opt(d.brands || shared("brands"), l.brand)}</select></div>
+          <div class="wf-form__group"><label class="wf-form__label">Investment Budget</label><select class="wf-form__select">${opt(d.budgets, l.budget)}</select></div>
+          <div class="wf-form__group"><label class="wf-form__label">Business Experience</label><input class="wf-form__input" value="${esc(l.experience || "")}" placeholder="e.g. 5 years F&B"></div>
+          <div class="wf-form__group"><label class="wf-form__label">Preferred Location</label><input class="wf-form__input" value="${esc(l.preferredLocation || "")}" placeholder="Area, City"></div>
+          <div class="wf-form__group"><label class="wf-form__label">Lead Source</label><select class="wf-form__select">${opt(d.sources || shared("sources"), l.source)}</select></div>
+          <div class="wf-form__group"><label class="wf-form__label">Priority</label><select class="wf-form__select">${opt(d.priorities, l.priority)}</select></div>
+        </div>
+      </div>
+      <div class="wf-form__section">
+        <div class="wf-form__section-title">Assignment & Pipeline</div>
+        <div class="wf-form__grid">
+          <div class="wf-form__group"><label class="wf-form__label">Assigned Executive</label><select class="wf-form__select">${opt(d.users || shared("users"), l.salesExec)}</select></div>
+          <div class="wf-form__group"><label class="wf-form__label">Assigned Team Lead</label><select class="wf-form__select">${opt(d.users || shared("users"), l.teamLead)}</select></div>
+          <div class="wf-form__group"><label class="wf-form__label">Current Stage</label><select class="wf-form__select">${opt(d.pipeline, l.stage)}</select></div>
+          <div class="wf-form__group"><label class="wf-form__label">Lead Score</label><input class="wf-form__input" type="number" min="0" max="100" value="${esc(l.score != null ? l.score : "")}" placeholder="0–100"></div>
+          <div class="wf-form__group"><label class="wf-form__label">Expected Closure Date</label><input type="date" class="wf-form__input" value="${esc(l.closureDateRaw || "2024-07-15")}"></div>
+        </div>
+      </div>
+      <div class="wf-form__section">
+        <div class="wf-form__section-title">Notes & Attachments</div>
+        <div class="wf-form__group"><label class="wf-form__label">Notes</label><textarea class="wf-form__textarea" placeholder="Internal notes about this lead…">${esc(l.notes || "")}</textarea></div>
+        <div class="wf-upload" id="wf-upload-zone">
+          <div class="wf-upload__icon"></div>
+          <div class="wf-upload__text">Drag & drop files here or <strong>click to browse</strong></div>
+          <div class="wf-form__hint" style="margin-top:4px">PDF, JPG, PNG — Max 10 MB per file</div>
+        </div>
+      </div>
+      <div class="wf-form__actions">
+        <button type="button" class="wf-btn" data-action="cancel-form">Cancel</button>
+        ${isEdit ? `<button type="button" class="wf-btn wf-btn--danger" data-modal="archive-lead">Archive Lead</button>` : ""}
+        <button type="submit" class="wf-btn wf-btn--primary">${isEdit ? "Save Changes" : "Create Lead"}</button>
+      </div>
+    </form>`;
+  }
+
+  function leadKanbanView(leads) {
+    const d = typeof LEAD_DATA !== "undefined" ? LEAD_DATA : { pipeline: [], leads: [] };
+    const allLeads = leads || d.leads || [];
+    const stages = d.pipeline || ["New Lead", "Contacted", "Qualified"];
+    const cols = stages.map((stage) => ({
+      title: stage,
+      items: allLeads.filter((l) => l.stage === stage)
+    })).filter((c) => c.items.length > 0 || ["New Lead", "Contacted", "Qualified", "Meeting Scheduled", "Proposal Shared", "Negotiation"].includes(c.title));
+
+    return `<div class="wf-kanban">${cols.map((c) => `
+      <div class="wf-kanban__col">
+        <div class="wf-kanban__header">${esc(c.title)} <span class="wf-badge">${c.items.length}</span></div>
+        ${c.items.map((l) => `
+          <div class="wf-kanban__card" data-screen="details" style="cursor:pointer">
+            <div style="font-weight:600;font-size:13px;margin-bottom:4px">${esc(l.name)}</div>
+            <div style="font-size:11px;color:var(--wf-text-muted);margin-bottom:6px">${esc(l.id)} · ${esc(l.brand)}</div>
+            <div style="font-size:11px;color:var(--wf-text-secondary)">${esc(l.city)} · Score ${l.score}</div>
+            <div style="font-size:11px;margin-top:6px">${esc(l.salesExec)} · <span class="wf-badge wf-badge--outline" style="font-size:10px">${esc(l.priority)}</span></div>
+          </div>
+        `).join("")}
+        ${c.items.length === 0 ? `<div class="wf-kanban__card" style="opacity:0.5;font-size:12px;text-align:center">No leads</div>` : ""}
+      </div>
+    `).join("")}</div>`;
+  }
+
+  function leadMeetingForm(lead) {
+    const l = lead || (typeof LEAD_DATA !== "undefined" ? LEAD_DATA.leads[0] : {});
+    const d = typeof LEAD_DATA !== "undefined" ? LEAD_DATA : {};
+    const opt = (arr, sel) => (arr || []).map((v) => `<option${v === sel ? " selected" : ""}>${esc(v)}</option>`).join("");
+    return `<form class="wf-form" id="wf-lead-meeting-form">
+      <div class="wf-form__section"><div class="wf-form__section-title">Meeting Details</div>
+        <div class="wf-form__grid">
+          <div class="wf-form__group"><label class="wf-form__label">Meeting ID</label><input class="wf-form__input" value="Auto-generated" readonly></div>
+          <div class="wf-form__group"><label class="wf-form__label wf-form__label--required">Meeting Title</label><input class="wf-form__input" value="Brand Presentation — ${esc(l.name)}" required></div>
+          <div class="wf-form__group"><label class="wf-form__label">Lead</label><input class="wf-form__input" value="${esc(l.name)} (${esc(l.id)})" readonly></div>
+          <div class="wf-form__group"><label class="wf-form__label">Brand</label><select class="wf-form__select">${opt(d.brands, l.brand)}</select></div>
+          <div class="wf-form__group"><label class="wf-form__label">Meeting Type</label><select class="wf-form__select"><option>Brand Presentation</option><option>Discovery Call</option><option>Site Visit</option><option>Investment Discussion</option><option>Agreement Review</option></select></div>
+          <div class="wf-form__group"><label class="wf-form__label">Priority</label><select class="wf-form__select">${opt(d.priorities, l.priority)}</select></div>
+        </div>
+      </div>
+      <div class="wf-form__section"><div class="wf-form__section-title">Schedule</div>
+        <div class="wf-form__grid wf-form__grid--3">
+          <div class="wf-form__group"><label class="wf-form__label">Meeting Date</label><input type="date" class="wf-form__input" value="2024-06-26"></div>
+          <div class="wf-form__group"><label class="wf-form__label">Start Time</label><input type="time" class="wf-form__input" value="10:00"></div>
+          <div class="wf-form__group"><label class="wf-form__label">End Time</label><input type="time" class="wf-form__input" value="11:00"></div>
+          <div class="wf-form__group"><label class="wf-form__label">Meeting Mode</label><select class="wf-form__select"><option>Online</option><option>Offline</option><option>Hybrid</option></select></div>
+          <div class="wf-form__group"><label class="wf-form__label">Organizer</label><select class="wf-form__select">${opt(d.users, l.salesExec)}</select></div>
+          <div class="wf-form__group"><label class="wf-form__label">Reminder</label><select class="wf-form__select"><option>15 min before</option><option>30 min before</option><option>1 hour before</option></select></div>
+        </div>
+      </div>
+      <div class="wf-form__section"><div class="wf-form__section-title">Location & Agenda</div>
+        <div class="wf-form__grid">
+          <div class="wf-form__group wf-form__group--full"><label class="wf-form__label">Meeting Link / Address</label><input class="wf-form__input" placeholder="Zoom link or physical address"></div>
+          <div class="wf-form__group wf-form__group--full"><label class="wf-form__label">Agenda</label><textarea class="wf-form__textarea" placeholder="Meeting agenda and discussion points…">1. Brand overview\n2. Investment & ROI\n3. Next steps</textarea></div>
+        </div>
+      </div>
+      <div class="wf-form__actions">
+        <button type="button" class="wf-btn" data-screen="details">Cancel</button>
+        <button type="submit" class="wf-btn wf-btn--primary">Schedule Meeting</button>
+      </div>
+    </form>`;
+  }
+
+  function leadFollowupForm(lead) {
+    const l = lead || (typeof LEAD_DATA !== "undefined" ? LEAD_DATA.leads[0] : {});
+    const d = typeof LEAD_DATA !== "undefined" ? LEAD_DATA : {};
+    const opt = (arr, sel) => (arr || []).map((v) => `<option${v === sel ? " selected" : ""}>${esc(v)}</option>`).join("");
+    return `<form class="wf-form" id="wf-lead-followup-form">
+      <div class="wf-form__grid">
+        <div class="wf-form__group"><label class="wf-form__label">Lead</label><input class="wf-form__input" value="${esc(l.name)} (${esc(l.id)})" readonly></div>
+        <div class="wf-form__group"><label class="wf-form__label wf-form__label--required">Follow-up Task</label><input class="wf-form__input" placeholder="e.g. Send revised ROI sheet" required></div>
+        <div class="wf-form__group"><label class="wf-form__label">Assignee</label><select class="wf-form__select">${opt(d.users, l.salesExec)}</select></div>
+        <div class="wf-form__group"><label class="wf-form__label">Due Date</label><input type="date" class="wf-form__input" value="2024-06-26"></div>
+        <div class="wf-form__group"><label class="wf-form__label">Priority</label><select class="wf-form__select">${opt(d.priorities, "High")}</select></div>
+        <div class="wf-form__group"><label class="wf-form__label">Channel</label><select class="wf-form__select"><option>Call</option><option>Email</option><option>WhatsApp</option><option>Meeting</option></select></div>
+        <div class="wf-form__group wf-form__group--full"><label class="wf-form__label">Notes</label><textarea class="wf-form__textarea" placeholder="Follow-up context and talking points…"></textarea></div>
+      </div>
+      <div class="wf-form__actions">
+        <button type="button" class="wf-btn" data-screen="details">Cancel</button>
+        <button type="submit" class="wf-btn wf-btn--primary">Schedule Follow-up</button>
+      </div>
+    </form>`;
+  }
+
+  function leadAssignmentForm() {
+    const d = typeof LEAD_DATA !== "undefined" ? LEAD_DATA : {};
+    const opt = (arr) => (arr || []).map((v) => `<option>${esc(v)}</option>`).join("");
+    return `<form class="wf-form" id="wf-lead-assignment-form">
+      <div class="wf-form__grid">
+        <div class="wf-form__group"><label class="wf-form__label">Assign To — Sales Executive</label><select class="wf-form__select">${opt(d.users)}</select></div>
+        <div class="wf-form__group"><label class="wf-form__label">Assign To — Team Lead</label><select class="wf-form__select">${opt(d.users)}</select></div>
+        <div class="wf-form__group"><label class="wf-form__label">Territory / Region</label><select class="wf-form__select"><option>South India</option><option>North India</option><option>West India</option><option>East India</option></select></div>
+        <div class="wf-form__group"><label class="wf-form__label">Assignment Rule</label><select class="wf-form__select"><option>Manual</option><option>Round Robin</option><option>Territory Based</option><option>Load Balanced</option></select></div>
+        <div class="wf-form__group wf-form__group--full"><label class="wf-form__label">Assignment Notes</label><textarea class="wf-form__textarea" placeholder="Reason for reassignment…"></textarea></div>
+      </div>
+      <div class="wf-form__actions">
+        <button type="button" class="wf-btn" data-screen="list">Cancel</button>
+        <button type="submit" class="wf-btn wf-btn--primary">Assign Leads</button>
+      </div>
+    </form>`;
+  }
+
+  function leadConvertForm(lead) {
+    const l = lead || (typeof LEAD_DATA !== "undefined" ? LEAD_DATA.leads[0] : {});
+    const d = typeof LEAD_DATA !== "undefined" ? LEAD_DATA : {};
+    const opt = (arr, sel) => (arr || []).map((v) => `<option${v === sel ? " selected" : ""}>${esc(v)}</option>`).join("");
+    return `<form class="wf-form" id="wf-lead-convert-form">
+      <div class="wf-props__check wf-props__check--ok">Lead qualification verified — score ${l.score}/100</div>
+      <div class="wf-props__check wf-props__check--ok">Stage: ${esc(l.stage)} — eligible for conversion</div>
+      <div class="wf-form__section"><div class="wf-form__section-title">Customer Details (pre-filled from lead)</div>
+        <div class="wf-form__grid">
+          <div class="wf-form__group"><label class="wf-form__label">Customer ID</label><input class="wf-form__input" value="Auto-generated (CUS-2024-XXX)" readonly></div>
+          <div class="wf-form__group"><label class="wf-form__label">Full Name</label><input class="wf-form__input" value="${esc(l.name)}" readonly></div>
+          <div class="wf-form__group"><label class="wf-form__label">Email</label><input class="wf-form__input" value="${esc(l.email)}" readonly></div>
+          <div class="wf-form__group"><label class="wf-form__label">Mobile</label><input class="wf-form__input" value="${esc(formatPhone(l.phone))}" readonly></div>
+          <div class="wf-form__group"><label class="wf-form__label">City</label><input class="wf-form__input" value="${esc(l.city)}" readonly></div>
+          <div class="wf-form__group"><label class="wf-form__label">Brand</label><select class="wf-form__select">${opt(d.brands, l.brand)}</select></div>
+          <div class="wf-form__group"><label class="wf-form__label">Investment Budget</label><input class="wf-form__input" value="${esc(l.budget)}" readonly></div>
+          <div class="wf-form__group"><label class="wf-form__label">Assigned Sales Executive</label><select class="wf-form__select">${opt(d.users, l.salesExec)}</select></div>
+          <div class="wf-form__group"><label class="wf-form__label">Initial Status</label><select class="wf-form__select"><option>Onboarding</option><option>Active</option><option>Pending Agreement</option></select></div>
+          <div class="wf-form__group wf-form__group--full"><label class="wf-form__label">Conversion Notes</label><textarea class="wf-form__textarea" placeholder="Notes for customer onboarding team…">${esc(l.notes || "")}</textarea></div>
+        </div>
+      </div>
+      <div class="wf-form__section"><div class="wf-form__section-title">Transfer Options</div>
+        <div class="wf-form__grid">
+          <label class="wf-props__check"><input type="checkbox" checked> Copy timeline & activity log</label>
+          <label class="wf-props__check"><input type="checkbox" checked> Transfer documents</label>
+          <label class="wf-props__check"><input type="checkbox" checked> Transfer meeting history</label>
+          <label class="wf-props__check"><input type="checkbox" checked> Transfer open tasks & follow-ups</label>
+          <label class="wf-props__check"><input type="checkbox"> Archive lead record after conversion</label>
+        </div>
+      </div>
+      <div class="wf-form__actions">
+        <button type="button" class="wf-btn" data-screen="details">Cancel</button>
+        <button type="button" class="wf-btn" data-modal="confirm-convert">Convert to Customer</button>
+      </div>
+    </form>`;
+  }
+
+  function leadMeetingTable(meetings, options = {}) {
+    const { compact = false, hidePagination = false } = options;
+    const rows = (meetings || []).map((m) => `
+      <tr>
+        <td><a href="#meeting-history" data-screen="meeting-history" class="wf-table__link">${esc(m.id)}</a></td>
+        <td class="wf-table__cell-clip">${esc(m.title)}</td>
+        <td class="wf-table__cell-clip">${esc(m.lead)}</td>
+        <td>${esc(m.date)}</td>
+        <td>${esc(m.start)} – ${esc(m.end)}</td>
+        <td><span class="wf-badge">${esc(m.mode)}</span></td>
+        <td><span class="wf-badge${m.status === "Completed" ? " wf-badge--dark" : ""}">${esc(m.status)}</span></td>
+        <td class="wf-table__cell-clip">${esc(m.organizer)}</td>
+        <td class="wf-table__cell-clip">${esc(m.outcome)}</td>
+      </tr>
+    `).join("");
+    return `<div class="wf-table-wrap wf-table-wrap--scroll"><table class="wf-table wf-table--fit"><thead><tr>
+      <th>ID</th><th>Title</th><th>Lead</th><th>Date</th><th>Time</th><th>Mode</th><th>Status</th><th>Organizer</th><th>Outcome</th>
+    </tr></thead><tbody>${rows}</tbody></table>${hidePagination ? "" : pagination((meetings || []).length > 5 ? 42 : (meetings || []).length)}</div>`;
+  }
+
+  function leadModals() {
+    return modals()
+      .replace(/Customers/g, "Leads")
+      .replace(/Customer/g, "Lead")
+      .replace(/Rahul Sharma \(CUS-2024-001\)/, "Rahul Sharma (LEAD-2024-089)")
+      + `
+    <div class="wf-modal-overlay" id="modal-bulk-assign">
+      <div class="wf-modal"><div class="wf-modal__header"><span class="wf-modal__title">Bulk Assign Leads</span><button class="wf-modal__close" data-close-modal>&times;</button></div>
+        <div class="wf-modal__body"><div class="wf-form__grid">
+          <div class="wf-form__group"><label class="wf-form__label">Sales Executive</label><select class="wf-form__select"><option>Diksha</option><option>Akshita</option><option>Fazil</option><option>Swetha</option></select></div>
+          <div class="wf-form__group"><label class="wf-form__label">Team Lead</label><select class="wf-form__select"><option>Himani Bhargava</option><option>Om Anil</option><option>Akshita</option></select></div>
+          <div class="wf-form__group wf-form__group--full"><p style="font-size:13px">4 leads selected for reassignment.</p></div>
+        </div></div>
+        <div class="wf-modal__footer"><button class="wf-btn" data-close-modal>Cancel</button><button class="wf-btn wf-btn--primary" data-action="confirm-bulk-assign">Assign All</button></div>
+      </div>
+    </div>
+    <div class="wf-modal-overlay" id="modal-archive-lead">
+      <div class="wf-modal"><div class="wf-modal__header"><span class="wf-modal__title">Archive Lead</span><button class="wf-modal__close" data-close-modal>&times;</button></div>
+        <div class="wf-modal__body">
+          <p style="font-size:13px;margin-bottom:12px">Archive <strong>Rahul Sharma (LEAD-2024-089)</strong>? Archived leads can be restored from the Lead Archive.</p>
+          <div class="wf-form__group"><label class="wf-form__label">Reason</label><select class="wf-form__select"><option>Not Interested</option><option>Duplicate</option><option>Unresponsive</option><option>Budget Mismatch</option><option>Other</option></select></div>
+        </div>
+        <div class="wf-modal__footer"><button class="wf-btn" data-close-modal>Cancel</button><button class="wf-btn wf-btn--danger" data-action="confirm-archive-lead">Archive Lead</button></div>
+      </div>
+    </div>
+    <div class="wf-modal-overlay" id="modal-confirm-convert">
+      <div class="wf-modal"><div class="wf-modal__header"><span class="wf-modal__title">Convert to Customer</span><button class="wf-modal__close" data-close-modal>&times;</button></div>
+        <div class="wf-modal__body">
+          <p style="font-size:13px;margin-bottom:12px">Convert <strong>Rahul Sharma (LEAD-2024-089)</strong> to a customer record?</p>
+          <div class="wf-props__check wf-props__check--ok">Timeline, documents, and meetings will be transferred</div>
+          <div class="wf-props__check wf-props__check--ok">Lead stage will update to Customer Converted</div>
+        </div>
+        <div class="wf-modal__footer"><button class="wf-btn" data-close-modal>Cancel</button><button class="wf-btn wf-btn--primary" data-action="confirm-convert-lead">Confirm Conversion</button></div>
+      </div>
+    </div>
+    <div class="wf-modal-overlay" id="modal-import-leads">
+      <div class="wf-modal"><div class="wf-modal__header"><span class="wf-modal__title">Import Leads</span><button class="wf-modal__close" data-close-modal>&times;</button></div>
+        <div class="wf-modal__body">
+          <div class="wf-upload"><div class="wf-upload__text">Upload CSV or Excel file</div><div class="wf-form__hint">Required columns: Name, Mobile, Email, City, Brand, Source</div></div>
+          <div class="wf-form__group" style="margin-top:12px"><label class="wf-form__label">Assign imported leads to</label><select class="wf-form__select"><option>Round Robin — Sales Team</option><option>Diksha</option><option>Territory Based</option></select></div>
+        </div>
+        <div class="wf-modal__footer"><button class="wf-btn" data-close-modal>Cancel</button><button class="wf-btn wf-btn--primary" data-action="confirm-bulk-import">Start Import</button></div>
+      </div>
+    </div>`;
+  }
+
   function timeline(items) {
     return `<div class="wf-timeline">
       ${items.map((item) => `
@@ -1007,10 +1475,25 @@ const WF = (() => {
     });
 
     document.body.addEventListener("click", (e) => {
+      const navEl = e.target.closest("[data-nav]");
+      if (navEl) {
+        const href = navEl.getAttribute("data-nav");
+        if (href) {
+          e.preventDefault();
+          window.location.href = href;
+          return;
+        }
+      }
       const modalTrigger = e.target.closest("[data-modal]");
       if (modalTrigger) {
         e.preventDefault();
-        document.getElementById(`modal-${modalTrigger.getAttribute("data-modal")}`)?.classList.add("is-open");
+        const modalId = modalTrigger.getAttribute("data-modal");
+        const modalEl = document.getElementById(`modal-${modalId}`);
+        if (modalEl) {
+          modalEl.classList.add("is-open");
+        } else if (MODAL_NAV_FALLBACKS[modalId]) {
+          window.location.href = MODAL_NAV_FALLBACKS[modalId];
+        }
         return;
       }
       const closeBtn = e.target.closest("[data-close-modal]");
@@ -1369,7 +1852,120 @@ const WF = (() => {
     bindContentEvents();
     bindWorkflowStepper();
     bindRoleSwitcher();
+    bindInteractiveCharts();
     enhanceMobileExperience();
+  }
+
+  function activateLineChartPoint(chart, index) {
+    if (!chart) return;
+    const labels = JSON.parse(chart.dataset.chartLabels || "[]");
+    const primary = JSON.parse(chart.dataset.chartPrimary || "[]");
+    const secondary = JSON.parse(chart.dataset.chartSecondary || "[]");
+    const primaryLabel = chart.dataset.primaryLabel || "Leads";
+    const secondaryLabel = chart.dataset.secondaryLabel || "Converted";
+    const zones = chart.querySelectorAll(".wf-dual-line-chart__zone");
+    const zone = zones[index];
+    if (!zone) return;
+
+    zones.forEach((z) => z.classList.toggle("is-active", z === zone));
+
+    chart.querySelectorAll(".wf-dual-line-chart__dot").forEach((dot, i) => {
+      dot.classList.toggle("is-active", i === index);
+    });
+
+    const crosshair = chart.querySelector(".wf-dual-line-chart__crosshair");
+    const tooltip = chart.querySelector(".wf-dual-line-chart__tooltip");
+    const plot = chart.querySelector(".wf-dual-line-chart__plot");
+    if (!crosshair || !tooltip || !plot) return;
+
+    const plotRect = plot.getBoundingClientRect();
+    const zoneRect = zone.getBoundingClientRect();
+    const centerX = zoneRect.left + zoneRect.width / 2 - plotRect.left;
+
+    crosshair.removeAttribute("hidden");
+    crosshair.style.left = `${centerX}px`;
+
+    const title = tooltip.querySelector(".wf-chart-tooltip__title");
+    const rowPrimary = tooltip.querySelector(".wf-chart-tooltip__row--primary");
+    const rowSecondary = tooltip.querySelector(".wf-chart-tooltip__row--secondary");
+    if (title) title.textContent = labels[index] || "";
+    if (rowPrimary) rowPrimary.textContent = `${primaryLabel} : ${primary[index] ?? "—"}`;
+    if (rowSecondary) rowSecondary.textContent = `${secondaryLabel} : ${secondary[index] ?? "—"}`;
+
+    tooltip.removeAttribute("hidden");
+    tooltip.style.left = `${centerX}px`;
+    tooltip.style.top = "6px";
+  }
+
+  function deactivateLineChart(chart) {
+    if (!chart) return;
+    chart.querySelectorAll(".wf-dual-line-chart__zone.is-active").forEach((z) => z.classList.remove("is-active"));
+    chart.querySelectorAll(".wf-dual-line-chart__dot.is-active").forEach((d) => d.classList.remove("is-active"));
+    const crosshair = chart.querySelector(".wf-dual-line-chart__crosshair");
+    const tooltip = chart.querySelector(".wf-dual-line-chart__tooltip");
+    if (crosshair) {
+      crosshair.setAttribute("hidden", "");
+      crosshair.style.left = "";
+    }
+    if (tooltip) {
+      tooltip.setAttribute("hidden", "");
+      tooltip.style.left = "";
+      tooltip.style.top = "";
+    }
+  }
+
+  function bindInteractiveCharts() {
+    if (document.body.dataset.chartsBound) return;
+    document.body.dataset.chartsBound = "1";
+
+    document.body.addEventListener("mouseover", (e) => {
+      const col = e.target.closest(".wf-vbar-chart__col");
+      if (col) {
+        const chart = col.closest(".wf-vbar-chart");
+        chart?.querySelectorAll(".wf-vbar-chart__col").forEach((c) => c.classList.remove("is-active"));
+        col.classList.add("is-active");
+      }
+    });
+
+    document.body.addEventListener("mouseout", (e) => {
+      const col = e.target.closest(".wf-vbar-chart__col");
+      if (!col) return;
+      const related = e.relatedTarget;
+      const chart = col.closest(".wf-vbar-chart");
+      if (!related || !col.contains(related)) {
+        if (!related || !chart?.contains(related)) {
+          chart?.querySelectorAll(".wf-vbar-chart__col").forEach((c) => c.classList.remove("is-active"));
+        }
+      }
+    });
+
+    document.body.addEventListener("mouseover", (e) => {
+      const zone = e.target.closest(".wf-dual-line-chart__zone");
+      if (zone) {
+        activateLineChartPoint(zone.closest(".wf-dual-line-chart"), Number(zone.dataset.index));
+      }
+    });
+
+    document.body.addEventListener("mouseout", (e) => {
+      const zone = e.target.closest(".wf-dual-line-chart__zone");
+      if (!zone) return;
+      const related = e.relatedTarget;
+      const chart = zone.closest(".wf-dual-line-chart");
+      if (!related || !zone.contains(related)) {
+        if (!related || !chart?.contains(related)) {
+          deactivateLineChart(chart);
+        }
+      }
+    });
+
+    document.body.addEventListener("mouseleave", (e) => {
+      const plot = e.target.closest(".wf-dual-line-chart__plot-wrap, .wf-dual-line-chart");
+      if (!plot) return;
+      const related = e.relatedTarget;
+      if (!related || !plot.contains(related)) {
+        deactivateLineChart(plot.closest(".wf-dual-line-chart"));
+      }
+    }, true);
   }
 
   /* ── View-as Role Switcher (RBAC wireframe preview) ──────── */
@@ -1571,7 +2167,7 @@ const WF = (() => {
       const active = s.id === activeId ? " wf-bottom-nav__item--active" : "";
       const kind = bottomNavKindForScreen(s);
       const label = mobileNavShortLabel(s, usedLabels);
-      return `<a href="#${s.id}" data-screen="${s.id}" class="wf-bottom-nav__item${active}" aria-label="${esc(s.label)}" aria-current="${s.id === activeId ? "page" : "false"}">
+      return `<a href="${screenHref(s.id)}" data-screen="${s.id}" class="wf-bottom-nav__item${active}" aria-label="${esc(s.label)}" aria-current="${s.id === activeId ? "page" : "false"}">
         <span class="wf-bottom-nav__icon wf-bottom-nav__icon--${kind}" aria-hidden="true">${bottomNavIconSvg(kind)}</span>
         <span class="wf-bottom-nav__label">${esc(label)}</span>
       </a>`;
@@ -2151,6 +2747,26 @@ const WF = (() => {
     const workflow = steps || ((typeof MODEL_DATA !== "undefined" && MODEL_DATA.workflow) ? MODEL_DATA.workflow : ["Draft", "Submitted", "Under Review", "Approved", "Published", "Archived"]);
     const idx = workflow.indexOf(currentStatus);
     const targetScreen = options.targetScreen || "";
+    const isPipeline = options.pipeline || workflow.length > 6;
+
+    if (isPipeline) {
+      const nodes = workflow.map((step, i) => {
+        const done = i < idx;
+        const active = i === idx;
+        const target = targetScreen && (active || done) ? ` data-workflow-target="${targetScreen}"` : "";
+        const line = i < workflow.length - 1
+          ? `<div class="wf-workflow__line${done ? " wf-workflow__line--done" : ""}" aria-hidden="true"></div>`
+          : "";
+        return `<div class="wf-workflow__node">
+          <button type="button" class="wf-workflow__step wf-workflow__step--pipeline" data-workflow-step="${esc(step)}"${target} aria-current="${active ? "step" : "false"}" title="${esc(step)}">
+            <span class="wf-workflow__dot${done ? " wf-workflow__dot--done" : ""}${active ? " wf-workflow__dot--active" : ""}" aria-hidden="true">${done ? "" : i + 1}</span>
+          </button>
+          <span class="wf-workflow__label wf-workflow__label--below${active ? " wf-workflow__label--active" : ""}">${esc(step)}</span>
+        </div>${line}`;
+      }).join("");
+      return `<div class="wf-workflow wf-workflow--pipeline" role="list" aria-label="Workflow progress"><div class="wf-workflow__track">${nodes}</div></div>`;
+    }
+
     return `<div class="wf-workflow" role="list" aria-label="Workflow progress">${workflow.map((step, i) => {
       const done = i < idx;
       const active = i === idx;
@@ -3278,7 +3894,7 @@ const WF = (() => {
 
   function periodToggle(active) {
     const periods = ["Daily", "Weekly", "Monthly", "Quarterly", "Yearly"];
-    return `<div class="wf-view-toggle wf-mb-16">${periods.map((p) => `<button type="button" class="wf-btn wf-btn--sm${p === active ? " wf-btn--primary" : ""}" data-period="${p.toLowerCase()}">${p}</button>`).join("")}</div>`;
+    return `<div class="wf-view-toggle">${periods.map((p) => `<button type="button" class="wf-btn wf-btn--sm${p === active ? " wf-btn--primary" : ""}" data-period="${p.toLowerCase()}">${p}</button>`).join("")}</div>`;
   }
 
   function statValueSizeClass(value, small) {
@@ -3575,6 +4191,176 @@ const WF = (() => {
       </svg>
       <div class="wf-line-chart__labels">${pts.map((l) => `<span>${esc(l)}</span>`).join("")}</div>
     </div>`;
+  }
+
+  function chartFilterSelect(options, selected) {
+    const opts = options || [];
+    return `<select class="wf-chart-filter" aria-label="Filter">${opts.map((o) => `<option${o === selected ? " selected" : ""}>${esc(o)}</option>`).join("")}</select>`;
+  }
+
+  function verticalBarChart(items, options = {}) {
+    const data = items || [];
+    const maxVal = Math.max(...data.map((i) => Number(i.value) || 0), 1);
+    const step = options.axisStep || 15;
+    const axisMax = options.axisMax || Math.ceil(maxVal / step) * step;
+    const colCount = options.columns || data.length;
+    const ticks = [];
+    for (let v = axisMax; v >= 0; v -= step) ticks.push(v);
+
+    return `<div class="wf-vbar-chart wf-vbar-chart--interactive" style="--wf-bar-count:${colCount}">
+      <div class="wf-vbar-chart__yaxis">${ticks.map((t) => `<span>${t}</span>`).join("")}</div>
+      <div class="wf-vbar-chart__plot">
+        <div class="wf-vbar-chart__grid" aria-hidden="true">${ticks.map(() => '<div class="wf-vbar-chart__gridline"></div>').join("")}</div>
+        <div class="wf-vbar-chart__cols">${data.map((item) => {
+          const pct = Math.round(((Number(item.value) || 0) / axisMax) * 100);
+          const title = item.short || item.label;
+          const xlab = item.xlabel || item.short || item.label;
+          return `<div class="wf-vbar-chart__col">
+            <div class="wf-vbar-chart__col-inner">
+              <div class="wf-vbar-chart__highlight" aria-hidden="true"></div>
+              <div class="wf-vbar-chart__tooltip" role="tooltip">
+                <div class="wf-vbar-chart__tooltip-title">${esc(title)}</div>
+                <div class="wf-vbar-chart__tooltip-value">count : ${esc(String(item.value))}</div>
+              </div>
+              <div class="wf-vbar-chart__bar-area">
+                <div class="wf-vbar-chart__bar" style="height:${pct}%"></div>
+              </div>
+            </div>
+            <div class="wf-vbar-chart__label" title="${esc(title)}">${esc(xlab)}</div>
+          </div>`;
+        }).join("")}</div>
+      </div>
+    </div>`;
+  }
+
+  function dualLineChart(labels, series, options = {}) {
+    const pts = labels || ["Jan", "Feb", "Mar", "Apr", "May", "Jun"];
+    const lines = series || [];
+    const allVals = lines.flatMap((s) => s.values || []);
+    const max = options.axisMax || Math.max(...allVals, 1);
+    const w = 600;
+    const h = 200;
+    const padTop = 12;
+    const padBottom = 8;
+    const plotH = h - padTop - padBottom;
+    const step = pts.length > 1 ? w / (pts.length - 1) : w;
+
+    const yAt = (v) => padTop + plotH - ((Number(v) || 0) / max) * plotH;
+
+    const toPoly = (values) => (values || []).map((v, i) => `${i * step},${yAt(v)}`).join(" ");
+
+    const gridStep = options.axisStep || 15;
+    const axisMax = options.axisMax || Math.ceil(max / gridStep) * gridStep;
+    const ticks = [];
+    for (let v = axisMax; v >= 0; v -= gridStep) ticks.push(v);
+
+    const primary = lines[0] || { label: "Leads", values: [] };
+    const secondary = lines[1] || { label: "Converted", values: [] };
+
+    const zones = pts.map((label, i) => `
+      <button type="button" class="wf-dual-line-chart__zone" data-index="${i}" aria-label="${esc(label)}"></button>
+    `).join("");
+
+    const primaryDots = (primary.values || []).map((v, i) => {
+      const xPct = pts.length > 1 ? (i / (pts.length - 1)) * 100 : 50;
+      const yPct = (yAt(v) / h) * 100;
+      return `<span class="wf-dual-line-chart__dot wf-dual-line-chart__dot--primary" style="left:${xPct}%;top:${yPct}%"></span>`;
+    }).join("");
+
+    return `<div class="wf-dual-line-chart wf-dual-line-chart--interactive" style="--wf-chart-points:${pts.length}"
+      data-chart-labels='${JSON.stringify(pts)}'
+      data-chart-primary='${JSON.stringify(primary.values || [])}'
+      data-chart-secondary='${JSON.stringify(secondary.values || [])}'
+      data-primary-label="${esc(primary.label)}"
+      data-secondary-label="${esc(secondary.label)}">
+      <div class="wf-dual-line-chart__yaxis">${ticks.map((t) => `<span>${t}</span>`).join("")}</div>
+      <div class="wf-dual-line-chart__plot-wrap">
+        <div class="wf-dual-line-chart__plot">
+          <svg viewBox="0 0 ${w} ${h}" preserveAspectRatio="none" aria-hidden="true">
+            ${ticks.map((t) => {
+              const y = yAt(t);
+              return `<line x1="0" y1="${y}" x2="${w}" y2="${y}" class="wf-dual-line-chart__gridline"/>`;
+            }).join("")}
+            <polyline class="wf-dual-line-chart__line wf-dual-line-chart__line--secondary" points="${toPoly(secondary.values)}" fill="none"/>
+            <polyline class="wf-dual-line-chart__line wf-dual-line-chart__line--primary" points="${toPoly(primary.values)}" fill="none"/>
+          </svg>
+          <div class="wf-dual-line-chart__dots" aria-hidden="true">${primaryDots}</div>
+          <div class="wf-dual-line-chart__crosshair" hidden aria-hidden="true"></div>
+          <div class="wf-dual-line-chart__zones">${zones}</div>
+          <div class="wf-dual-line-chart__tooltip" hidden role="tooltip">
+            <div class="wf-chart-tooltip__title"></div>
+            <div class="wf-chart-tooltip__row wf-chart-tooltip__row--primary"></div>
+            <div class="wf-chart-tooltip__row wf-chart-tooltip__row--secondary"></div>
+          </div>
+        </div>
+        <div class="wf-line-chart__labels">${pts.map((l) => `<span>${esc(l)}</span>`).join("")}</div>
+      </div>
+      <div class="wf-dual-line-chart__legend">
+        <span class="wf-dual-line-chart__legend-item"><span class="wf-dual-line-chart__swatch wf-dual-line-chart__swatch--primary"></span>${esc(primary.label)}</span>
+        <span class="wf-dual-line-chart__legend-item"><span class="wf-dual-line-chart__swatch wf-dual-line-chart__swatch--secondary"></span>${esc(secondary.label)}</span>
+      </div>
+    </div>`;
+  }
+
+  function leadKpiGrid(kpis) {
+    const items = kpis || [];
+    return `<div class="wf-card-grid wf-card-grid--6 wf-lead-kpi-grid">${items.map((k) => `
+      <div class="wf-stat-card wf-lead-kpi">
+        <div class="wf-lead-kpi__head">
+          <div class="wf-stat-card__label">${esc(k.label)}</div>
+          ${k.icon ? `<span class="wf-lead-kpi__icon" aria-hidden="true">${k.icon}</span>` : ""}
+        </div>
+        <div class="wf-stat-card__value${statValueSizeClass(k.value, k.small)}">${esc(k.value)}</div>
+        <div class="wf-stat-card__change${k.meta ? "" : " wf-stat-card__change--empty"}">${k.meta ? esc(k.meta) : "—"}</div>
+      </div>
+    `).join("")}</div>`;
+  }
+
+  function leadTopPerformers(rows) {
+    const data = rows || [];
+    return `<div class="wf-table-wrap wf-table-wrap--fit" style="border:none">
+      <table class="wf-table wf-table--fit wf-table--compact wf-performer-table">
+        <thead><tr>
+          <th>#</th><th>Executive</th>
+          <th class="wf-table__num">Assigned</th>
+          <th class="wf-table__num">Converted</th>
+          <th class="wf-table__num">Rate</th>
+        </tr></thead>
+        <tbody>${data.map((r, i) => `
+          <tr>
+            <td>${i + 1}</td>
+            <td><span class="wf-avatar wf-avatar--sm" aria-hidden="true">${esc(r.initials)}</span> ${esc(r.name)}</td>
+            <td class="wf-table__num">${esc(String(r.assigned))}</td>
+            <td class="wf-table__num">${esc(String(r.converted))}</td>
+            <td class="wf-table__num">${esc(r.rate)}</td>
+          </tr>
+        `).join("")}</tbody>
+      </table>
+    </div>`;
+  }
+
+  function leadRecentActivity(items) {
+    const list = items || [];
+    return `<div class="wf-lead-activity">${list.map((a) => `
+      <div class="wf-lead-activity__item">
+        <span class="wf-lead-activity__icon wf-lead-activity__icon--${esc(a.type || "update")}" aria-hidden="true"></span>
+        <div class="wf-lead-activity__body">
+          <div class="wf-lead-activity__text">${a.html || esc(a.text)}</div>
+          <div class="wf-lead-activity__time">${esc(a.ago)}</div>
+        </div>
+      </div>
+    `).join("")}</div>`;
+  }
+
+  function brandLeadCards(brands) {
+    const data = brands || [];
+    return `<div class="wf-brand-count-grid">${data.map((b) => `
+      <a href="${screenHref("list")}" data-screen="list" class="wf-brand-count-card">
+        <span class="wf-brand-count-card__name">${esc(b.name)}</span>
+        <span class="wf-brand-count-card__value">${esc(String(b.count))}</span>
+        <span class="wf-brand-count-card__sub">leads</span>
+      </a>
+    `).join("")}</div>`;
   }
 
   function reportDataTable(columns, rows) {
@@ -4059,11 +4845,11 @@ const WF = (() => {
     const list = items || [];
     return `<div class="wf-activity-feed">
       ${list.map((a) => `<div class="wf-activity-feed__item">
-        <div class="wf-activity-feed__dot"></div>
-        <div>
-          <div style="font-size:13px;font-weight:500">${esc(a.title)}</div>
-          <div style="font-size:12px;color:var(--wf-text-muted)">${esc(a.user)} · ${esc(a.time)}</div>
-          ${a.desc ? `<div style="font-size:12px;color:var(--wf-text-secondary);margin-top:4px">${esc(a.desc)}</div>` : ""}
+        <div class="wf-activity-feed__dot" aria-hidden="true"></div>
+        <div class="wf-activity-feed__content">
+          <div class="wf-activity-feed__title">${esc(a.title)}</div>
+          <div class="wf-activity-feed__meta">${esc(a.user)} · ${esc(a.time)}</div>
+          ${a.desc ? `<div class="wf-activity-feed__desc">${esc(a.desc)}</div>` : ""}
         </div>
       </div>`).join("")}
     </div>`;
@@ -4626,6 +5412,9 @@ const WF = (() => {
   return {
     BRAND_NAME,
     BRAND_MARK,
+    MODULE_NAV,
+    moduleLink,
+    screenHref,
     sidebarLogo,
     authLogo,
     initPage,
@@ -4646,6 +5435,19 @@ const WF = (() => {
     brandProfileCard,
     customerForm,
     brandForm,
+    leadTable,
+    leadProfileCard,
+    leadForm,
+    leadToolbar,
+    leadSortSelect,
+    leadBulkBar,
+    leadKanbanView,
+    leadMeetingForm,
+    leadFollowupForm,
+    leadAssignmentForm,
+    leadConvertForm,
+    leadMeetingTable,
+    leadModals,
     timeline,
     emptyState,
     loadingState,
@@ -4700,6 +5502,13 @@ const WF = (() => {
     miniBarChart,
     miniDonut,
     miniLineChart,
+    chartFilterSelect,
+    verticalBarChart,
+    dualLineChart,
+    leadKpiGrid,
+    leadTopPerformers,
+    leadRecentActivity,
+    brandLeadCards,
     reportDataTable,
     comparisonToggle,
     reportForm,

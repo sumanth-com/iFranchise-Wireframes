@@ -20,12 +20,12 @@ const DASHBOARD_MODULE = (() => {
     <span class="wf-role-bar__badge wf-approval-badge">Role-based dashboard</span>
   </div>`;
 
-  const dashToolbar = () => `<div class="wf-toolbar wf-mb-16">
+  const dashToolbar = () => `<div class="wf-toolbar">
     <div class="wf-toolbar__filters">
       ${WF.periodToggle("Monthly")}
-      <input type="date" class="wf-form__input" value="2024-06-01" aria-label="From date" style="max-width:150px">
-      <span style="font-size:12px;color:var(--wf-text-muted);align-self:center">to</span>
-      <input type="date" class="wf-form__input" value="2024-06-30" aria-label="To date" style="max-width:150px">
+      <input type="date" class="wf-form__input wf-toolbar__date" value="2024-06-01" aria-label="From date">
+      <span class="wf-toolbar__sep">to</span>
+      <input type="date" class="wf-form__input wf-toolbar__date" value="2024-06-30" aria-label="To date">
       <select class="wf-filter-select" aria-label="City filter"><option>All Cities</option>${d().cities.map((c) => `<option>${c}</option>`).join("")}</select>
       <select class="wf-filter-select" aria-label="Brand filter"><option>All Brands</option>${d().brands.map((b) => `<option>${b}</option>`).join("")}</select>
     </div>
@@ -65,39 +65,46 @@ const DASHBOARD_MODULE = (() => {
 
   const notificationPanel = (items) => `<div class="wf-card"><div class="wf-card__header">
     <span class="wf-card__title">Notifications</span>
-    <button class="wf-btn wf-btn--sm" data-modal="notifications">View All</button>
-  </div><div class="wf-card__body" style="padding:0">
-    ${items.map((n) => `<div class="wf-list-item">
+    ${WF.moduleLink(WF.MODULE_NAV.notifications, "View All")}
+  </div><div class="wf-card__body wf-card__body--list">
+    <div class="wf-list">${items.map((n) => `<a href="${WF.MODULE_NAV.notifications}" class="wf-list-item wf-list-item--link">
       <div class="wf-list-item__content">
         <div class="wf-list-item__title">${WF.esc(n.title)}</div>
         <div class="wf-list-item__subtitle">${WF.esc(n.time)}</div>
       </div>
       <span class="wf-badge${n.priority === "High" ? " wf-badge--dark" : ""}">${WF.esc(n.priority)}</span>
-    </div>`).join("")}
+    </a>`).join("")}</div>
   </div></div>`;
 
   const calendarWidget = (meetings) => `<div class="wf-card"><div class="wf-card__header">
     <span class="wf-card__title">Calendar — Today</span>
-    <button class="wf-btn wf-btn--sm" data-modal="send-email">Schedule</button>
-  </div><div class="wf-card__body" style="padding:0">
-    ${meetings.map((m) => `<div class="wf-list-item">
+    ${WF.moduleLink(WF.MODULE_NAV.meetingsSchedule, "Schedule")}
+  </div><div class="wf-card__body wf-card__body--list">
+    <div class="wf-list">${meetings.map((m) => `<a href="${WF.MODULE_NAV.meetingsList}" class="wf-list-item wf-list-item--link">
       <div class="wf-list-item__content">
         <div class="wf-list-item__title">${WF.esc(m.time)} — ${WF.esc(m.title)}</div>
         <div class="wf-list-item__subtitle">${WF.esc(m.attendee)} · ${WF.esc(m.mode)}</div>
       </div>
-    </div>`).join("")}
+    </a>`).join("")}</div>
   </div></div>`;
 
-  const quickActions = (actions) => `<div class="wf-card"><div class="wf-card__header"><span class="wf-card__title">Quick Actions</span></div>
-    <div class="wf-card__body"><div class="wf-flex wf-gap-8" style="flex-wrap:wrap">
-      ${actions.map((a) => {
-        if (a.action === "export") return `<button class="wf-btn wf-btn--sm" data-action="export">${WF.esc(a.label)}</button>`;
-        if (a.modal) return `<button class="wf-btn wf-btn--sm" data-modal="${a.modal}">${WF.esc(a.label)}</button>`;
-        return `<button class="wf-btn wf-btn--sm" data-screen="${a.screen}">${WF.esc(a.label)}</button>`;
-      }).join("")}
-      <button class="wf-btn wf-btn--sm wf-btn--primary" data-modal="send-email">Send Update</button>
-    </div></div>
+  const quickActions = (actions) => {
+    const renderAction = (a) => {
+      if (a.href) return WF.moduleLink(a.href, a.label, { primary: a.primary });
+      if (a.action === "export") return `<button type="button" class="wf-btn wf-btn--sm" data-action="export">${WF.esc(a.label)}</button>`;
+      if (a.modal) return `<button type="button" class="wf-btn wf-btn--sm" data-modal="${a.modal}">${WF.esc(a.label)}</button>`;
+      if (a.screen) return `<button type="button" class="wf-btn wf-btn--sm" data-screen="${a.screen}">${WF.esc(a.label)}</button>`;
+      return "";
+    };
+    return `<div class="wf-card"><div class="wf-card__header"><span class="wf-card__title">Quick Actions</span></div>
+    <div class="wf-card__body">
+      <div class="wf-quick-actions">
+      ${actions.map(renderAction).join("")}
+      ${WF.moduleLink(WF.MODULE_NAV.announcements, "Send Update", { primary: true, className: "wf-quick-actions__primary" })}
+      </div>
+    </div>
   </div>`;
+  };
 
   const screens = [
     {
@@ -111,7 +118,7 @@ const DASHBOARD_MODULE = (() => {
           <button class="wf-btn wf-btn--sm" id="wf-demo-loading">Refresh</button>
           <button data-screen="command-center" class="wf-btn wf-btn--sm wf-btn--primary">Command Center</button>
           <button class="wf-btn wf-btn--sm" data-action="export">Export</button>
-          <button class="wf-btn wf-btn--sm" data-modal="send-email">Executive Brief</button>
+          <button class="wf-btn wf-btn--sm wf-btn--primary" data-modal="send-email">Executive Brief</button>
         `)}
         ${dashToolbar()}
         ${kpiRow(data.kpis)}
@@ -145,7 +152,7 @@ const DASHBOARD_MODULE = (() => {
         <div class="wf-grid-2 wf-mb-20">
           <div class="wf-card"><div class="wf-card__header"><span class="wf-card__title">Team Performance Leaderboard</span>
             <button class="wf-btn wf-btn--sm" data-action="export">Export</button></div>
-            <div class="wf-card__body" style="padding:0">${simpleTable(
+            <div class="wf-card__body wf-card__body--table">${simpleTable(
               ["Executive", "Role", "Leads", "Converted", "Revenue", "Target %"],
               data.leaderboard.map((r) => [
                 WF.esc(r.name),
@@ -158,7 +165,7 @@ const DASHBOARD_MODULE = (() => {
             )}</div>
           </div>
           <div class="wf-card"><div class="wf-card__header"><span class="wf-card__title">Top Performing Brands</span></div>
-            <div class="wf-card__body" style="padding:0">${simpleTable(
+            <div class="wf-card__body wf-card__body--table">${simpleTable(
               ["Brand", "Revenue", "Outlets", "Growth"],
               data.topBrands.map((b) => [WF.esc(b.brand), WF.esc(b.revenue), b.outlets, WF.esc(b.growth)])
             )}</div>
@@ -211,7 +218,7 @@ const DASHBOARD_MODULE = (() => {
         </div>
         <div class="wf-grid-2 wf-mb-20">
           <div class="wf-card"><div class="wf-card__header"><span class="wf-card__title">Sales Performance</span><button data-screen="employee-performance" class="wf-btn wf-btn--sm">Details</button></div>
-            <div class="wf-card__body" style="padding:0">${simpleTable(["Executive", "Revenue", "Target %"], ceo.leaderboard.slice(0, 5).map((r) => [WF.esc(r.name), WF.esc(r.revenue), r.pct + "%"]))}</div>
+            <div class="wf-card__body wf-card__body--table">${simpleTable(["Executive", "Revenue", "Target %"], ceo.leaderboard.slice(0, 5).map((r) => [WF.esc(r.name), WF.esc(r.revenue), r.pct + "%"]))}</div>
           </div>
           <div class="wf-card"><div class="wf-card__header"><span class="wf-card__title">Call Analytics</span><a href="../call-intelligence/index.html" class="wf-btn wf-btn--sm">Call Module →</a></div>
             <div class="wf-card__body">
@@ -225,18 +232,18 @@ const DASHBOARD_MODULE = (() => {
         </div>
         <div class="wf-grid-2 wf-mb-20">
           <div class="wf-card"><div class="wf-card__header"><span class="wf-card__title">Brand Performance</span></div>
-            <div class="wf-card__body" style="padding:0">${simpleTable(["Brand", "Revenue", "Outlets", "Growth"], ceo.topBrands.map((b) => [WF.esc(b.brand), WF.esc(b.revenue), b.outlets, WF.esc(b.growth)]))}</div>
+            <div class="wf-card__body wf-card__body--table">${simpleTable(["Brand", "Revenue", "Outlets", "Growth"], ceo.topBrands.map((b) => [WF.esc(b.brand), WF.esc(b.revenue), b.outlets, WF.esc(b.growth)]))}</div>
           </div>
           <div class="wf-card"><div class="wf-card__header"><span class="wf-card__title">State-wise Performance</span></div>
-            <div class="wf-card__body" style="padding:0">${simpleTable(["State", "Revenue", "Leads"], cc.statePerformance.map((s) => [WF.esc(s.state), WF.esc(s.revenue), s.leads]))}</div>
+            <div class="wf-card__body wf-card__body--table">${simpleTable(["State", "Revenue", "Leads"], cc.statePerformance.map((s) => [WF.esc(s.state), WF.esc(s.revenue), s.leads]))}</div>
           </div>
         </div>
         <div class="wf-grid-2 wf-mb-20">
           <div class="wf-card"><div class="wf-card__header"><span class="wf-card__title">Top Performers</span></div>
-            <div class="wf-card__body" style="padding:0">${simpleTable(["Employee", "Role", "Score", "Revenue"], cc.topPerformers.map((p) => [WF.esc(p.name), WF.esc(p.role), p.score, WF.esc(p.revenue)]))}</div>
+            <div class="wf-card__body wf-card__body--table">${simpleTable(["Employee", "Role", "Score", "Revenue"], cc.topPerformers.map((p) => [WF.esc(p.name), WF.esc(p.role), p.score, WF.esc(p.revenue)]))}</div>
           </div>
           <div class="wf-card"><div class="wf-card__header"><span class="wf-card__title">Bottom Performers</span><span class="wf-badge">Coaching</span></div>
-            <div class="wf-card__body" style="padding:0">${simpleTable(["Employee", "Role", "Score", "Revenue"], cc.bottomPerformers.map((p) => [WF.esc(p.name), WF.esc(p.role), p.score, WF.esc(p.revenue)]))}</div>
+            <div class="wf-card__body wf-card__body--table">${simpleTable(["Employee", "Role", "Score", "Revenue"], cc.bottomPerformers.map((p) => [WF.esc(p.name), WF.esc(p.role), p.score, WF.esc(p.revenue)]))}</div>
           </div>
         </div>
         <div class="wf-card"><div class="wf-card__header"><span class="wf-card__title">City-wise Performance</span></div>
@@ -262,7 +269,7 @@ const DASHBOARD_MODULE = (() => {
           ${ep.metrics.map((m) => `<div class="wf-stat-card"><div class="wf-stat-card__label">${WF.esc(m.label)}</div><div class="wf-stat-card__value">${WF.esc(m.value)}</div></div>`).join("")}
         </div>
         <div class="wf-card wf-mb-20"><div class="wf-card__header"><span class="wf-card__title">Team Performance</span></div>
-          <div class="wf-card__body" style="padding:0">${simpleTable(
+          <div class="wf-card__body wf-card__body--table">${simpleTable(
             ["Employee", "Leads", "Calls", "Talk Time", "Meetings", "Follow-ups", "Conv %", "Revenue", "Target", "Closures", "Activity", "Productivity"],
             ep.team.map((e) => [
               WF.esc(e.name), e.leads, e.calls, WF.esc(e.talkTime), e.meetings, e.followUps,
@@ -287,7 +294,7 @@ const DASHBOARD_MODULE = (() => {
         ${WF.pageHeader("Team Lead Dashboard", "Team performance — Himani Bhargava · Sales Manager", `
           <button class="wf-btn wf-btn--sm" id="wf-demo-loading">Refresh</button>
           <button class="wf-btn wf-btn--sm" data-action="export">Export</button>
-          <button class="wf-btn wf-btn--sm wf-btn--primary" data-modal="send-email">Team Update</button>
+          ${WF.moduleLink(WF.MODULE_NAV.announcements, "Team Update", { primary: true })}
         `)}
         ${dashToolbar()}
         ${kpiRow(data.kpis)}
@@ -297,7 +304,7 @@ const DASHBOARD_MODULE = (() => {
             <div class="wf-card__body">${WF.miniBarChart(data.pipeline)}</div>
           </div>
           <div class="wf-card"><div class="wf-card__header"><span class="wf-card__title">Team Members</span></div>
-            <div class="wf-card__body" style="padding:0">${simpleTable(
+            <div class="wf-card__body wf-card__body--table">${simpleTable(
               ["Member", "Leads", "Meetings", "Target %", "Status"],
               data.members.map((m) => [
                 WF.esc(m.name),
@@ -309,7 +316,7 @@ const DASHBOARD_MODULE = (() => {
             )}</div>
           </div>
           <div class="wf-card"><div class="wf-card__header"><span class="wf-card__title">Pending Follow-ups</span></div>
-            <div class="wf-card__body" style="padding:0">${simpleTable(
+            <div class="wf-card__body wf-card__body--table">${simpleTable(
               ["Lead", "Assignee", "Due", "Status"],
               data.followups.map((f) => [
                 WF.esc(f.lead),
@@ -336,7 +343,7 @@ const DASHBOARD_MODULE = (() => {
         <div class="wf-grid-2">
           ${notificationPanel(data.notifications)}
           <div class="wf-card"><div class="wf-card__header"><span class="wf-card__title">Escalations</span></div>
-            <div class="wf-card__body" style="padding:0">${simpleTable(
+            <div class="wf-card__body wf-card__body--table">${simpleTable(
               ["ID", "Subject", "Raised By", "Priority", "Status"],
               data.escalations.map((e) => [
                 WF.esc(e.id),
@@ -360,7 +367,7 @@ const DASHBOARD_MODULE = (() => {
         ${roleBar("Sales Executive")}
         ${WF.pageHeader("Sales Executive Dashboard", "My pipeline — Diksha · Team Lead: Himani Bhargava", `
           <button class="wf-btn wf-btn--sm" id="wf-demo-loading">Refresh</button>
-          <button class="wf-btn wf-btn--sm wf-btn--primary" data-modal="send-email">+ Quick Add Lead</button>
+          ${WF.moduleLink(WF.MODULE_NAV.leadsCreate, "+ Quick Add Lead", { primary: true })}
         `)}
         ${dashToolbar()}
         ${kpiRow(data.kpis)}
@@ -371,7 +378,7 @@ const DASHBOARD_MODULE = (() => {
           </div>
           <div class="wf-card"><div class="wf-card__header"><span class="wf-card__title">My Leads</span>
             <button class="wf-btn wf-btn--sm" data-action="export">Export</button></div>
-            <div class="wf-card__body" style="padding:0">${simpleTable(
+            <div class="wf-card__body wf-card__body--table">${simpleTable(
               ["Lead ID", "Name", "Brand", "City", "Status", "Budget"],
               data.leads.map((l) => [
                 WF.esc(l.id),
@@ -384,7 +391,7 @@ const DASHBOARD_MODULE = (() => {
             )}</div>
           </div>
           <div class="wf-card"><div class="wf-card__header"><span class="wf-card__title">Today's Follow-ups</span></div>
-            <div class="wf-card__body" style="padding:0">${simpleTable(
+            <div class="wf-card__body wf-card__body--table">${simpleTable(
               ["Time", "Lead", "Type", "Note"],
               data.followups.map((f) => [WF.esc(f.time), WF.esc(f.lead), WF.esc(f.type), WF.esc(f.note)])
             )}</div>
@@ -392,15 +399,15 @@ const DASHBOARD_MODULE = (() => {
         </div>
         <div class="wf-grid-2 wf-mb-20">
           <div class="wf-card"><div class="wf-card__header"><span class="wf-card__title">Meetings Today</span>
-            <button class="wf-btn wf-btn--sm" data-modal="send-email">Schedule</button></div>
-            <div class="wf-card__body" style="padding:0">${simpleTable(
+            ${WF.moduleLink(WF.MODULE_NAV.meetingsSchedule, "Schedule")}</div>
+            <div class="wf-card__body wf-card__body--table">${simpleTable(
               ["Time", "Lead", "Type", "Note"],
               data.followups.map((f) => [WF.esc(f.time), WF.esc(f.lead), WF.esc(f.type), WF.esc(f.note)])
             )}</div>
           </div>
           <div class="wf-card"><div class="wf-card__header"><span class="wf-card__title">Tasks</span>
             <button class="wf-btn wf-btn--sm" data-modal="add-task">+ Add Task</button></div>
-            <div class="wf-card__body" style="padding:0">${simpleTable(
+            <div class="wf-card__body wf-card__body--table">${simpleTable(
               ["Task", "Due", "Status"],
               data.tasks.map((t) => [WF.esc(t.task), WF.esc(t.due), `<span class="wf-badge">${WF.esc(t.status)}</span>`])
             )}</div>
@@ -408,13 +415,13 @@ const DASHBOARD_MODULE = (() => {
         </div>
         <div class="wf-grid-2">
           <div class="wf-card"><div class="wf-card__header"><span class="wf-card__title">Recent Customers</span></div>
-            <div class="wf-card__body" style="padding:0">${simpleTable(
+            <div class="wf-card__body wf-card__body--table">${simpleTable(
               ["Customer", "Brand", "City", "Signed"],
               data.customers.map((c) => [WF.esc(c.name), WF.esc(c.brand), WF.esc(c.city), WF.esc(c.signed)])
             )}</div>
           </div>
           <div class="wf-card"><div class="wf-card__header"><span class="wf-card__title">Upcoming Calls</span></div>
-            <div class="wf-card__body" style="padding:0">${simpleTable(
+            <div class="wf-card__body wf-card__body--table">${simpleTable(
               ["When", "Contact", "Brand", "Type"],
               data.calls.map((c) => [WF.esc(c.time), WF.esc(c.contact), WF.esc(c.brand), WF.esc(c.type)])
             )}</div>
@@ -433,7 +440,7 @@ const DASHBOARD_MODULE = (() => {
         ${WF.pageHeader("Brand Owner Dashboard", "Brand partner overview — Akshita · Odette", `
           <button class="wf-btn wf-btn--sm" id="wf-demo-loading">Refresh</button>
           <button class="wf-btn wf-btn--sm" data-action="export">Export</button>
-          <button class="wf-btn wf-btn--sm wf-btn--primary" data-modal="send-email">Brand Update</button>
+          ${WF.moduleLink(WF.MODULE_NAV.announcements, "Brand Update", { primary: true })}
         `)}
         ${dashToolbar()}
         ${kpiRow(data.kpis)}
@@ -445,7 +452,7 @@ const DASHBOARD_MODULE = (() => {
             <div class="wf-card__body">${WF.miniBarChart(data.brandBreakdown)}</div>
           </div>
           <div class="wf-card"><div class="wf-card__header"><span class="wf-card__title">Upcoming Launches</span></div>
-            <div class="wf-card__body" style="padding:0">${simpleTable(
+            <div class="wf-card__body wf-card__body--table">${simpleTable(
               ["Outlet", "City", "Launch Date", "Status"],
               data.launches.map((l) => [
                 WF.esc(l.outlet),
@@ -459,13 +466,13 @@ const DASHBOARD_MODULE = (() => {
         <div class="wf-grid-2 wf-mb-20">
           <div class="wf-card"><div class="wf-card__header"><span class="wf-card__title">Recent Documents</span>
             <button class="wf-btn wf-btn--sm" data-action="export">Download</button></div>
-            <div class="wf-card__body" style="padding:0">${simpleTable(
+            <div class="wf-card__body wf-card__body--table">${simpleTable(
               ["Document", "Type", "Date"],
               data.documents.map((doc) => [WF.esc(doc.name), WF.esc(doc.type), WF.esc(doc.date)])
             )}</div>
           </div>
           <div class="wf-card"><div class="wf-card__header"><span class="wf-card__title">Support Tickets</span></div>
-            <div class="wf-card__body" style="padding:0">${simpleTable(
+            <div class="wf-card__body wf-card__body--table">${simpleTable(
               ["Ticket", "Subject", "Status", "Priority"],
               data.tickets.map((t) => [
                 WF.esc(t.id),
@@ -503,7 +510,7 @@ const DASHBOARD_MODULE = (() => {
           </div>
           <div class="wf-card"><div class="wf-card__header"><span class="wf-card__title">GST Reports</span>
             <button class="wf-btn wf-btn--sm" data-action="export-pdf">Download</button></div>
-            <div class="wf-card__body" style="padding:0">${simpleTable(
+            <div class="wf-card__body wf-card__body--table">${simpleTable(
               ["Period", "Taxable Value", "GST", "Status"],
               data.gstReports.map((g) => [
                 WF.esc(g.period),
@@ -517,7 +524,7 @@ const DASHBOARD_MODULE = (() => {
         <div class="wf-card wf-dashboard-full wf-mb-20">
           <div class="wf-card__header"><span class="wf-card__title">Recent Transactions</span>
             <button class="wf-btn wf-btn--sm" data-action="export">Export</button></div>
-          <div class="wf-card__body" style="padding:0">${simpleTable(
+          <div class="wf-card__body wf-card__body--table">${simpleTable(
             ["Payment ID", "Customer", "Brand", "Amount", "Date", "Status"],
             data.transactions.map((t) => [
               WF.esc(t.id),
@@ -530,7 +537,7 @@ const DASHBOARD_MODULE = (() => {
           )}</div>
         </div>
         <div class="wf-card"><div class="wf-card__header"><span class="wf-card__title">Refund Requests</span></div>
-          <div class="wf-card__body" style="padding:0">${simpleTable(
+          <div class="wf-card__body wf-card__body--table">${simpleTable(
             ["Refund ID", "Customer", "Amount", "Reason", "Status"],
             data.refunds.map((r) => [
               WF.esc(r.id),
@@ -560,7 +567,7 @@ const DASHBOARD_MODULE = (() => {
         ${kpiRow(data.kpis)}
         <div class="wf-grid-2 wf-mb-20">
           <div class="wf-card"><div class="wf-card__header"><span class="wf-card__title">System Health</span></div>
-            <div class="wf-card__body" style="padding:0">${simpleTable(
+            <div class="wf-card__body wf-card__body--table">${simpleTable(
               ["Service", "Status", "Uptime"],
               data.systemHealth.map((s) => [
                 WF.esc(s.service),
@@ -570,7 +577,7 @@ const DASHBOARD_MODULE = (() => {
             )}</div>
           </div>
           <div class="wf-card"><div class="wf-card__header"><span class="wf-card__title">API Status</span></div>
-            <div class="wf-card__body" style="padding:0">${simpleTable(
+            <div class="wf-card__body wf-card__body--table">${simpleTable(
               ["Endpoint", "Latency", "Status", "Rate"],
               data.apiStatus.map((a) => [
                 WF.esc(a.endpoint),
@@ -596,13 +603,13 @@ const DASHBOARD_MODULE = (() => {
         <div class="wf-grid-2 wf-mb-20">
           <div class="wf-card"><div class="wf-card__header"><span class="wf-card__title">Audit Logs</span>
             <button class="wf-btn wf-btn--sm" data-action="export">Export</button></div>
-            <div class="wf-card__body" style="padding:0">${simpleTable(
+            <div class="wf-card__body wf-card__body--table">${simpleTable(
               ["Time", "User", "Action", "Entity"],
               data.auditLogs.map((l) => [WF.esc(l.time), WF.esc(l.user), WF.esc(l.action), WF.esc(l.entity)])
             )}</div>
           </div>
           <div class="wf-card"><div class="wf-card__header"><span class="wf-card__title">Security Alerts</span></div>
-            <div class="wf-card__body" style="padding:0">${simpleTable(
+            <div class="wf-card__body wf-card__body--table">${simpleTable(
               ["Type", "Detail", "Severity", "Time"],
               data.securityAlerts.map((a) => [
                 WF.esc(a.type),
@@ -618,9 +625,9 @@ const DASHBOARD_MODULE = (() => {
           <div class="wf-card"><div class="wf-card__header"><span class="wf-card__title">Users · Roles · Permissions</span></div>
             <div class="wf-card__body">
               <div class="wf-flex wf-gap-8" style="flex-wrap:wrap;margin-bottom:16px">
-                <button class="wf-btn wf-btn--sm" data-modal="export">Users (248)</button>
-                <button class="wf-btn wf-btn--sm" data-modal="export">Roles (14)</button>
-                <button class="wf-btn wf-btn--sm" data-modal="export">Permissions Matrix</button>
+                <a href="/users/directory" class="wf-btn wf-btn--sm">Users (248)</a>
+                <a href="/roles/roles-list" class="wf-btn wf-btn--sm">Roles (14)</a>
+                <a href="/roles/permission-matrix" class="wf-btn wf-btn--sm">Permissions Matrix</a>
               </div>
               <div style="font-size:13px;color:var(--wf-text-secondary);line-height:1.7">
                 <p><strong>Database Health:</strong> Operational — replication lag 12ms</p>

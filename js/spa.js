@@ -1,40 +1,114 @@
-/* SPA Router — one page per module, all screens in-page */
+/* SPA Router — one page per module, path-based URLs (/leads/dashboard) */
 
 const WF_SPA = (() => {
   let config = null;
   let screens = {};
   let currentId = null;
 
+  function moduleBasePath() {
+    if (!config) {
+      const path = location.pathname.replace(/\/index\.html$/i, "");
+      return path.replace(/\/$/, "") || "/";
+    }
+    const parts = location.pathname.replace(/\/index\.html$/i, "").split("/").filter(Boolean);
+    const screenIds = Object.keys(screens);
+    if (parts.length && screenIds.includes(parts[parts.length - 1])) {
+      parts.pop();
+    }
+    return parts.length ? `/${parts.join("/")}` : "/";
+  }
+
+  function screenUrl(screenId) {
+    if (!config) return location.pathname;
+    const base = moduleBasePath();
+    const id = screenId || config.defaultScreen;
+    if (!id || id === config.defaultScreen) {
+      return `${base}/${config.defaultScreen}`;
+    }
+    return `${base}/${id}`;
+  }
+
+  function screenFromPath() {
+    const parts = location.pathname.replace(/\/index\.html$/i, "").split("/").filter(Boolean);
+    const last = parts[parts.length - 1];
+    if (screens[last]) return last;
+    return null;
+  }
+
   function init(moduleConfig) {
     config = moduleConfig;
     screens = {};
     moduleConfig.screens.forEach((s) => { screens[s.id] = s; });
 
-    document.body.innerHTML = `
-      <div class="wf-app">
-        ${WF.spaSidebar(moduleConfig)}
-        <div class="wf-main">
-          ${WF.topbar(moduleConfig.searchPlaceholder)}
-          <main class="wf-content">
-            <div class="wf-ptr-indicator" id="wf-ptr-indicator">Pull to refresh</div>
-            <div id="wf-mobile-screen-nav-wrap"></div>
-            <nav class="wf-breadcrumb" id="wf-breadcrumb" aria-label="Breadcrumb"></nav>
-            <div id="wf-screen-container"></div>
+    const isAuth = moduleConfig.layout === "auth";
+
+    if (isAuth) {
+      document.body.innerHTML = `
+        <div class="wf-auth-app">
+          <aside class="wf-auth__wire-panel" aria-label="Wireframe navigation">
+            <div class="wf-card wf-auth__wire-nav-card">
+              <div class="wf-card__header">
+                <h2 class="wf-card__title">Wireframe screens</h2>
+              </div>
+              <div class="wf-card__body wf-auth__wire-nav-body">
+                <p class="wf-auth__wire-nav-label">Quick access</p>
+                <nav class="wf-auth__wire-nav" aria-label="Authentication screens">
+                  <div class="wf-auth__wire-nav-links">
+                  ${moduleConfig.screens.map((s) => `
+                    <button type="button" class="wf-auth__wire-link" data-screen="${s.id}">${s.shortLabel || s.label}</button>
+                  `).join("")}
+                  </div>
+                </nav>
+              </div>
+              <div class="wf-card__footer wf-auth__wire-nav-footer">
+                <a href="/" class="wf-auth__wire-hub-link">← All modules</a>
+              </div>
+            </div>
+          </aside>
+          <main class="wf-auth">
+            <div class="wf-auth__shell">
+              <div id="wf-screen-container" class="wf-auth__screen"></div>
+            </div>
           </main>
         </div>
-      </div>
-      ${WF.mobileBottomNav(moduleConfig.screens, moduleConfig.defaultScreen)}
-      ${moduleConfig.modals ? moduleConfig.modals() : WF.modals()}
-    `;
+        ${moduleConfig.modals ? moduleConfig.modals() : ""}
+      `;
+      document.body.classList.add("wf-spa-module", "wf-auth-module");
+    } else {
+      document.body.innerHTML = `
+        <div class="wf-app">
+          ${WF.spaSidebar(moduleConfig)}
+          <div class="wf-main">
+            ${WF.topbar(moduleConfig.searchPlaceholder)}
+            <main class="wf-content">
+              <div class="wf-ptr-indicator" id="wf-ptr-indicator">Pull to refresh</div>
+              <div id="wf-mobile-screen-nav-wrap"></div>
+              <nav class="wf-breadcrumb" id="wf-breadcrumb" aria-label="Breadcrumb"></nav>
+              <div id="wf-screen-container"></div>
+            </main>
+          </div>
+        </div>
+        ${WF.mobileBottomNav(moduleConfig.screens, moduleConfig.defaultScreen)}
+        ${moduleConfig.modals ? moduleConfig.modals() : WF.modals()}
+      `;
+      document.body.classList.add("wf-spa-module");
+    }
 
     document.body.dataset.wfShellBound = "";
-    document.body.classList.add("wf-spa-module");
     WF.bindEvents();
     bindSpaNav();
+    if (typeof moduleConfig.onAfterBind === "function") moduleConfig.onAfterBind();
 
-    const initial = location.hash.slice(1) || moduleConfig.defaultScreen;
+    const initial = screenFromPath() || moduleConfig.defaultScreen;
     navigate(initial, false);
-    window.addEventListener("hashchange", () => navigate(location.hash.slice(1), false));
+
+    if (!screenFromPath() && !location.pathname.endsWith(`/${moduleConfig.defaultScreen}`)) {
+      history.replaceState({ screen: initial }, "", screenUrl(initial));
+    }
+
+    window.addEventListener("popstate", () => {
+      navigate(screenFromPath() || config.defaultScreen, false);
+    });
   }
 
   function resolveBreadcrumb(screen) {
@@ -48,6 +122,13 @@ const WF_SPA = (() => {
     const screen = screens[currentId];
     if (!screen) return;
 
+    if (config.layout === "auth") {
+      document.querySelectorAll(".wf-auth__wire-link").forEach((el) => {
+        el.classList.toggle("is-active", el.getAttribute("data-screen") === currentId);
+      });
+      return;
+    }
+
     const breadcrumbEl = document.getElementById("wf-breadcrumb");
     const mobileNavWrap = document.getElementById("wf-mobile-screen-nav-wrap");
     if (!breadcrumbEl || !mobileNavWrap) return;
@@ -55,7 +136,7 @@ const WF_SPA = (() => {
     const crumbs = resolveBreadcrumb(screen);
     breadcrumbEl.innerHTML = WF.spaBreadcrumb(
       config.moduleLabel,
-      config.moduleHref,
+      screenUrl(config.defaultScreen),
       crumbs
     );
 
@@ -80,24 +161,25 @@ const WF_SPA = (() => {
     if (activeLink) activeLink.scrollIntoView({ block: "nearest", behavior: "smooth" });
   }
 
-  function navigate(screenId, pushHash = true) {
+  function navigate(screenId, pushState = true) {
     const screen = screens[screenId];
     if (!screen) {
       const fallback = screens[config.defaultScreen]
         ? config.defaultScreen
         : Object.keys(screens)[0];
       if (!fallback) return;
-      if (pushHash) {
-        location.replace(`#${fallback}`);
-      } else {
+      if (pushState) {
         navigate(fallback, true);
+      } else {
+        navigate(fallback, false);
       }
       return;
     }
 
     currentId = screenId;
-    if (pushHash && location.hash.slice(1) !== screenId) {
-      location.hash = screenId;
+    const url = screenUrl(screenId);
+    if (pushState && location.pathname !== url) {
+      history.pushState({ screen: screenId }, "", url);
     }
 
     const container = document.getElementById("wf-screen-container");
@@ -110,9 +192,14 @@ const WF_SPA = (() => {
 
     document.title = `${screen.label} — ${config.moduleTitle} — ${WF.BRAND_NAME}`;
     window.scrollTo({ top: 0, behavior: "smooth" });
-    document.querySelector(".wf-content")?.scrollTo({ top: 0 });
+    if (config.layout === "auth") {
+      document.querySelector(".wf-auth")?.scrollTo({ top: 0 });
+    } else {
+      document.querySelector(".wf-content")?.scrollTo({ top: 0 });
+    }
 
     WF.bindEvents();
+    if (typeof config.onAfterBind === "function") config.onAfterBind();
   }
 
   function bindSpaNav() {
@@ -137,5 +224,13 @@ const WF_SPA = (() => {
 
   function getModuleConfig() { return config; }
 
-  return { init, navigate: go, getCurrent, syncNavChrome, getModuleConfig };
+  return {
+    init,
+    navigate: go,
+    getCurrent,
+    syncNavChrome,
+    getModuleConfig,
+    screenUrl,
+    moduleBasePath
+  };
 })();
