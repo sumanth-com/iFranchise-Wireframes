@@ -2509,53 +2509,49 @@ html::-webkit-scrollbar-corner {
   width: 100%;
   max-width: 100%;
   margin: 0 auto;
-  padding: 0 20px 48px;
+  padding: 0 0 64px;
   overflow-x: hidden;
   box-sizing: border-box;
+  min-height: 100vh;
 }
 
 .wf-hub__header {
-  background: var(--wf-sidebar-bg);
+  background: linear-gradient(160deg, #2b2b2b 0%, #1e1e1e 55%, #141414 100%);
   color: #fff;
-  padding: 28px 24px;
-  margin: 0 0 32px;
-  border-bottom: 3px solid #444;
+  padding: 44px 24px 40px;
+  margin: 0 0 36px;
   text-align: center;
-}
-
-.wf-hub__card-title {
-  font-size: 13px;
-  font-weight: 600;
-  margin-bottom: 4px;
-  line-height: 1.3;
-}
-
-.wf-hub__card-desc {
-  font-size: 11px;
-  color: var(--wf-text-secondary);
-  line-height: 1.4;
-  display: -webkit-box;
-  -webkit-line-clamp: 2;
-  -webkit-box-orient: vertical;
+  position: relative;
   overflow: hidden;
 }
 
-.wf-dashboard-full {
-  width: 100%;
-  min-width: 0;
-  margin-bottom: 20px;
+.wf-hub__header::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(ellipse 80% 60% at 50% -20%, rgba(255, 255, 255, 0.06) 0%, transparent 70%);
+  pointer-events: none;
+}
+
+.wf-hub__header-inner {
+  position: relative;
+  max-width: 640px;
+  margin: 0 auto;
 }
 
 .wf-hub__header-title {
-  font-size: 24px;
+  font-size: 26px;
   font-weight: 700;
-  letter-spacing: 0.3px;
+  letter-spacing: -0.02em;
+  line-height: 1.2;
 }
 
 .wf-hub__header-sub {
   font-size: 13px;
-  color: #aaa;
-  margin-top: 4px;
+  color: rgba(255, 255, 255, 0.55);
+  margin-top: 8px;
+  letter-spacing: 0.02em;
 }
 
 .wf-hub__title {
@@ -2571,46 +2567,102 @@ html::-webkit-scrollbar-corner {
 
 .wf-hub__grid {
   display: grid;
-  grid-template-columns: repeat(5, minmax(0, 1fr));
-  gap: 12px;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: 16px;
   width: 100%;
+  max-width: 1440px;
+  margin: 0 auto;
+  padding: 0 24px;
   min-width: 0;
+  align-items: stretch;
 }
 
 .wf-hub__card {
   background: var(--wf-surface);
   border: 1px solid var(--wf-border-light);
-  border-radius: var(--wf-radius);
-  padding: 14px 12px;
+  border-radius: 12px;
+  padding: 18px;
   min-height: 108px;
   text-decoration: none;
   color: inherit;
-  transition: box-shadow 0.15s, border-color 0.15s;
-  display: block;
+  transition: box-shadow 0.2s ease, border-color 0.2s ease, transform 0.2s ease;
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
   position: relative;
   min-width: 0;
+  box-sizing: border-box;
+  overflow: hidden;
+}
+
+.wf-hub__card::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.8);
+  pointer-events: none;
 }
 
 .wf-hub__card:hover {
-  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
-  border-color: var(--wf-border);
+  box-shadow: 0 10px 28px rgba(0, 0, 0, 0.09);
+  border-color: #bbb;
   text-decoration: none;
-  transform: translateY(-1px);
+  transform: translateY(-3px);
 }
 
-.wf-hub__card-badge {
-  position: absolute;
-  top: 12px;
-  right: 12px;
-  font-size: 10px;
-  padding: 2px 8px;
-  border: 1px solid var(--wf-border);
+.wf-hub__card-icon {
+  flex-shrink: 0;
+  width: 42px;
+  height: 42px;
   border-radius: 10px;
-  color: var(--wf-text-muted);
-  background: var(--wf-surface-alt);
+  background: linear-gradient(145deg, #f8f8f8 0%, #ececec 100%);
+  border: 1px solid var(--wf-border-light);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #444;
+  transition: background 0.2s ease, border-color 0.2s ease, color 0.2s ease;
 }
 
-.wf-screen-list {
+.wf-hub__card-icon svg {
+  width: 20px;
+  height: 20px;
+}
+
+.wf-hub__card:hover .wf-hub__card-icon {
+  background: linear-gradient(145deg, #333 0%, #222 100%);
+  border-color: #333;
+  color: #fff;
+}
+
+.wf-hub__card-content {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.wf-hub__card-title {
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 1.3;
+  letter-spacing: -0.01em;
+  color: var(--wf-text);
+}
+
+.wf-hub__card-desc {
+  font-size: 12px;
+  color: var(--wf-text-secondary);
+  line-height: 1.5;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.wf-dashboard-full {
   list-style: none;
   margin-top: 24px;
 }
