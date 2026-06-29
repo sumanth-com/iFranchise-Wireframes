@@ -29,10 +29,6 @@ const DASHBOARD_MODULE = (() => {
       <select class="wf-filter-select" aria-label="City filter"><option>All Cities</option>${d().cities.map((c) => `<option>${c}</option>`).join("")}</select>
       <select class="wf-filter-select" aria-label="Brand filter"><option>All Brands</option>${d().brands.map((b) => `<option>${b}</option>`).join("")}</select>
     </div>
-    <div class="wf-toolbar__actions">
-      <button class="wf-btn wf-btn--sm" id="wf-demo-loading">Refresh</button>
-      <button class="wf-btn wf-btn--sm" data-action="export">Export</button>
-    </div>
   </div>`;
 
   const kpiRow = (kpis) => `<div class="wf-card-grid">${kpis.map((k) => `
@@ -118,7 +114,7 @@ const DASHBOARD_MODULE = (() => {
           <button class="wf-btn wf-btn--sm" id="wf-demo-loading">Refresh</button>
           <button data-screen="command-center" class="wf-btn wf-btn--sm wf-btn--primary">Command Center</button>
           <button class="wf-btn wf-btn--sm" data-action="export">Export</button>
-          <button class="wf-btn wf-btn--sm wf-btn--primary" data-modal="send-email">Executive Brief</button>
+          <button class="wf-btn wf-btn--sm" data-modal="send-email">Executive Brief</button>
         `)}
         ${dashToolbar()}
         ${kpiRow(data.kpis)}
@@ -150,8 +146,7 @@ const DASHBOARD_MODULE = (() => {
           </div>
         </div>
         <div class="wf-grid-2 wf-mb-20">
-          <div class="wf-card"><div class="wf-card__header"><span class="wf-card__title">Team Performance Leaderboard</span>
-            <button class="wf-btn wf-btn--sm" data-action="export">Export</button></div>
+          <div class="wf-card"><div class="wf-card__header"><span class="wf-card__title">Team Performance Leaderboard</span></div>
             <div class="wf-card__body wf-card__body--table">${simpleTable(
               ["Executive", "Role", "Leads", "Converted", "Revenue", "Target %"],
               data.leaderboard.map((r) => [
@@ -220,7 +215,7 @@ const DASHBOARD_MODULE = (() => {
           <div class="wf-card"><div class="wf-card__header"><span class="wf-card__title">Sales Performance</span><button data-screen="employee-performance" class="wf-btn wf-btn--sm">Details</button></div>
             <div class="wf-card__body wf-card__body--table">${simpleTable(["Executive", "Revenue", "Target %"], ceo.leaderboard.slice(0, 5).map((r) => [WF.esc(r.name), WF.esc(r.revenue), r.pct + "%"]))}</div>
           </div>
-          <div class="wf-card"><div class="wf-card__header"><span class="wf-card__title">Call Analytics</span><a href="../call-intelligence/index.html" class="wf-btn wf-btn--sm">Call Module →</a></div>
+          <div class="wf-card"><div class="wf-card__header"><span class="wf-card__title">Call Analytics</span><a href="/call-intelligence/dashboard" class="wf-btn wf-btn--sm">Call Module →</a></div>
             <div class="wf-card__body">
               <div class="wf-card-grid" style="grid-template-columns:repeat(3,1fr)">
                 <div class="wf-stat-card"><div class="wf-stat-card__label">Total Calls</div><div class="wf-stat-card__value">${cc.callMetrics.total.toLocaleString()}</div></div>
@@ -262,7 +257,7 @@ const DASHBOARD_MODULE = (() => {
         ${WF.pageHeader("Employee Performance Dashboard", "Leads, calls, meetings, conversions, and productivity scores", `
           <button class="wf-btn wf-btn--sm" id="wf-demo-loading">Refresh</button>
           <button class="wf-btn wf-btn--sm" data-action="export">Export</button>
-          <a href="../analytics/index.html#employee-performance" class="wf-btn wf-btn--sm">Full Reports →</a>
+          <a href="/analytics/employee-performance" class="wf-btn wf-btn--sm">Full Reports →</a>
         `)}
         ${dashToolbar()}
         <div class="wf-card-grid wf-mb-20">
@@ -522,8 +517,7 @@ const DASHBOARD_MODULE = (() => {
           </div>
         </div>
         <div class="wf-card wf-dashboard-full wf-mb-20">
-          <div class="wf-card__header"><span class="wf-card__title">Recent Transactions</span>
-            <button class="wf-btn wf-btn--sm" data-action="export">Export</button></div>
+          <div class="wf-card__header"><span class="wf-card__title">Recent Transactions</span></div>
           <div class="wf-card__body wf-card__body--table">${simpleTable(
             ["Payment ID", "Customer", "Brand", "Amount", "Date", "Status"],
             data.transactions.map((t) => [
@@ -601,8 +595,7 @@ const DASHBOARD_MODULE = (() => {
           </div>
         </div>
         <div class="wf-grid-2 wf-mb-20">
-          <div class="wf-card"><div class="wf-card__header"><span class="wf-card__title">Audit Logs</span>
-            <button class="wf-btn wf-btn--sm" data-action="export">Export</button></div>
+          <div class="wf-card"><div class="wf-card__header"><span class="wf-card__title">Audit Logs</span></div>
             <div class="wf-card__body wf-card__body--table">${simpleTable(
               ["Time", "User", "Action", "Entity"],
               data.auditLogs.map((l) => [WF.esc(l.time), WF.esc(l.user), WF.esc(l.action), WF.esc(l.entity)])
@@ -647,7 +640,7 @@ const DASHBOARD_MODULE = (() => {
       moduleKey: "dashboard",
       moduleLabel: "Dashboard",
       moduleTitle: "Executive Dashboard",
-      moduleHref: "index.html",
+      moduleHref: "/",
       defaultScreen: "ceo",
       searchPlaceholder: "Search KPIs, reports, users, transactions…",
       screens

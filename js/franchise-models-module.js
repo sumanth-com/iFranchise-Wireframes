@@ -437,7 +437,7 @@ const FRANCHISE_MODELS_MODULE = (() => {
       moduleKey: "franchiseModels",
       moduleLabel: "Franchise Models",
       moduleTitle: "Franchise Models",
-      moduleHref: "index.html",
+      moduleHref: "/",
       defaultScreen: "dashboard",
       searchPlaceholder: "Search models, brands, territories, documents…",
       modals: WF.modelModals,

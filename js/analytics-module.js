@@ -410,7 +410,7 @@ const ANALYTICS_MODULE = (() => {
           { label: "Call Conversion", value: "18.4%" }
         ])}
         <div class="wf-grid-2">${WF.chartCard("Call Volume Trend", "Line Chart")}${WF.chartCard("Talk Time by Agent", "Bar Chart")}</div>
-        <div class="wf-card wf-mt-16"><div class="wf-card__body" style="font-size:13px;color:var(--wf-text-muted)"><a href="../call-intelligence/index.html">Open Call Intelligence module →</a> for live calls, recordings, and detailed analytics.</div></div>
+        <div class="wf-card wf-mt-16"><div class="wf-card__body" style="font-size:13px;color:var(--wf-text-muted)"><a href="/call-intelligence/dashboard">Open Call Intelligence module →</a> for live calls, recordings, and detailed analytics.</div></div>
       `
     },
     {
@@ -426,7 +426,7 @@ const ANALYTICS_MODULE = (() => {
           { label: "Cost Per Deal", value: "₹1.42 L" }
         ])}
         <div class="wf-grid-2">${WF.chartCard("ROI Trend", "Line Chart")}${WF.chartCard("Spend vs Revenue", "Area Chart")}</div>
-        <div class="wf-card wf-mt-16"><div class="wf-card__body" style="font-size:13px;color:var(--wf-text-muted)"><a href="../marketing-intelligence/index.html">Open Marketing Intelligence module →</a> for campaign and funnel analytics.</div></div>
+        <div class="wf-card wf-mt-16"><div class="wf-card__body" style="font-size:13px;color:var(--wf-text-muted)"><a href="/marketing-intelligence/dashboard">Open Marketing Intelligence module →</a> for campaign and funnel analytics.</div></div>
       `
     },
     {
@@ -535,21 +535,11 @@ const ANALYTICS_MODULE = (() => {
       moduleKey: "analytics",
       moduleLabel: "Reporting & Analytics",
       moduleTitle: "Reporting & Analytics",
-      moduleHref: "index.html",
+      moduleHref: "/",
       defaultScreen: "executive",
       searchPlaceholder: "Search reports, KPIs, brands, cities, executives…",
       modals: WF.analyticsModals,
       screens
-    });
-
-    document.body.addEventListener("click", (e) => {
-      const periodBtn = e.target.closest("[data-period]");
-      if (periodBtn) {
-        document.querySelectorAll("[data-period]").forEach((btn) => {
-          btn.classList.toggle("wf-btn--primary", btn === periodBtn);
-        });
-        WF.showToast(`Period: ${periodBtn.getAttribute("data-period")}`);
-      }
     });
   }
 

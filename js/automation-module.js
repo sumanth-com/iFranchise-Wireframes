@@ -451,7 +451,7 @@ const AUTOMATION_MODULE = (() => {
       moduleKey: "automation",
       moduleLabel: "Automation Engine",
       moduleTitle: "Automation Engine",
-      moduleHref: "index.html",
+      moduleHref: "/",
       defaultScreen: "dashboard",
       searchPlaceholder: "Search workflows, triggers, executions, webhooks…",
       modals: WF.automationModals,

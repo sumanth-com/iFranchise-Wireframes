@@ -472,7 +472,7 @@ const MEETINGS_MODULE = (() => {
       moduleKey: "meetings",
       moduleLabel: "Meeting Management",
       moduleTitle: "Meeting Management",
-      moduleHref: "index.html",
+      moduleHref: "/",
       defaultScreen: "dashboard",
       searchPlaceholder: "Search meetings, customers, brands, participants…",
       modals: WF.meetingModals,

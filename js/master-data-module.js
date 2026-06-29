@@ -125,7 +125,7 @@ const MASTER_DATA_MODULE = (() => {
       moduleKey: "masterData",
       moduleLabel: "Master Data Management",
       moduleTitle: "Master Data Management",
-      moduleHref: "index.html",
+      moduleHref: "/",
       defaultScreen: "dashboard",
       searchPlaceholder: "Search brands, cities, lead sources, templates…",
       screens

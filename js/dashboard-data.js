@@ -79,10 +79,10 @@ const DASHBOARD_DATA = {
       { time: "4:30 PM", title: "Collections Review", attendee: "Fazil", mode: "Online" }
     ],
     quickActions: [
-      { label: "Pending Approvals", href: "../approvals/index.html#inbox" },
-      { label: "Schedule Meeting", href: "../meetings/index.html#schedule" },
+      { label: "Pending Approvals", href: "/approvals/inbox" },
+      { label: "Schedule Meeting", href: "/meetings/schedule" },
       { label: "Export Report", action: "export" },
-      { label: "View Analytics", href: "../analytics/index.html#dashboard" }
+      { label: "View Analytics", href: "/analytics/executive" }
     ]
   },
 

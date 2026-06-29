@@ -536,7 +536,7 @@ const ROLES_MODULE = (() => {
       moduleKey: "roles",
       moduleLabel: "Role & Permission Management",
       moduleTitle: "Role & Permission Management",
-      moduleHref: "index.html",
+      moduleHref: "/",
       defaultScreen: "dashboard",
       searchPlaceholder: "Search roles, permissions, users, modules…",
       modals: WF.securityModals,

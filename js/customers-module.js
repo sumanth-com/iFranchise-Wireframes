@@ -185,7 +185,7 @@ const CUSTOMER_MODULE = (() => {
       id: "payments", label: "Payment History",
       breadcrumb: [{ label: b().name, screen: "details" }, { label: "Payments" }],
       render: () => `
-        ${WF.pageHeader("Payment History", b().name, `<button class="wf-btn wf-btn--sm wf-btn--primary">Record Payment</button>`)}
+        ${WF.pageHeader("Payment History", b().name, `<a href="/accounts/record-payment" class="wf-btn wf-btn--sm wf-btn--primary">Record Payment</a>`)}
         ${detailTabs()}
         <div class="wf-card-grid" style="grid-template-columns:repeat(4,1fr)">
           <div class="wf-stat-card"><div class="wf-stat-card__label">Total Paid</div><div class="wf-stat-card__value" style="font-size:20px">₹15,70,000</div></div>
@@ -256,7 +256,7 @@ const CUSTOMER_MODULE = (() => {
       moduleKey: "customers",
       moduleLabel: "Customers",
       moduleTitle: "Customer Management",
-      moduleHref: "index.html",
+      moduleHref: "/",
       defaultScreen: "dashboard",
       searchPlaceholder: "Search customers, agreements, documents…",
       screens

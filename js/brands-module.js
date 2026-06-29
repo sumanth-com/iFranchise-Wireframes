@@ -343,7 +343,7 @@ const BRAND_MODULE = (() => {
       moduleKey: "brands",
       moduleLabel: "Brands",
       moduleTitle: "Brand Management",
-      moduleHref: "index.html",
+      moduleHref: "/",
       defaultScreen: "dashboard",
       searchPlaceholder: "Search brands, documents, franchise opportunities…",
       modals: WF.brandModals,

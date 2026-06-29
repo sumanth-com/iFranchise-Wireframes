@@ -388,7 +388,7 @@ const DOCUMENTS_MODULE = (() => {
       moduleKey: "documents",
       moduleLabel: "Document Management",
       moduleTitle: "Document Management",
-      moduleHref: "index.html",
+      moduleHref: "/",
       defaultScreen: "dashboard",
       searchPlaceholder: "Search documents, customers, brands, tags…",
       modals: WF.documentModals,

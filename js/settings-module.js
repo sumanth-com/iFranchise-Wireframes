@@ -60,7 +60,7 @@ const SETTINGS_MODULE = (() => {
             <div class="wf-card__body" style="display:flex;flex-wrap:wrap;gap:8px">
               <button data-screen="feature-flags" class="wf-btn wf-btn--sm">Feature Flags</button>
               <button data-screen="integrations" class="wf-btn wf-btn--sm">Integrations</button>
-              <a href="../master-data/index.html" class="wf-btn wf-btn--sm">Master Data</a>
+              <a href="/master-data/dashboard" class="wf-btn wf-btn--sm">Master Data</a>
               <button data-screen="backup" class="wf-btn wf-btn--sm">Backup</button>
               <button data-screen="security" class="wf-btn wf-btn--sm">Security</button>
               <button data-screen="license" class="wf-btn wf-btn--sm">License</button>
@@ -339,7 +339,7 @@ const SETTINGS_MODULE = (() => {
       render: () => cfg("system-logs", "System Logs", "Application and configuration change logs", `
         <button data-screen="dashboard" class="wf-btn wf-btn--sm wf-mb-16">← Dashboard</button>
         ${WF.activityFeed(d().recentActivities.map((a) => ({ title: a.action, user: a.user, time: a.time, desc: "Configuration change" })))}
-      `, `<a href="../audit/index.html" class="wf-btn wf-btn--sm">Full Audit Module →</a>`)
+      `, `<a href="/audit/dashboard" class="wf-btn wf-btn--sm">Full Audit Module →</a>`)
     },
     {
       id: "maintenance", label: "Maintenance Mode",
@@ -391,7 +391,7 @@ const SETTINGS_MODULE = (() => {
         <div class="wf-form__group"><label class="wf-form__label"><input type="checkbox" checked> Immutable audit records</label></div>
         <div class="wf-form__group"><label class="wf-form__label"><input type="checkbox" checked> Log all data changes</label></div>
         ${WF.settingsFormFooter()}
-      </form>`), `<a href="../audit/index.html" class="wf-btn wf-btn--sm">Audit Module →</a>`)
+      </form>`), `<a href="/audit/dashboard" class="wf-btn wf-btn--sm">Audit Module →</a>`)
     },
     {
       id: "retention", label: "Data Retention Policies",
@@ -449,7 +449,7 @@ const SETTINGS_MODULE = (() => {
       moduleKey: "settings",
       moduleLabel: "System Configuration",
       moduleTitle: "System Configuration",
-      moduleHref: "index.html",
+      moduleHref: "/",
       defaultScreen: "dashboard",
       searchPlaceholder: "Search settings, integrations, security…",
       modals: WF.settingsModals,

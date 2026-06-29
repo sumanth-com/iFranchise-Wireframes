@@ -51,7 +51,7 @@ const TEMPLATES_MODULE = (() => {
             </div></div>
           `).join("")}
         </div>
-        <div class="wf-card wf-mt-16"><div class="wf-card__header"><span class="wf-card__title">Automation Trigger Map</span><a href="../automation/index.html" class="wf-btn wf-btn--sm">Automation Engine →</a></div>
+        <div class="wf-card wf-mt-16"><div class="wf-card__header"><span class="wf-card__title">Automation Trigger Map</span><a href="/automation/dashboard" class="wf-btn wf-btn--sm">Automation Engine →</a></div>
           <div class="wf-card__body" style="padding:0">${WF.reportDataTable(["Event", "Templates", "Automations"], d().automationTriggers.map((t) => [t.event, t.templates, t.automations]))}</div>
         </div>
       `
@@ -85,7 +85,7 @@ const TEMPLATES_MODULE = (() => {
       moduleKey: "templates",
       moduleLabel: "Template Management",
       moduleTitle: "Template Management",
-      moduleHref: "index.html",
+      moduleHref: "/",
       defaultScreen: "dashboard",
       searchPlaceholder: "Search templates, triggers, agreements…",
       screens

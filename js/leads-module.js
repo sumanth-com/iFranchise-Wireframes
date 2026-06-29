@@ -362,7 +362,7 @@ const LEADS_MODULE = (() => {
       moduleKey: "leads",
       moduleLabel: "Leads",
       moduleTitle: "Lead Management",
-      moduleHref: "index.html",
+      moduleHref: "/",
       defaultScreen: "dashboard",
       sidebarCreate: "create",
       screenGroups: [

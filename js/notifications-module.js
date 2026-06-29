@@ -53,11 +53,11 @@ const NOTIFICATIONS_MODULE = (() => {
           <button data-screen="scheduled" class="wf-btn wf-btn--sm wf-btn--primary">+ Schedule</button>
         `)}
         <div class="wf-flex wf-gap-8 wf-mb-16" style="flex-wrap:wrap">
-          <button class="wf-btn wf-btn--sm wf-btn--primary">All (${NOTIFICATION_DATA.notifications.length})</button>
-          <button class="wf-btn wf-btn--sm">Unread (${unread().length})</button>
-          <button class="wf-btn wf-btn--sm">Approvals (3)</button>
-          <button class="wf-btn wf-btn--sm">Meetings (5)</button>
-          <button class="wf-btn wf-btn--sm">Payments (4)</button>
+          <button type="button" class="wf-btn wf-btn--sm wf-btn--primary" data-filter="all">All (${NOTIFICATION_DATA.notifications.length})</button>
+          <button type="button" class="wf-btn wf-btn--sm" data-filter="unread">Unread (${unread().length})</button>
+          <button type="button" class="wf-btn wf-btn--sm" data-filter="approvals">Approvals (3)</button>
+          <button type="button" class="wf-btn wf-btn--sm" data-filter="meetings">Meetings (5)</button>
+          <button type="button" class="wf-btn wf-btn--sm" data-filter="payments">Payments (4)</button>
         </div>
         <div class="wf-center-layout">
           <div class="wf-card"><div class="wf-card__header"><span class="wf-card__title">Inbox</span></div>
@@ -400,7 +400,7 @@ const NOTIFICATIONS_MODULE = (() => {
       moduleKey: "notifications",
       moduleLabel: "Notification Center",
       moduleTitle: "Notification Center",
-      moduleHref: "index.html",
+      moduleHref: "/",
       defaultScreen: "dashboard",
       searchPlaceholder: "Search notifications, recipients, types, channels…",
       modals: WF.notificationModals,

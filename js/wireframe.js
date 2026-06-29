@@ -304,7 +304,7 @@ const WF = (() => {
   }
 
   function sidebarLogo(moduleLabel) {
-    return `<a href="../index.html" class="wf-sidebar__logo" style="text-decoration:none;color:inherit">
+    return `<a href="/" class="wf-sidebar__logo" style="text-decoration:none;color:inherit">
       <div class="wf-sidebar__logo-icon" aria-hidden="true">${BRAND_MARK}</div>
       <div>
         <div class="wf-sidebar__logo-text">${BRAND_NAME}</div>
@@ -332,7 +332,7 @@ const WF = (() => {
       </a>`;
 
     const exit = `<div class="wf-sidebar__exit">
-      <a href="../index.html" class="wf-sidebar__link wf-sidebar__link--hub">
+      <a href="/" class="wf-sidebar__link wf-sidebar__link--hub">
         <span class="wf-sidebar__hub-icon" aria-hidden="true">${bottomNavIconSvg("modules")}</span>
         <span>All Modules</span>
       </a>
@@ -388,7 +388,7 @@ const WF = (() => {
       : "";
 
     const exit = `<div class="wf-sidebar__exit">
-      <a href="../index.html" class="wf-sidebar__link wf-sidebar__link--hub">
+      <a href="/" class="wf-sidebar__link wf-sidebar__link--hub">
         <span>All Modules</span>
       </a>
     </div>`;
@@ -436,7 +436,7 @@ const WF = (() => {
   }
 
   function spaBreadcrumb(moduleLabel, moduleHref, items) {
-    let crumbs = `<a href="../index.html">Home</a><span class="wf-breadcrumb__sep">/</span>
+    let crumbs = `<a href="/">Home</a><span class="wf-breadcrumb__sep">/</span>
       <a href="${moduleHref}">${esc(moduleLabel)}</a>`;
     items.forEach((item, i) => {
       crumbs += `<span class="wf-breadcrumb__sep">/</span>`;
@@ -462,7 +462,7 @@ const WF = (() => {
         <span class="wf-topbar__menu-bar" aria-hidden="true"></span>
         <span class="wf-topbar__menu-bar" aria-hidden="true"></span>
       </button>
-      <a href="../index.html" class="wf-topbar__hub-btn" aria-label="All modules" title="All modules">
+      <a href="/" class="wf-topbar__hub-btn" aria-label="All modules" title="All modules">
         <span class="wf-topbar__hub-btn-icon" aria-hidden="true">${bottomNavIconSvg("modules")}</span>
       </a>
       <div class="wf-topbar__search">
@@ -1621,6 +1621,28 @@ const WF = (() => {
         if (confirm("Discard unsaved changes?") && typeof WF_SPA !== "undefined") WF_SPA.navigate("list");
         return;
       }
+      const toastBtn = e.target.closest('[data-action="toast"]');
+      if (toastBtn) {
+        e.preventDefault();
+        showToast(toastBtn.getAttribute("data-toast") || toastBtn.textContent.trim());
+        return;
+      }
+      const filterChip = e.target.closest("[data-filter]");
+      if (filterChip) {
+        e.preventDefault();
+        const group = filterChip.parentElement;
+        group?.querySelectorAll("[data-filter]").forEach((btn) => {
+          btn.classList.toggle("wf-btn--primary", btn === filterChip);
+        });
+        showToast(`Filter: ${filterChip.textContent.trim()}`);
+        return;
+      }
+      const wireBtn = e.target.closest(".wf-btn");
+      if (wireBtn && isWireframeActionBtn(wireBtn) && !wireBtn.closest("form")) {
+        e.preventDefault();
+        showToast(wireframeActionMessage(wireBtn.textContent.trim()));
+        return;
+      }
     });
 
     document.querySelectorAll(".wf-modal-overlay").forEach((ov) => {
@@ -1843,6 +1865,18 @@ const WF = (() => {
         } else {
           showToast("Data refreshed");
         }
+      });
+    }
+
+    if (!document.body.dataset.periodToggleBound) {
+      document.body.dataset.periodToggleBound = "1";
+      document.body.addEventListener("click", (e) => {
+        const periodBtn = e.target.closest("[data-period]");
+        if (!periodBtn) return;
+        document.querySelectorAll("[data-period]").forEach((btn) => {
+          btn.classList.toggle("wf-btn--primary", btn === periodBtn);
+        });
+        showToast(`Period: ${periodBtn.getAttribute("data-period")}`);
       });
     }
   }
@@ -2483,6 +2517,37 @@ const WF = (() => {
 
   function closeAllModals() {
     document.querySelectorAll(".wf-modal-overlay").forEach((m) => m.classList.remove("is-open"));
+  }
+
+  function wireframeActionMessage(label) {
+    const lower = label.toLowerCase();
+    if (/download|export/.test(lower)) return `${label} started — file will download shortly`;
+    if (/upload/.test(lower)) return `${label} — file picker opened (wireframe)`;
+    if (/send|post|remind/.test(lower)) return `${label} — sent successfully`;
+    if (/save|apply|update/.test(lower)) return `${label} — saved successfully`;
+    if (/delete|revoke|remove|archive|block/.test(lower)) return `${label} — action confirmed (wireframe)`;
+    if (/approve/.test(lower)) return `${label} — approved`;
+    if (/reject/.test(lower)) return `${label} — rejected`;
+    if (/edit|configure|connect/.test(lower)) return `Opening ${label.toLowerCase()} (wireframe)`;
+    if (/view|details|preview|investigate|diff|compare/.test(lower)) return `Opening ${label.toLowerCase()} (wireframe)`;
+    if (/play|listen/.test(lower)) return `${label} — playback started (wireframe)`;
+    if (/call|barge/.test(lower)) return `${label} — connecting (wireframe)`;
+    if (/copy/.test(lower)) return "Copied to clipboard (wireframe)";
+    if (/test|retry|flush|backup|generate|calculate|reserve|submit|complete|join|launch|launch/.test(lower)) return `${label} — successful (wireframe)`;
+    if (/select all|clear all/.test(lower)) return `${label} (wireframe)`;
+    if (/cancel/.test(lower)) return `${label} — cancelled (wireframe)`;
+    if (/resend/.test(lower)) return `${label} — sent again`;
+    return `${label} (wireframe)`;
+  }
+
+  function isWireframeActionBtn(el) {
+    if (!el?.classList?.contains("wf-btn")) return false;
+    if (el.tagName === "A" && el.getAttribute("href") && el.getAttribute("href") !== "#") return false;
+    if (el.type === "submit") return false;
+    if (el.id === "wf-demo-loading") return false;
+    if (["data-action", "data-modal", "data-screen", "data-close-modal", "data-password-toggle", "data-period", "data-nav", "data-filter"].some((a) => el.hasAttribute(a))) return false;
+    if (el.closest(".wf-pagination")) return false;
+    return true;
   }
 
   function showToast(msg) {

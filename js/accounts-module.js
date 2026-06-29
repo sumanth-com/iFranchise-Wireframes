@@ -185,8 +185,8 @@ const ACCOUNTS_MODULE = (() => {
         return `
           ${roleBar()}
           ${WF.pageHeader("Invoice " + i.number, i.customer + " · " + i.brand + " · " + i.city, `
-            <button class="wf-btn wf-btn--sm">Download PDF</button>
-            <button class="wf-btn wf-btn--sm">Send to Customer</button>
+            <button class="wf-btn wf-btn--sm" data-action="export-pdf">Download PDF</button>
+            <button class="wf-btn wf-btn--sm" data-modal="send-email">Send to Customer</button>
             <button data-screen="record-payment" class="wf-btn wf-btn--sm wf-btn--primary">Record Payment</button>
           `)}
           <div class="wf-detail-layout">
@@ -417,9 +417,9 @@ const ACCOUNTS_MODULE = (() => {
         <div class="wf-card wf-mt-16"><div class="wf-card__header"><span class="wf-card__title">Recent Reports</span></div>
           <div class="wf-table-wrap" style="border:none"><table class="wf-table"><thead><tr><th>Report</th><th>Period</th><th>Generated</th><th>By</th><th>Actions</th></tr></thead>
           <tbody>
-            <tr><td>Revenue Summary — Jun 2024</td><td>01–30 Jun 2024</td><td>25 Jun 2024</td><td>Fazil</td><td><button class="wf-btn wf-btn--sm">Download</button></td></tr>
-            <tr><td>GST Return — May 2024</td><td>01–31 May 2024</td><td>05 Jun 2024</td><td>Fazil</td><td><button class="wf-btn wf-btn--sm">Download</button></td></tr>
-            <tr><td>Outstanding Dues</td><td>As of 25 Jun 2024</td><td>25 Jun 2024</td><td>Finance Manager</td><td><button class="wf-btn wf-btn--sm">Download</button></td></tr>
+            <tr><td>Revenue Summary — Jun 2024</td><td>01–30 Jun 2024</td><td>25 Jun 2024</td><td>Fazil</td><td><button class="wf-btn wf-btn--sm" data-action="export-pdf">Download</button></td></tr>
+            <tr><td>GST Return — May 2024</td><td>01–31 May 2024</td><td>05 Jun 2024</td><td>Fazil</td><td><button class="wf-btn wf-btn--sm" data-action="export-pdf">Download</button></td></tr>
+            <tr><td>Outstanding Dues</td><td>As of 25 Jun 2024</td><td>25 Jun 2024</td><td>Finance Manager</td><td><button class="wf-btn wf-btn--sm" data-action="export-pdf">Download</button></td></tr>
           </tbody></table></div>
         </div>
       `
@@ -483,7 +483,7 @@ const ACCOUNTS_MODULE = (() => {
       moduleKey: "accounts",
       moduleLabel: "Accounts & Payments",
       moduleTitle: "Accounts & Payments",
-      moduleHref: "index.html",
+      moduleHref: "/",
       defaultScreen: "finance-dashboard",
       searchPlaceholder: "Search payments, invoices, customers, transaction IDs…",
       modals: WF.accountsModals,

@@ -166,7 +166,7 @@ const MARKETING_INTELLIGENCE_MODULE = (() => {
       moduleKey: "marketingIntelligence",
       moduleLabel: "Marketing Intelligence",
       moduleTitle: "Marketing Intelligence",
-      moduleHref: "index.html",
+      moduleHref: "/",
       defaultScreen: "dashboard",
       searchPlaceholder: "Search campaigns, lead sources, spend…",
       screens

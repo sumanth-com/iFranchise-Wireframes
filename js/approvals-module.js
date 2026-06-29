@@ -455,7 +455,7 @@ const APPROVALS_MODULE = (() => {
       moduleKey: "approvals",
       moduleLabel: "Approval Management",
       moduleTitle: "Approval Management",
-      moduleHref: "index.html",
+      moduleHref: "/",
       defaultScreen: "dashboard",
       searchPlaceholder: "Search approvals, references, requesters, types…",
       modals: WF.approvalModals,

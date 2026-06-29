@@ -23,7 +23,7 @@ const CALL_INTELLIGENCE_MODULE = (() => {
       <div style="width:36px;height:36px;background:var(--wf-placeholder);border-radius:8px;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700">CZ</div>
       <div style="flex:1;min-width:0"><strong>${WF.esc(int.name)}</strong><div style="font-size:12px;color:var(--wf-text-muted);margin-top:2px">${WF.esc(int.note)}</div></div>
       <span class="wf-badge">${WF.esc(int.status)}</span>
-      <button class="wf-btn wf-btn--sm">Configure</button>
+      <button type="button" class="wf-btn wf-btn--sm" data-action="toast" data-toast="Integration settings (wireframe)">Configure</button>
     </div>`).join("")}
   </div></div>`;
 
@@ -76,7 +76,7 @@ const CALL_INTELLIGENCE_MODULE = (() => {
         ${WF.pageHeader("Call History", "Complete call log with outcomes and recordings")}
         ${filters()}${WF.reportActions()}
         <div class="wf-card"><div class="wf-card__body" style="padding:0"><div class="wf-table-wrap" style="border:none"><table class="wf-table"><thead><tr><th>Call ID</th><th>Contact</th><th>Agent</th><th>Direction</th><th>Duration</th><th>Outcome</th><th>Date</th><th>Recording</th><th>Actions</th></tr></thead>
-        <tbody>${d().callHistory.map((c) => `<tr><td style="font-size:12px">${WF.esc(c.id)}</td><td>${WF.esc(c.contact)}</td><td>${WF.esc(c.agent)}</td><td>${WF.esc(c.direction)}</td><td>${WF.esc(c.duration)}</td><td><span class="wf-badge">${WF.esc(c.outcome)}</span></td><td style="font-size:12px">${WF.esc(c.date)}</td><td>${c.recording ? "Yes" : "—"}</td><td><button class="wf-btn wf-btn--sm">Details</button></td></tr>`).join("")}</tbody></table>${WF.pagination(1842)}</div></div></div>
+        <tbody>${d().callHistory.map((c) => `<tr><td style="font-size:12px">${WF.esc(c.id)}</td><td>${WF.esc(c.contact)}</td><td>${WF.esc(c.agent)}</td><td>${WF.esc(c.direction)}</td><td>${WF.esc(c.duration)}</td><td><span class="wf-badge">${WF.esc(c.outcome)}</span></td><td style="font-size:12px">${WF.esc(c.date)}</td><td>${c.recording ? "Yes" : "—"}</td><td><button data-screen="recordings" class="wf-btn wf-btn--sm">Details</button></td></tr>`).join("")}</tbody></table>${WF.pagination(1842)}</div></div></div>
       `
     },
     {
@@ -247,7 +247,7 @@ const CALL_INTELLIGENCE_MODULE = (() => {
       moduleKey: "callIntelligence",
       moduleLabel: "Call Intelligence",
       moduleTitle: "Call Intelligence",
-      moduleHref: "index.html",
+      moduleHref: "/",
       defaultScreen: "dashboard",
       searchPlaceholder: "Search calls, agents, recordings…",
       screens

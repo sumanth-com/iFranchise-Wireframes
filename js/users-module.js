@@ -475,7 +475,7 @@ const USERS_MODULE = (() => {
       render: () => `
         ${roleBar()}
         ${WF.pageHeader("Bulk User Import", "Import employees from CSV or Excel template", `
-          <button data-modal="bulk-import" class="wf-btn wf-btn--sm wf-btn--primary">Start Import</button>
+          <button data-action="confirm-bulk-import" class="wf-btn wf-btn--sm wf-btn--primary">Start Import</button>
         `)}
         <div class="wf-grid-2">
           <div class="wf-card"><div class="wf-card__header"><span class="wf-card__title">Upload File</span></div>
@@ -630,7 +630,7 @@ const USERS_MODULE = (() => {
       moduleKey: "users",
       moduleLabel: "User Management",
       moduleTitle: "User Management",
-      moduleHref: "index.html",
+      moduleHref: "/",
       defaultScreen: "dashboard",
       searchPlaceholder: "Search employees, departments, teams, roles…",
       modals: WF.userModals,

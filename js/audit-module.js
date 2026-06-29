@@ -452,7 +452,7 @@ const AUDIT_MODULE = (() => {
       moduleKey: "audit",
       moduleLabel: "Audit & Activity Logs",
       moduleTitle: "Audit & Activity Logs",
-      moduleHref: "index.html",
+      moduleHref: "/",
       defaultScreen: "dashboard",
       searchPlaceholder: "Search audit logs, users, modules, events…",
       modals: WF.auditModals,
